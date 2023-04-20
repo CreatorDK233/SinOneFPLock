@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 1   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE APPUNLOCK
@@ -62,7 +62,7 @@ line level    source
   49               {315,420,254,105,513,410,450,425,415,350,
   50                523,125,210,143,134,201,314,250,102,214,
   51                451,135,130,435,104,153,401,304,452,234,
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 2   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 2   
 
   52                204,421,301,140,132,405,325,520,305,430,
   53                352,241,413,253,302,145,120,240,412,532,
@@ -126,7 +126,7 @@ line level    source
  110          u_int code hash_6bit[100]={47915,13054,41259,18369,40178,38207,25638,46817,46083,30419,
  111                       50986,10896,36704,10563,18506,28065,50342,21086,19537,30698,
  112                       53109,37046,30852,27564,51967,47385,50612,48059,40981,31760,
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 3   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 3   
 
  113                       50162,56901,46805,42069,42970,59167,52317,27980,14682,31780,
  114                       52183,53819,56328,14976,19547,57182,16280,37081,32197,36125,
@@ -190,7 +190,7 @@ line level    source
                   debug_print("buf=0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x\n",buf[0],buf[1],buf[2],buf
              -[3],buf[4],buf[5],buf[6],buf[7],buf[8],buf[9],buf[10],buf[11]);
                 else if( _len==13 )
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 4   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 4   
 
                   debug_print("buf=0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x\n",buf[0],buf[1],buf[2
              -],buf[3],buf[4],buf[5],buf[6],buf[7],buf[8],buf[9],buf[10],buf[11],buf[12]);
@@ -254,7 +254,7 @@ line level    source
  230   1        start = 1;
  231   1        end = pwd->lockpwd_len-1;
  232   1        offset = pwd->lockpwd[0];
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 5   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 5   
 
  233   1        offset = (offset%10)%(end-start+1);
  234   1        
@@ -318,7 +318,7 @@ line level    source
  292   2      
  293   2          pwd->lockpwd[1] = dad(pwd->lockpwd[1],h1);
  294   2          pwd->lockpwd[2] = dad(pwd->lockpwd[2],h2);
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 6   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 6   
 
  295   2          pwd->lockpwd[3] = dad(pwd->lockpwd[3],h3);
  296   2          pwd->lockpwd[4] = dad(pwd->lockpwd[4],h4);
@@ -382,7 +382,7 @@ line level    source
  354   3          }
  355   2          pwd->userpwd_hash[0] = pwd->lockpwd[1];
  356   2          pwd->userpwd_hash[1] = pwd->lockpwd[2];
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 7   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 7   
 
  357   2          pwd->userpwd_hash[2] = pwd->lockpwd[3];
  358   2          pwd->userpwd_hash[3] = pwd->lockpwd[4];
@@ -446,7 +446,7 @@ line level    source
  414   1      
  415   1        return true;
  416   1      }
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 8   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 8   
 
  417          
  418          bool pwd_hash_d(ipwd *pwd)
@@ -510,7 +510,7 @@ line level    source
  476   1        if( pwd==NULL )
  477   1          return false;
  478   1        pwd->mode = pwd->lockpwd[0];
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 9   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 9   
 
  479   1        if( pwd->lockpwd_len==LOCK_PWD_NOLED_MAX_LEN )
  480   1          pwd->mode=mode_serial_count;
@@ -574,7 +574,7 @@ line level    source
  535   1          )
  536   1          {
  537   2            UserIdentifyResultMgr.BackupsManagerID[0].CountSerialnum[0]=0x00;
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 10  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 10  
 
  538   2            UserIdentifyResultMgr.BackupsManagerID[0].CountSerialnum[1]=0x00;
  539   2            UserIdentifyResultMgr.BackupsManagerID[0].CountSerialnum[2]=0x00;
@@ -638,7 +638,7 @@ line level    source
  588   1          EEPROM_ReadSequential(BackupsCountRandNumberStartAddr1,UserIdentifyResultMgr.BackupsManagerID[1].CountRa
              -ndnum,2);
  589   1          if((UserIdentifyResultMgr.BackupsManagerID[1].CountRandnum[0]==0xFF)
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 11  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 11  
 
  590   1          ||(UserIdentifyResultMgr.BackupsManagerID[1].CountRandnum[1]==0xFF)
  591   1          )
@@ -702,7 +702,7 @@ line level    source
              -ManagerPswUserId.PasscodeBuff,12);  
  644   2          }
  645   1      
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 12  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 12  
 
  646   1                    EEPROM_ReadSequential(BackupsManagerPasscodeMemoryStartAddr1,UserIdentifyResultMgr.BackupsMa
              -nagerID[1].ManagerPswUserId.PasscodeBuff,12);
@@ -766,7 +766,7 @@ line level    source
  703   1          {
  704   2                  UserIdentifyResultMgr.ManagerID[1].Serialnum[0]=0x00;
  705   2            UserIdentifyResultMgr.ManagerID[1].Serialnum[1]=0x00;
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 13  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 13  
 
  706   2            UserIdentifyResultMgr.ManagerID[1].Serialnum[2]=0x00;
  707   2            UserIdentifyResultMgr.ManagerID[1].Serialnum[3]=0x00;
@@ -830,7 +830,7 @@ line level    source
  764   1          if((UserIdentifyResultMgr.ManagerID[0].CountRandnum[0]==0xFF)
  765   1          ||(UserIdentifyResultMgr.ManagerID[0].CountRandnum[1]==0xFF)
  766   1          )
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 14  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 14  
 
  767   1          {
  768   2                 UserIdentifyResultMgr.ManagerID[0].CountRandnum[0]=0x00;
@@ -894,7 +894,7 @@ line level    source
              -rPswUserId.UserID,1);
  822   1      
  823   1        //ReadPasscodeMaster02MemoryFromEEPROM();
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 15  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 15  
 
  824   1        for(i=0;i<12;i++)
  825   1        {
@@ -958,7 +958,7 @@ line level    source
              -Randnum,2);        
  877   1                        BackupsManagerPassword();
  878   1          
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 16  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 16  
 
  879   1      
  880   1      }
@@ -1022,7 +1022,7 @@ line level    source
  932   2          UserIdentifyResultMgr.BackupsManagerID[userId].TempCountnum[0]=pwd->lockpwd[5];
  933   2          UserIdentifyResultMgr.BackupsManagerID[userId].TempCountnum[1]=pwd->lockpwd[6];
  934   2          UserIdentifyResultMgr.BackupsManagerID[userId].TempCountnum[2]=pwd->lockpwd[7];
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 17  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 17  
 
  935   2          
  936   2          UserIdentifyResultMgr.BackupsManagerID[userId].CountRandnum[0]=pwd->lockpwd[0];
@@ -1086,7 +1086,7 @@ line level    source
              -].Serialnum[3];
  981   1        return  temp_serial_num;
  982   1      }
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 18  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 18  
 
  983          u_int Get_CountSerialnum(u_int userId)
  984          {    
@@ -1150,7 +1150,7 @@ line level    source
 1036   1        
 1037   1        UserIdentifyResultMgr.BackupsManagerID[userId].Countnum[0]= UserIdentifyResultMgr.ManagerID[userId].Count
              -num[0];
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 19  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 19  
 
 1038   1        UserIdentifyResultMgr.BackupsManagerID[userId].Countnum[1]= UserIdentifyResultMgr.ManagerID[userId].Count
              -num[1];
@@ -1214,7 +1214,7 @@ line level    source
 1092   3                  temp_serialnum=Get_Serialnum(userId);
 1093   3                  if(pwd->serialnum<(DEF_MAX_SERIAL_NUM+1))
 1094   3              {
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 20  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 20  
 
 1095   4                        if(temp_serialnum<pwd->serialnum) 
 1096   4                {
@@ -1278,7 +1278,7 @@ line level    source
 1154   6                              
 1155   6                  }
 1156   5                  else
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 21  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 21  
 
 1157   5                  {       
 1158   6                    pwd->iscorrect = 0;     
@@ -1342,7 +1342,7 @@ line level    source
              -r lockpwd[],unsigned int lockpwd_len,unsigned int *pmode,unsigned int *presult)
 1216          {
 1217   1        ipwd pwd={0};
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 22  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 22  
 
 1218   1        u_int temp_count=0;
 1219   1        if( pwd_prepare(&pwd,userpwd,userpwdlen,lockpwd,lockpwd_len)==false )
@@ -1406,7 +1406,7 @@ line level    source
 1277   1          
 1278   1          //unsigned char lockpwd[12]={8,3,5,0,9,9,3,6,0,9,6,2};
 1279   1          //unsigned char userpwd[12]={3,4,5,6,4,5,3,5};  //mode =2, 4-13,10:37 
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/19/2023 13:57:30 PAGE 23  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/20/2023 10:18:56 PAGE 23  
 
 1280   1      
 1281   1          unsigned char lockpwd[12]={2,0,2,2,9,3,6,9,0,9,5,4};

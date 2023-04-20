@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   FONT_MENU                                                         04/19/2023 13:57:33 PAGE 1   
+C51 COMPILER V9.60.0.0   FONT_MENU                                                         04/20/2023 10:18:58 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE FONT_MENU
@@ -62,7 +62,7 @@ line level    source
               code uint8_t InputUserIDStr[]={HZ_qing,HZ_shu,HZ_ru,HZ_bian,HZ_hao,HZ_end};
               //code uint8_t InputUserIDStrEn[]={"PLS input ID"};
               
-C51 COMPILER V9.60.0.0   FONT_MENU                                                         04/19/2023 13:57:33 PAGE 2   
+C51 COMPILER V9.60.0.0   FONT_MENU                                                         04/20/2023 10:18:58 PAGE 2   
 
               code  uint8_t PleaseSwingCardStr[]={HZ_qing,HZ_shua,HZ_ka,HZ_end};//«ÎÀ¢ø®
               //code  uint8_t PleaseSwingCardStrEn[]={"PLS swing card"};
@@ -126,7 +126,7 @@ line level    source
              -∆
               };  
               //code uint8_t FpMenuStrEn[][12]= 
-C51 COMPILER V9.60.0.0   FONT_MENU                                                         04/19/2023 13:57:33 PAGE 3   
+C51 COMPILER V9.60.0.0   FONT_MENU                                                         04/20/2023 10:18:58 PAGE 3   
 
               //{ 
               //  {"1.FP Admin."},          //π‹¿Ì‘±÷∏Œ∆π‹¿Ì
@@ -190,7 +190,7 @@ line level    source
               };  
               //code uint8_t SytemConfigMenuStrEn[][17]= 
               //{ 
-C51 COMPILER V9.60.0.0   FONT_MENU                                                         04/19/2023 13:57:33 PAGE 4   
+C51 COMPILER V9.60.0.0   FONT_MENU                                                         04/20/2023 10:18:58 PAGE 4   
 
               //    //{"Time setting   "},      // ±º‰…Ë∂®
               //    {"1.Language"},     //”Ô—‘

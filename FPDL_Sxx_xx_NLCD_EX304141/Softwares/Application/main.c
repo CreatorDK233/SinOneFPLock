@@ -46,6 +46,7 @@ void Main_System_Init(void)
 	
 	#ifdef Function_TuyaWifi
 	//Wifi_Init();
+	//MX_UART1_Init();
 	Wifi_Rst();
 	#endif
 	

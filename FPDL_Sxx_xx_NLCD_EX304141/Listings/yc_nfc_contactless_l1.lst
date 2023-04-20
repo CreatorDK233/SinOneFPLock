@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 1   
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE YC_NFC_CONTACTLESS_L1
@@ -62,7 +62,7 @@ line level    source
   47          }; /* gain,i,q */
   48          
   49          static unsigned char bit_rate = 0;
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 2   
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 2   
 
   50          uint8_t cardtype=0;
   51          /*
@@ -126,7 +126,7 @@ line level    source
  109          //            WRITEREG(REG_LDO_CORE_LPO_CLK_CTRL, 0x5b);
  110          //        }
  111          
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 3   
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 3   
 
  112          //        RegBuff[0] = READREG(1);
  113          //        RegBuff[1] = READREG(148);
@@ -190,7 +190,7 @@ line level    source
  170   3          }
  171   2          if (!Poll_Type.Type_B)
  172   2          {
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 4   
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 4   
 
  173   3            err_no = YC_NFC_Contactless_WUPB(NULL);
  174   3            if(err_no == EOT_SHOUT )
@@ -254,7 +254,7 @@ line level    source
  232   1          WRITEREG(addr, (reg | mask));
  233   1      }
  234          
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 5   
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 5   
 
  235          /**
  236            * @brief      Clear REG bit
@@ -318,7 +318,7 @@ line level    source
  294   1          SET_MFC_RST_H;
  295   1        Soft_Delay1ms(20);
  296   1        while ((READREG(REG_PMU_STATE) < 3 )|| (READREG(REG_PMU_STATE) >14 ))    {
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 6   
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 6   
 
  297   2              Soft_Delay1ms(2);
  298   2              i++;
@@ -382,7 +382,7 @@ line level    source
  356            */
  357          void YC_NFC_Contactless_Init(void)
  358          {
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 7   
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 7   
 
  359   1          SETBITMASK(REG_TOP_CTRL, 0x10);
  360   1      
@@ -446,7 +446,7 @@ line level    source
  418   2          }
  419   1          else if (picc_type == TYPE_B)
  420   1          {
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 8   
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 8   
 
  421   2              WRITEREG(REG_TX_PA_MOD_GAIN, MOD_INDEX);
  422   2              CLEARBITMASK(REG_TX_PA_GAIN_CTRL, 0x20);
@@ -510,7 +510,7 @@ line level    source
  480          //  return TIM0_CNTNFC;
  481          //}
  482          //void NFCMsCount(void)
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 9   
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 9   
 
  483          //{
  484          //  Contactless_mscnt  = (CPU_MHZ / 1000 );
@@ -574,7 +574,7 @@ line level    source
  542   1          WRITEREG(REG_IRQ0_CLEAR, 0xff);
  543   1          WRITEREG(REG_IRQ0_CLEAR, 0x00);
  544   1          WRITEREG(REG_IRQ1_CLEAR, 0x07);
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 10  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 10  
 
  545   1          WRITEREG(REG_IRQ1_CLEAR, 0x00);
  546   1      
@@ -638,7 +638,7 @@ line level    source
  604   1      
  605   1          if (cmd == CMD_WUPA || cmd == CMD_REQA || cmd == CMD_ANTICOLLISION)
  606   1          {
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 11  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 11  
 
  607   2              CLEARBITMASK(REG_TX_CRC_CTRL, BIT0);
  608   2              CLEARBITMASK(REG_RX_CRC_CTRL, BIT0);
@@ -702,7 +702,7 @@ line level    source
              -,Tpcd
  664   3                NFC_Set_Timer((u16)t, 0xffff); 
  665   3              //NFC_Set_FWT(t);
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 12  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 12  
 
  666   3            }
  667   2        }
@@ -766,7 +766,7 @@ line level    source
  725   2              {
  726   3                  if (requestlen - i > FIFO_LENGTH - WATER_LEVEL - 2)
  727   3                  {
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 13  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 13  
 
  728   4                      for (j = 0; j < FIFO_LENGTH - WATER_LEVEL - 2; j++)
  729   4                      {
@@ -830,7 +830,7 @@ line level    source
  787   3              }
  788   2              
  789   2              if ((READREG(REG_IRQ0_STATE) & 0x01) != 0)
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 14  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 14  
 
  790   2              {
  791   3                return NFC_ERR_TIME_OUT;
@@ -894,7 +894,7 @@ line level    source
  849   2          }
  850   1        if (cmd ==CMD_MAUTH1 || cmd ==CMD_MAUTH2 || cmd ==CMD_MTRANSFER || cmd == CMD_M0READ || cmd == CMD_M0WRIT
              -E)
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 15  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 15  
 
  851   1        {
  852   2          err_flag = 0;
@@ -958,7 +958,7 @@ line level    source
              -                                                                      \
  910   1                                  if(Swtx > 2)                                                                                
              -                                    \
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 16  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 16  
 
  911   1                                  {                                                                                           
              -                                                    \
@@ -1022,7 +1022,7 @@ line level    source
  959   3                  return EOT_SHOUT;
  960   3              }
  961   2              if (errno == NFC_ERR_TIME_OUT)
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 17  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 17  
 
  962   2              {
  963   3                  Time_Out += 1;
@@ -1086,7 +1086,7 @@ line level    source
 1021   3                  {
 1022   4                      (res + Recv_Offset)[i - 1] = Recv[i];
 1023   4                  }
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 18  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 18  
 
 1024   3                  Recv_Offset += Recv_Len - 1;
 1025   3      
@@ -1150,7 +1150,7 @@ line level    source
 1083   3      
 1084   3                  break;
 1085   3      
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 19  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 19  
 
 1086   3              case S_BLOCK:
 1087   3                  if (Recv[0] & 0x01)
@@ -1214,7 +1214,7 @@ line level    source
 1144   1      
 1145   1      
 1146   1          errno = NFC_Transceive(CMD_WUPA, WUPA, 1, 7, ATQA, &len, 0);
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 20  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 20  
 
 1147   1          if (errno == NFC_ERR_NONE)
 1148   1          {
@@ -1278,7 +1278,7 @@ line level    source
 1206            *   This parameter can be one of the values:
 1207            *     @arg CL1: cascase level 1
 1208            *     @arg CL2: cascase level 2
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 21  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 21  
 
 1209            *     @arg CL2: cascase level 3
 1210            * @retval Error code
@@ -1342,7 +1342,7 @@ line level    source
 1267   3              case CL1:
 1268   3                  for (i = 0; i < len; i++)
 1269   3                  {
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 22  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 22  
 
 1270   4                      picc_a.UID_CLn[0][i] = UID_CLn_Temp[i];
 1271   4                  }
@@ -1406,7 +1406,7 @@ line level    source
 1329   2          case CL1:
 1330   2              for (i = 0; i < 5; i++)
 1331   2              {
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 23  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 23  
 
 1332   3                  SELECT[2 + i] = picc_a.UID_CLn[0][i];
 1333   3              }
@@ -1470,7 +1470,7 @@ line level    source
 1391   3              }
 1392   2          }
 1393   1      
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 24  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 24  
 
 1394   1          return errno;
 1395   1      }
@@ -1534,7 +1534,7 @@ line level    source
 1453   4                  }
 1454   3                  else
 1455   3                  {
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 25  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 25  
 
 1456   4                      FSCI = ATS[1] & 0xf;
 1457   4                  }
@@ -1598,7 +1598,7 @@ line level    source
 1515   5                          {
 1516   6                            if( NFC_TIM_COUNT > 1000 )
 1517   6                            { 
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 26  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 26  
 
 1518   7                              //NFC_TIM_COUNT = 0;
 1519   7                              return EOT_SHOUT;     
@@ -1662,7 +1662,7 @@ line level    source
 1576   1          unsigned char WUPB[3]={0};
 1577   1      
 1578   1          YC_NFC_Contactless_Switch_Card_Type(TYPE_B);
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 27  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 27  
 
 1579   1          Soft_Delay1ms(8);
 1580   1      
@@ -1726,7 +1726,7 @@ line level    source
 1638   3                  *ISOIEC14443_4_compliant = ATQB[10] & 0x1;
 1639   3              }
 1640   2      
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 28  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 28  
 
 1641   2              if ((ATQB[10] & 0x8) != 0)
 1642   2              {
@@ -1790,7 +1790,7 @@ line level    source
 1700   2          #ifdef SDK_DEBUG
                       //PRINT("ATQB <-: ");
                       for (i = 0; i < len; i++)
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 29  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 29  
 
                       {
                           //PRINT("%02x ", ATQB[i]);
@@ -1854,7 +1854,7 @@ line level    source
 1762            * @param  None
 1763            * @retval Error code
 1764            */
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 30  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 30  
 
 1765          unsigned char YC_NFC_Contactless_ATTRIB(void)
 1766          {
@@ -1918,7 +1918,7 @@ line level    source
 1824   3              }
 1825   2          }
 1826   1          return errno;
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 31  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 31  
 
 1827   1      }
 1828          
@@ -1982,7 +1982,7 @@ line level    source
 1886          
 1887          //            if (errno == EOT_SHOUT)
 1888          //            {
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 32  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 32  
 
 1889          //                return EOT_SHOUT;
 1890          //            }
@@ -2046,7 +2046,7 @@ line level    source
 1948   1          while (1)
 1949   1          {
 1950   2              errno = YC_NFC_Contactless_WUPA();
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 33  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 33  
 
 1951   2              if (errno == EOT_SHOUT)
 1952   2              {
@@ -2110,7 +2110,7 @@ line level    source
 2010   3      
 2011   3                  GeneralExceptionProcess();
 2012   3              }
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 34  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 34  
 
 2013   2      
 2014   2              if (!UID_complete)
@@ -2174,7 +2174,7 @@ line level    source
 2072   2          }
 2073   1      
 2074   1          return errno;
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 35  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 35  
 
 2075   1      }
 2076          
@@ -2238,7 +2238,7 @@ line level    source
 2134          //        {
 2135          //            while (1)
 2136          //            {
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 36  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 36  
 
 2137          
 2138          //                errno = YC_NFC_Contactless_RATS();
@@ -2302,7 +2302,7 @@ line level    source
 2196          
 2197          //        if (YC_NFC_Contactless_WUPA() == NFC_ERR_NONE)
 2198          //        {
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 37  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 37  
 
 2199          //            goto removea;
 2200          //        }
@@ -2366,7 +2366,7 @@ line level    source
 2257          //                                };
 2258          
 2259          //#ifdef SDK_DEBUG
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 38  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 38  
 
 2260          //    //PRINT("C-APDU ->: ");
 2261          //    for (i = 0; i < sizeof(APDU_PPSE); i++)
@@ -2430,7 +2430,7 @@ line level    source
 2319          //            //PRINT("%02x ", res[i]);
 2320          //        }
 2321          //        //PRINT("\n");
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 39  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 39  
 
 2322          //#endif
 2323          //    }
@@ -2494,7 +2494,7 @@ line level    source
 2381          //  { 
 2382          //    for (i=0;i<recvlen;i++)
 2383          //    {
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 40  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 40  
 
 2384          //      *pid++ = recvbuf[i];
 2385          //    }
@@ -2558,7 +2558,7 @@ line level    source
                 
               
                 #else  //m1
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 41  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 41  
 
 2445   1        block_num_mi = 0;
 2446   1        key_index = 1;
@@ -2622,7 +2622,7 @@ line level    source
 2504          
 2505          void force_dc_calc(void)
 2506          {
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 42  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 42  
 
 2507   1          u8 tmp=0;
 2508   1          tmp = READREG(REG_RSSI_CALC_CTRL);
@@ -2686,7 +2686,7 @@ line level    source
 2566   4                      if (cali == 0x7f)
 2567   4                      {
 2568   5                          cali = 0x7f;
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 43  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 43  
 
 2569   5                      }
 2570   4                      else
@@ -2750,7 +2750,7 @@ line level    source
 2628   4                      if (cali == 0xff)
 2629   4                      {
 2630   5                          cali = cali;
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 44  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 44  
 
 2631   5                      }
 2632   4                      else
@@ -2814,7 +2814,7 @@ line level    source
 2690   1          {
 2691   2              gain_i_q_table[0][1] = 0;
 2692   2          }
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 45  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 45  
 
 2693   1          if (CALI_OK == dc_cali_q())
 2694   1          {
@@ -2878,7 +2878,7 @@ line level    source
 2752   2              break;
 2753   2          case    RX_GAIN_42DB:
 2754   2              i = 6;
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 46  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 46  
 
 2755   2              break;
 2756   2          case    RX_GAIN_48DB:
@@ -2942,7 +2942,7 @@ line level    source
 2814   1        YC_NFC_Contactless_Rf_Switch(ON);
 2815   1        Set_Receive_Parameters(RX_GAIN_6DB,RX_I_R_1K);        //设置接收增益及内部电阻
 2816   1      
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 47  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 47  
 
 2817   1      
 2818   1        WRITEREG(REG_ADC_CTRL, 0x08);
@@ -3006,7 +3006,7 @@ line level    source
 2876   1      
 2877   1        WRITEREG(REG_ADC_CTRL, 0x08);
 2878   1        WRITEREG(REG_XTAL_CTRL4, 0x07);
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 48  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 48  
 
 2879   1        Soft_Delay_us(100);
 2880   1      
@@ -3070,7 +3070,7 @@ line level    source
 2938   2      //    CLRWDT();
 2939   2      //    Soft_Delay1ms(200);
 2940   2      //    CLRWDT();
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 49  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 49  
 
 2941   2          
 2942   2          YC_NFC_Contactless_Init();
@@ -3134,7 +3134,7 @@ line level    source
 3000   1      //  else
 3001   1      //  {
 3002   1      //    Tresetdelay();
-C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/19/2023 13:57:33 PAGE 50  
+C51 COMPILER V9.60.0.0   YC_NFC_CONTACTLESS_L1                                             04/20/2023 10:18:58 PAGE 50  
 
 3003   1      
 3004   1      //    YC_NFC_Field_Reset();

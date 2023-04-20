@@ -620,7 +620,8 @@ void WifiDataHandle(uint8_t *offset)
 	cmd_type = offset[3];
 	cmd_lenth &= offset[4] << 8;
 	cmd_lenth += offset[5];
-
+	WifiMgr.OFFPowerCnt = 0;
+	
 	switch(cmd_type) 
 	{
 		case PRODUCT_INFO_CMD:	// 模块查询MCU信息
@@ -1225,7 +1226,6 @@ void WifiCMD_Excute(void)
 		WifiMgr.Ack.Status = WifiAckIdle;	
 		return;		//if check sum is failed, ignore this data strin
 	}
-	WifiMgr.OFFPowerCnt = 0;
 	WifiDataHandle(WifiMgr.Ack.Buff);
 }
 
@@ -1355,13 +1355,10 @@ void Wifi_Handle(void)
 		//PasscodeUserIdentifyMgr.TimeCnt =Def_IdendtifyFailScreenTimeDelay;
 	}
 	//超时关闭wifi
-	if( IfWifiIsLinked() == S_SUCCESS )
+	WifiMgr.OFFPowerCnt++;
+	if( WifiMgr.OFFPowerCnt >= Def_GuiTimeDelayCnt5s )
 	{
-		WifiMgr.OFFPowerCnt++;
-		if( WifiMgr.OFFPowerCnt >= Def_GuiTimeDelayCnt5s )
-		{
-			Wifi_DeInit();
-		}
+		Wifi_DeInit();
 	}
 }
 

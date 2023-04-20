@@ -241,6 +241,7 @@ void System_PowerDown(void)
 		Hardware_DelayMs(16);
 		CLRWDT();
 	}
+	//MX_UART1_DeInit();
 	#endif
 
 	MX_GPIO_DeInit();
@@ -299,6 +300,7 @@ void System_Awake(void)
 	#endif
 	
 //	#ifdef Function_TuyaWifi
+//	MX_UART1_Init();
 //	//Wifi_Init();
 //	Wifi_Rst();
 //	#endif

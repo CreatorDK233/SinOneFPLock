@@ -123,9 +123,9 @@
 #define DEF_CustomerNumber	64		//should be less than 256
 #define DEF_ModelNumber			30		//should be less than 256
 #define DEF_HardwareVerion	100		//should be less than 256
-#define DEF_FirmwareVerion	207		//should be less than 256
+#define DEF_FirmwareVerion	208		//should be less than 256
 #define SystemHardwareVersion	{VOICE_Six,VOICE_Four,VOICE_Three,VOICE_Zero,DEF_VoiceSegmentEndFlag}
-#define SystemFirmwareVersion	{VOICE_One,VOICE_Zero,VOICE_Zero,VOICE_Mute20ms,VOICE_Two,VOICE_Zero,VOICE_Seven,DEF_VoiceSegmentEndFlag}
+#define SystemFirmwareVersion	{VOICE_One,VOICE_Zero,VOICE_Zero,VOICE_Mute20ms,VOICE_Two,VOICE_Zero,VOICE_Eight,DEF_VoiceSegmentEndFlag}
 //#define Function_CardReaderUseSPI
 #define Function_AppUnlock
 //#define Function_ScreenDisplay

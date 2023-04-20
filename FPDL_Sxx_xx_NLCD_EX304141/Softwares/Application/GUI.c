@@ -856,10 +856,12 @@ void ShowNetWorkConnecting(void)//СЊЭјжа
 		WifiMgr.Link.Status = LinkWait;
 		WifiMgr.Link.TimeCnt = 120*64;	//120S
 		WifiMgr.PostMgr.Flag.Bits.StartNetwork = 1;
+		WifiMgr.OFFPowerCnt = 0;
 		PLAY_VOICE_ONESEGMENT(VOICE_NetworkingConfiguration);
 	}
 	else if ( WifiMgr.Link.Status == LinkWait )
 	{
+		WifiMgr.OFFPowerCnt = 0;
 		if( WifiMgr.WifiConnection.Status == JustConnected )
 		{
 			WifiMgr.WifiConnection.Status = Connected;

@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 1   
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/20/2023 10:18:58 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MIFARE
@@ -62,7 +62,7 @@ line level    source
   48          u8 getbit1(u8 *source,u8 n)
   49          {
   50   1          return source[n/8] & (1 << (n % 8)) ? 1:0;
-C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 2   
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/20/2023 10:18:58 PAGE 2   
 
   51   1      }
   52          u8 bittou16(u8 *source, u16 *des, u8 snum)
@@ -126,7 +126,7 @@ line level    source
  108   1          s8 err = M1_ERR_NONE;
  109   1          u8 authenticationCommand[5];
  110   1          u8 authenticationResponse[FSD];
-C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 3   
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/20/2023 10:18:58 PAGE 3   
 
  111   1          u16 crc;
  112   1          size_t index;
@@ -190,7 +190,7 @@ line level    source
  169          
  170          s8 mifareAuthenticateStep2(u32 readerNonce)
  171          {
-C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 4   
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/20/2023 10:18:58 PAGE 4   
 
  172   1          s8 err = M1_ERR_NONE;
  173   1          u16 auth2Command[8];
@@ -254,7 +254,7 @@ line level    source
  231   1          calculateParity(&transceive_buffer[0], requestLength+2);
  232   1      
  233   1          // Encrypt if cipher is in use
-C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 5   
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/20/2023 10:18:58 PAGE 5   
 
  234   1          if(mifareCipherActive)
  235   1              crypto1_transcrypt(&mifareCipherState, transceive_buffer, requestLength+2);
@@ -318,7 +318,7 @@ line level    source
  293   1          u16 crc = preloadValue;
  294   1          u16 index;
  295   1      
-C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 6   
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/20/2023 10:18:58 PAGE 6   
 
  296   1          for (index = 0; index < length; index++)
  297   1          {
@@ -382,7 +382,7 @@ line level    source
  355          //{
  356          //  s8 err ; 
  357          //  u8 luc_send_data[18]; 
-C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 7   
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/20/2023 10:18:58 PAGE 7   
 
  358          //  u8 luc_p_response[18]={0x00};
  359          //  u16 lus_responseLength = 0x00 ;
@@ -446,7 +446,7 @@ line level    source
  417          //  u16 lus_responseLength = 0x00 ; 
  418          //  luc_send_data[0] = MIFARE_TRANSFER_BLOCK;
  419          //  luc_send_data[1] = blockAddr; //blockAddr 
-C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 8   
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/20/2023 10:18:58 PAGE 8   
 
  420          //  err = mifareSendRequest(luc_send_data,
  421          //              2,
@@ -510,7 +510,7 @@ line level    source
  479          //  err = mifareSendRequest(luc_send_data,
  480          //              2,
  481          //              luc_p_response,
-C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 9   
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/20/2023 10:18:58 PAGE 9   
 
  482          //              20,
  483          //              &lus_responseLength,
@@ -574,7 +574,7 @@ line level    source
  541          //  }
  542          //  else 
  543          //  {
-C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 10  
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/20/2023 10:18:58 PAGE 10  
 
  544          //    return MIF_VALERR ;
  545          //  }
@@ -638,7 +638,7 @@ line level    source
  603   1        s8 err; 
  604   1        if (key_index == KEYA)
  605   1        {
-C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 11  
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/20/2023 10:18:58 PAGE 11  
 
  606   2          apdu_data[0] = 0x60; 
  607   2        }
@@ -702,7 +702,7 @@ line level    source
  665          //  err = NFC_Transceive(CMD_M0WRITE, luc_send_data, send_len, 0, response, &responseLength, 0);
  666          //  if((response[0] == 0x0a) && (responseLength == 1) && (err == 0))
  667          //  {
-C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 12  
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/20/2023 10:18:58 PAGE 12  
 
  668          //      return err;
  669          //  }

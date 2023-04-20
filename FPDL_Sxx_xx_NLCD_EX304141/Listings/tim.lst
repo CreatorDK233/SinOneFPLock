@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   TIM                                                               04/19/2023 13:57:29 PAGE 1   
+C51 COMPILER V9.60.0.0   TIM                                                               04/20/2023 10:18:54 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE TIM
@@ -62,7 +62,7 @@ line level    source
   50   1        TH1 = 256 - 160;
   51   1        TR1 = 0;
   52   1        IPT1 =1;//设置Timer1中断优先级为高
-C51 COMPILER V9.60.0.0   TIM                                                               04/19/2023 13:57:29 PAGE 2   
+C51 COMPILER V9.60.0.0   TIM                                                               04/20/2023 10:18:54 PAGE 2   
 
   53   1        ET1 = 1;//定时器1允许
   54   1        TR1 = 1;//打开定时器1
@@ -126,7 +126,7 @@ line level    source
  112          {   
  113   1        TXINX = 0x03;   //选择定时器T3
  114   1        TFX = 0;        //溢出清零
-C51 COMPILER V9.60.0.0   TIM                                                               04/19/2023 13:57:29 PAGE 3   
+C51 COMPILER V9.60.0.0   TIM                                                               04/20/2023 10:18:54 PAGE 3   
 
  115   1      
  116   1        TimerCount.Timer3Cnt+=1;

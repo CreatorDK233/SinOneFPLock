@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/19/2023 13:57:32 PAGE 1   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/20/2023 10:18:57 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE GUI_FUNCTION
@@ -62,7 +62,7 @@ line level    source
   50   1        VoiceMenuMgr.MenuPoint=0;
   51   1        VoiceMenuMgr.TotalMenuNum = 4;
   52   1        CurrentScreen = SCREEN_PasscodeMenu;
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/19/2023 13:57:32 PAGE 2   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/20/2023 10:18:57 PAGE 2   
 
   53   1      }
   54          void GoToCardMenu(void)//进入卡片菜单
@@ -126,7 +126,7 @@ line level    source
  109   1        else
  110   1        {
  111   2          return bFALSE;
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/19/2023 13:57:32 PAGE 3   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/20/2023 10:18:57 PAGE 3   
 
  112   2        }
  113   1      }
@@ -190,7 +190,7 @@ line level    source
  171   2        }
  172   1      }
  173          
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/19/2023 13:57:32 PAGE 4   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/20/2023 10:18:57 PAGE 4   
 
  174          void UnlockSuccess(uint8_t UnlockType)//开锁成功
  175          {
@@ -254,7 +254,7 @@ line level    source
  233   2        }
  234   1        
  235   1        EEPROM_ReadSequential(VolumeSwitchStartAddr,(uint8_t*)&temp_BOOL,1);
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/19/2023 13:57:32 PAGE 5   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/20/2023 10:18:57 PAGE 5   
 
  236   1      
  237   1        if (temp_BOOL == bFALSE)
@@ -318,7 +318,7 @@ line level    source
                 {
                   EEPROM_WriteSequential(LockBrandStartAddr,&temp,1);
                   
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/19/2023 13:57:32 PAGE 6   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/20/2023 10:18:57 PAGE 6   
 
               //    if ( LockBrand.BrandType == SmallBrand )
               //    {
@@ -382,7 +382,7 @@ line level    source
  357   2          #ifdef Function_ScreenDisplay
                   for (i=0;i<DataInputMgr.InputPoint;i++)
                   { 
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/19/2023 13:57:32 PAGE 7   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/20/2023 10:18:57 PAGE 7   
 
                     temp = value%10;
                     DisOneDigital16x8(StartPage,StartColumn+(8*(DataInputMgr.InputPoint-i-1)),temp,NormalDisplay);
@@ -446,7 +446,7 @@ line level    source
  419   2          else
  420   2          {
  421   3            DataInputMgr.Status = InputEnd;
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/19/2023 13:57:32 PAGE 8   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/20/2023 10:18:57 PAGE 8   
 
  422   3          }
  423   2        }
@@ -510,7 +510,7 @@ line level    source
  481   3          }
  482   2          if ( PasscodeInputMgr.Point == 0 )
  483   2          {
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/19/2023 13:57:32 PAGE 9   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/20/2023 10:18:57 PAGE 9   
 
  484   3            PasscodeInputMgr.Status = PasscodeInputExit;
  485   3          }
@@ -574,7 +574,7 @@ line level    source
  543   5                PasscodeUserIdentifyMgr.UserID = PasscodeIdendify(PasscodeInputMgr.InputBuff);
  544   5                if ( PasscodeUserIdentifyMgr.UserID != 0x00 )//Identify success
  545   5                {
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/19/2023 13:57:32 PAGE 10  
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/20/2023 10:18:57 PAGE 10  
 
  546   6                  PasscodeUserIdentifyMgr.Status = PasscodeIdentifySuccess;
  547   6                  //PasscodeUserIdentifyMgr.TimeCnt =Def_IdendtifySuccessScreenTimeDelay;
@@ -638,7 +638,7 @@ line level    source
  604   1        uint8_t PasscodeLen;
  605   1        for (i=0;i<(DEF_MAX_PASSCODEMASTER+DEF_MAX_PASSCODEUSER);i++)
  606   1        {
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/19/2023 13:57:32 PAGE 11  
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/20/2023 10:18:57 PAGE 11  
 
  607   2          if ( PasscodeMemoryMgr[i].Status != PasscodeIsValid ){
  608   3            continue;
@@ -702,7 +702,7 @@ line level    source
  666   1        ReadPasscodeUserMemoryFromEEPROM();
  667   1             //ReadPasscodeMaster02MemoryFromEEPROM();
  668   1      
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/19/2023 13:57:32 PAGE 12  
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/20/2023 10:18:57 PAGE 12  
 
  669   1        for (i=0;i<DEF_MAX_PASSCODEMASTER;i++)
  670   1        {
@@ -766,7 +766,7 @@ line level    source
  728   3          }
  729   2        }
  730   1        
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/19/2023 13:57:32 PAGE 13  
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/20/2023 10:18:57 PAGE 13  
 
  731   1        #ifdef Function_ScreenDisplay
                 DisHZ16x14Str(0,32,SystemVersionStr,NormalDisplay);
@@ -830,7 +830,7 @@ line level    source
  788          {
  789   1        uint8_t i;
  790   1        for (i=0;i<(DEF_MAX_PASSCODEUSER+DEF_MAX_PASSCODEMASTER);i++)
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/19/2023 13:57:32 PAGE 14  
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/20/2023 10:18:57 PAGE 14  
 
  791   1        {
  792   2          if (PasscodeMemoryMgr[i].UserID == UserID )
@@ -894,7 +894,7 @@ line level    source
  850          {
  851   1        uint8_t i,j;
  852   1      
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/19/2023 13:57:32 PAGE 15  
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/20/2023 10:18:57 PAGE 15  
 
  853   1        for (i=0;i<DEF_MAX_PASSCODEMASTER;i++)
  854   1        {
@@ -958,7 +958,7 @@ line level    source
  912   1        uint8_t i;
  913   1        for (i=DEF_MAX_PASSCODEMASTER;i<(DEF_MAX_PASSCODEMASTER+DEF_MAX_PASSCODEUSER);i++)
  914   1        {
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/19/2023 13:57:32 PAGE 16  
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/20/2023 10:18:57 PAGE 16  
 
  915   2          if ( PasscodeMemoryMgr[i].Status != PasscodeIsValid ){
  916   3            return (i+1);
@@ -1022,7 +1022,7 @@ line level    source
  974   1        SystemTime.hour   =   TempSystemTime.hour;
  975   1        SystemTime.minute =   TempSystemTime.minute;
  976   1        SystemTime.second =   TempSystemTime.second;
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/19/2023 13:57:32 PAGE 17  
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      04/20/2023 10:18:57 PAGE 17  
 
  977   1      }
  978          
