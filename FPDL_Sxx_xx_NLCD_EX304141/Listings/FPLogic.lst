@@ -1,0 +1,795 @@
+C51 COMPILER V9.60.0.0   FPLOGIC                                                           02/09/2023 18:53:05 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE FPLOGIC
+OBJECT MODULE PLACED IN .\Objects\FPLogic.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Softwares\ModuleLogic\FPLogic.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE INCD
+                    -IR(.\Drivers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Protoco
+                    -l;.\Softwares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic) DEBUG PRINT(.\Listings\FPLogic.lst) TABS(2) OBJECT(
+                    -.\Objects\FPLogic.obj)
+
+line level    source
+
+   1          #include "FPLogic.h"
+   2          #include "global_variable.h"
+   3          #include "FingerPrint.h"
+   4          #include "GUI.h"
+   5          #include "Project.h"
+   6          #include "EEPROM.h"
+   7          #include "Font.h"
+   8          #include "BeepMgr.h"
+   9          #include "SC95F861xB_C.H"
+  10          #include "LCD.h"
+  11          
+  12          void RegisterFp(uint16_t UserID)//注册指纹
+  13          {
+  14   1        #ifdef LED_HFG12864_SHOW
+  15   1        code uint8_t PutFingerStr[]={HZ_kongge,HZ_qing,HZ_fang,HZ_zhiwei,HZ_shou,HZ_zhi,HZ_end}; 
+  16   1        #endif
+  17   1      //  code uint8_t PutFingerStrEn[]={"<Put Finger>"};
+  18   1        
+  19   1        FpRegisterMgr.UserID = UserID;
+  20   1        
+  21   1        if ( FpRegisterMgr.Status == FPMcmdStart )
+  22   1        {
+  23   2          FpRegisterMgr.Status = SendGetImageCmd;
+  24   2          FpRegisterMgr.TimeCnt = Def_WaitUserPutFingerTimeDelay;   
+  25   2          FpRegisterMgr.EnrollSuccessTimes = 1;
+  26   2          FpRegisterMgr.EnrollFailTimes=0;
+  27   2          #ifdef Function_NoDuplicateFp
+  28   2          FpRegisterMgr.DuplicateCheck = bFALSE;
+  29   2          #else
+                  FpRegisterMgr.DuplicateCheck = bTRUE;
+                  #endif
+  32   2          PLAY_VOICE_ONESEGMENT(VOICE_PleasePutFinger);
+  33   2          Hardware_DelayMs(150);
+  34   2          #ifdef LED_HFG12864_SHOW
+  35   2          DisHZ16x14Str(3,14,PutFingerStr,NormalDisplay);
+  36   2          #endif
+  37   2        }
+  38   1        else if (FpRegisterMgr.Status == SendGetImageCmd)
+  39   1        {
+  40   2          
+  41   2          FpRegisterMgr.Status = WaitForGetImageCmdACK;
+  42   2          FpmAckMgr.Status = WaitACK;
+  43   2          FPM_SendGetEnrollImageCmd();
+  44   2          DEBUG_MARK;
+  45   2        }
+  46   1        else if ( FpRegisterMgr.Status == WaitForGetImageCmdACK)
+  47   1        {
+  48   2          if (FpmAckMgr.Status == GotACK)
+  49   2          {
+  50   3            DEBUG_MARK;
+  51   3            if ( FpmAckMgr.ErrorCode == Error_NONE)
+  52   3            {
+C51 COMPILER V9.60.0.0   FPLOGIC                                                           02/09/2023 18:53:05 PAGE 2   
+
+  53   4              FpRegisterMgr.Status = SendGenCharCmd;
+  54   4              RefreshSystemSleepTime();
+  55   4            }
+  56   3            else
+  57   3            {
+  58   4              if ( (FpmAckMgr.ErrorCode == Error_GetImage)
+  59   4                ||(FpmAckMgr.ErrorCode == Error_NoFinger)
+  60   4                ||(FpmAckMgr.ErrorCode == Error_BadImage)
+  61   4                )
+  62   4              {
+  63   5                FpRegisterMgr.Status = SendGetImageCmd;
+  64   5              }
+  65   4              else
+  66   4              {
+  67   5                FpRegisterMgr.Status = fail;
+  68   5                FpRegisterMgr.ErrorType = FpRegisterFail;
+  69   5                DEBUG_MARK;
+  70   5              }
+  71   4            }
+  72   3            DEBUG_MARK;
+  73   3          }
+  74   2          else if (--FpRegisterMgr.TimeCnt < 1 )
+  75   2          {
+  76   3            FpRegisterMgr.Status = fail;
+  77   3            FpRegisterMgr.ErrorType = TimeOut;
+  78   3          }
+  79   2      
+  80   2        }
+  81   1        else if ( FpRegisterMgr.Status == SendGenCharCmd )
+  82   1        {
+  83   2          
+  84   2          FpRegisterMgr.Status = WaitForGenCharCmdACK;
+  85   2          FpmAckMgr.Status = WaitACK;
+  86   2          FPM_SendGenCharCmd(FpRegisterMgr.EnrollSuccessTimes);   //BuffID start from 0x01
+  87   2          FpRegisterMgr.TimeCnt = Def_FPMcmdTimeOutDelay;   
+  88   2          DEBUG_MARK;
+  89   2        }
+  90   1      
+  91   1        else if ( FpRegisterMgr.Status == WaitForGenCharCmdACK)
+  92   1        {
+  93   2          if (FpmAckMgr.Status == GotACK)
+  94   2          {
+  95   3            if ( FpmAckMgr.ErrorCode == Error_NONE)
+  96   3            { 
+  97   4              if ((FpRegisterMgr.EnrollSuccessTimes == 1 )&&(FpRegisterMgr.DuplicateCheck == bTRUE ))
+  98   4              {
+  99   5                FpRegisterMgr.EnrollSuccessTimes+=1;
+ 100   5                FpRegisterMgr.Status = SendSearchCmd;
+ 101   5                FpRegisterMgr.DuplicateCheck = bFALSE;  
+ 102   5                FpRegisterMgr.TimeCnt =  Def_FPMcmdTimeOutDelay;
+ 103   5              }
+ 104   4              else if (FpRegisterMgr.EnrollSuccessTimes < DEF_FPM_EnrollTimes )
+ 105   4              {
+ 106   5                FpRegisterMgr.Status = SendDetectFingerRemoveCmd;
+ 107   5                FpRegisterMgr.TimeCnt = Def_WaitUserRemoveFingerTimeDelay;  
+ 108   5                FpRegisterMgr.EnrollSuccessTimes+=1;
+ 109   5                PLAY_VOICE_ONESEGMENT(VOICE_PleasePutFingerAgain);
+ 110   5                Hardware_DelayMs(150);
+ 111   5                #ifdef LED_HFG12864_SHOW
+ 112   5                DisHZ16x14Str(3,14,PutFingerStr,NormalDisplay);
+ 113   5                #endif
+ 114   5              }
+C51 COMPILER V9.60.0.0   FPLOGIC                                                           02/09/2023 18:53:05 PAGE 3   
+
+ 115   4              else 
+ 116   4              {
+ 117   5                FpRegisterMgr.Status = SendRegModelCmd;
+ 118   5                FpRegisterMgr.TimeCnt =  Def_FPMcmdTimeOutDelay;
+ 119   5              }
+ 120   4              RefreshSystemSleepTime();
+ 121   4            }
+ 122   3            else if ((FpmAckMgr.ErrorCode == Error_GenChar)
+ 123   3                      ||(FpmAckMgr.ErrorCode == Error_GetImage) 
+ 124   3                    )
+ 125   3            {
+ 126   4              if ( FpRegisterMgr.EnrollFailTimes < DEF_FPM_EnrollFailTimes_Limited)
+ 127   4              {
+ 128   5                FpRegisterMgr.Status = SendDetectFingerRemoveCmd;
+ 129   5                FpRegisterMgr.TimeCnt = Def_WaitUserRemoveFingerTimeDelay;  
+ 130   5                RefreshSystemSleepTime();
+ 131   5                PLAY_VOICE_ONESEGMENT(VOICE_PleasePutFingerAgain);
+ 132   5                Hardware_DelayMs(150);
+ 133   5                #ifdef LED_HFG12864_SHOW
+ 134   5                DisHZ16x14Str(3,14,PutFingerStr,NormalDisplay);
+ 135   5                #endif
+ 136   5              }
+ 137   4              else
+ 138   4              {
+ 139   5                FpRegisterMgr.Status = fail;
+ 140   5                FpRegisterMgr.ErrorType = FpRegisterFail;
+ 141   5              }
+ 142   4              FpRegisterMgr.EnrollFailTimes+=1;
+ 143   4            }
+ 144   3            else
+ 145   3            {
+ 146   4              FpRegisterMgr.Status = fail;
+ 147   4              FpRegisterMgr.ErrorType = FpRegisterFail;
+ 148   4            }
+ 149   3            DEBUG_MARK;
+ 150   3          }
+ 151   2          else if (--FpRegisterMgr.TimeCnt < 1 )
+ 152   2          {
+ 153   3            FpRegisterMgr.Status = fail;
+ 154   3            FpRegisterMgr.ErrorType = TimeOut;
+ 155   3          }
+ 156   2        }
+ 157   1      
+ 158   1        else if ( FpRegisterMgr.Status == SendSearchCmd )
+ 159   1        {
+ 160   2          FpRegisterMgr.Status = WaitForSearchCmdACK;
+ 161   2          FpmAckMgr.Status = WaitACK;
+ 162   2          FPM_SendSearchCmd(0x01,0x0000,(DEF_MAX_FPMASTER+DEF_MAX_FPUSER));   //BuffID is 0x01,from Page 1~~100
+ 163   2          DEBUG_MARK;
+ 164   2        }
+ 165   1      
+ 166   1        else if ( FpRegisterMgr.Status == WaitForSearchCmdACK)
+ 167   1        {
+ 168   2          if (FpmAckMgr.Status == GotACK)
+ 169   2          {
+ 170   3            if ( FpmAckMgr.ErrorCode == Error_NONE)   //if fingerprint is registered
+ 171   3            {
+ 172   4              FpRegisterMgr.Status = fail;
+ 173   4              FpRegisterMgr.ErrorType = FingerPrintIsRegistered;
+ 174   4            }
+ 175   3            else if ( FpmAckMgr.ErrorCode == Error_UnRegistered)  
+ 176   3            {
+C51 COMPILER V9.60.0.0   FPLOGIC                                                           02/09/2023 18:53:05 PAGE 4   
+
+ 177   4              FpRegisterMgr.Status = SendDetectFingerRemoveCmd;
+ 178   4              FpRegisterMgr.TimeCnt = Def_WaitUserRemoveFingerTimeDelay;  
+ 179   4              //GUI_Flag_RefreshLCD = bTRUE;
+ 180   4              RefreshSystemSleepTime();
+ 181   4              PLAY_VOICE_ONESEGMENT(VOICE_PleasePutFingerAgain);
+ 182   4              Hardware_DelayMs(150);
+ 183   4              #ifdef LED_HFG12864_SHOW
+ 184   4              DisHZ16x14Str(3,14,PutFingerStr,NormalDisplay);
+ 185   4              #endif
+ 186   4            }
+ 187   3            else
+ 188   3            {
+ 189   4              FpRegisterMgr.Status = fail;
+ 190   4              FpRegisterMgr.ErrorType = FpRegisterFail;
+ 191   4            }
+ 192   3            DEBUG_MARK;
+ 193   3          }
+ 194   2          else if (--FpRegisterMgr.TimeCnt < 1 )
+ 195   2          {
+ 196   3            FpRegisterMgr.Status = fail;
+ 197   3            FpRegisterMgr.ErrorType = TimeOut;
+ 198   3          }
+ 199   2        }
+ 200   1      
+ 201   1        else if ( FpRegisterMgr.Status == SendDetectFingerRemoveCmd )
+ 202   1        {
+ 203   2          FpRegisterMgr.Status = WaitForDetectFingerRemoveCmdACK;
+ 204   2          FpmAckMgr.Status = WaitACK;
+ 205   2          FPM_SendGetEnrollImageCmd();
+ 206   2          DEBUG_MARK;
+ 207   2        }
+ 208   1        else if ( FpRegisterMgr.Status == WaitForDetectFingerRemoveCmdACK )
+ 209   1        {
+ 210   2          if (FpmAckMgr.Status == GotACK)
+ 211   2          {
+ 212   3            if ( FpmAckMgr.ErrorCode != Error_NoFinger)
+ 213   3            {
+ 214   4              FpRegisterMgr.Status = SendDetectFingerRemoveCmd;
+ 215   4              RefreshSystemSleepTime();
+ 216   4            }
+ 217   3            else
+ 218   3            {
+ 219   4              FpRegisterMgr.Status =  SendGetImageCmd;
+ 220   4              FpRegisterMgr.TimeCnt = Def_WaitUserPutFingerTimeDelay;       
+ 221   4              //GUI_Flag_RefreshLCD = bTRUE;
+ 222   4            }
+ 223   3            DEBUG_MARK;
+ 224   3          }
+ 225   2          else if (--FpRegisterMgr.TimeCnt < 1 )
+ 226   2          {
+ 227   3            FpRegisterMgr.Status = fail;
+ 228   3            FpRegisterMgr.ErrorType = TimeOut;
+ 229   3          }
+ 230   2        }
+ 231   1      
+ 232   1        else if ( FpRegisterMgr.Status == SendRegModelCmd )
+ 233   1        {
+ 234   2          FpRegisterMgr.Status = WaitForRegModelCmdACK;
+ 235   2          FpmAckMgr.Status = WaitACK;
+ 236   2          FPM_SendRegModelCmd();  
+ 237   2          FpRegisterMgr.TimeCnt = Def_FPMcmdTimeOutDelay;   
+ 238   2          DEBUG_MARK;
+C51 COMPILER V9.60.0.0   FPLOGIC                                                           02/09/2023 18:53:05 PAGE 5   
+
+ 239   2        }
+ 240   1        else if ( FpRegisterMgr.Status == WaitForRegModelCmdACK)
+ 241   1        {
+ 242   2          if (FpmAckMgr.Status == GotACK)
+ 243   2          {
+ 244   3            DEBUG_MARK;
+ 245   3            if ( FpmAckMgr.ErrorCode == Error_NONE)
+ 246   3            {
+ 247   4              FpRegisterMgr.Status = SendStoreCharCmd;
+ 248   4            }
+ 249   3            else
+ 250   3            {
+ 251   4              DEBUG_MARK;
+ 252   4              FpRegisterMgr.Status = fail;
+ 253   4              FpRegisterMgr.ErrorType = FpRegisterFail;
+ 254   4            }
+ 255   3            DEBUG_MARK;
+ 256   3          }
+ 257   2          else if (--FpRegisterMgr.TimeCnt < 1 )
+ 258   2          {
+ 259   3            FpRegisterMgr.Status = fail;
+ 260   3            FpRegisterMgr.ErrorType = TimeOut;
+ 261   3          }
+ 262   2        }
+ 263   1        else if ( FpRegisterMgr.Status == SendStoreCharCmd )
+ 264   1        {
+ 265   2          FpRegisterMgr.Status = WaitForStoreCharCmdACK;
+ 266   2          FpmAckMgr.Status = WaitACK;
+ 267   2          FPM_SendStoreCharCmd(0x01,FpRegisterMgr.UserID);    //BuffID is 0x01 ,Page ID is UserID
+ 268   2          FpRegisterMgr.TimeCnt = Def_FPMcmdTimeOutDelay; 
+ 269   2          DEBUG_MARK;
+ 270   2        }
+ 271   1        else if ( FpRegisterMgr.Status == WaitForStoreCharCmdACK )
+ 272   1        {
+ 273   2          if (FpmAckMgr.Status == GotACK)
+ 274   2          {
+ 275   3            if ( FpmAckMgr.ErrorCode == Error_NONE)
+ 276   3            {
+ 277   4              FpRegisterMgr.Status = success;
+ 278   4            }
+ 279   3            else
+ 280   3            {
+ 281   4              FpRegisterMgr.Status = fail;
+ 282   4              FpRegisterMgr.ErrorType = FpRegisterFail;
+ 283   4            }
+ 284   3            DEBUG_MARK;
+ 285   3          }
+ 286   2          else if (--FpRegisterMgr.TimeCnt < 1 )
+ 287   2          {
+ 288   3            FpRegisterMgr.Status = fail;
+ 289   3            FpRegisterMgr.ErrorType = TimeOut;
+ 290   3          }
+ 291   2        }
+ 292   1      }
+ 293          
+ 294          void FpUserIdentify(void)//指纹用户确认
+ 295          {
+ 296   1        if (FpIdentifyMgr.Status == FPMcmdStart )
+ 297   1        {
+ 298   2          FpIdentifyMgr.Status = SendGetImageCmd;
+ 299   2        }
+ 300   1        else if (FpIdentifyMgr.Status == SendGetImageCmd)
+C51 COMPILER V9.60.0.0   FPLOGIC                                                           02/09/2023 18:53:05 PAGE 6   
+
+ 301   1        {
+ 302   2          FpIdentifyMgr.Status = WaitForGetImageCmdACK;
+ 303   2          FpmAckMgr.Status = WaitACK;
+ 304   2          FPM_SendGetImageCmd();
+ 305   2          FpIdentifyMgr.TimeCnt = Def_FPMcmdTimeOutDelay;
+ 306   2          DEBUG_MARK;
+ 307   2        }
+ 308   1        else if ( FpIdentifyMgr.Status == WaitForGetImageCmdACK)
+ 309   1        {
+ 310   2          if (FpmAckMgr.Status == GotACK)
+ 311   2          {
+ 312   3            if ( FpmAckMgr.ErrorCode == Error_NONE)
+ 313   3            {
+ 314   4              DEBUG_MARK;
+ 315   4              #ifdef Function_FPMserialNumberCheck
+                      FpIdentifyMgr.Status = SendGetSerialNumberCmd;
+                      #else
+ 318   4              FpIdentifyMgr.Status = SendGenCharCmd;
+ 319   4              //GUI_Flag_RefreshLCD = bTRUE;
+ 320   4              #endif
+ 321   4              RefreshSystemSleepTime(); //if finger detected system sleep timer reset
+ 322   4            }
+ 323   3            else
+ 324   3            {
+ 325   4              if (FpmAckMgr.ErrorCode == Error_NoFinger)
+ 326   4              {
+ 327   5                FpIdentifyMgr.Status = FPMcmdStart;
+ 328   5              }
+ 329   4              else
+ 330   4              {
+ 331   5                FpIdentifyMgr.Status = FPMcmdStart;
+ 332   5                DEBUG_MARK;
+ 333   5              }
+ 334   4            }
+ 335   3          }
+ 336   2          else 
+ 337   2          {
+ 338   3            if (--FpIdentifyMgr.TimeCnt < 1)
+ 339   3            {
+ 340   4              FpIdentifyMgr.Status = FPMcmdStart;
+ 341   4                                            DEBUG_MARK;
+ 342   4            }
+ 343   3          }
+ 344   2        }
+ 345   1        else if ( FpIdentifyMgr.Status == SendGetSerialNumberCmd )
+ 346   1        {
+ 347   2          FpIdentifyMgr.Status = WaitForGetSerialNumberCmdACK;
+ 348   2          FpmAckMgr.Status = WaitACK;
+ 349   2          FPM_SendGetChipSerialNumberCmd();
+ 350   2          FpIdentifyMgr.TimeCnt = Def_FPMcmdTimeOutDelay;
+ 351   2          DEBUG_MARK;
+ 352   2        }
+ 353   1        else if ( FpIdentifyMgr.Status == WaitForGetSerialNumberCmdACK)
+ 354   1        {
+ 355   2          if (FpmAckMgr.Status == GotACK)
+ 356   2          {
+ 357   3            if ( FpmAckMgr.ErrorCode == Error_NONE)
+ 358   3            {
+ 359   4              if ( CheckFPMserialNumberIsMatch(&FpmAckMgr.Buff[10]) == bTRUE )
+ 360   4              {
+ 361   5                FpIdentifyMgr.Status = SendGenCharCmd;
+ 362   5                //GUI_Flag_RefreshLCD = bTRUE;
+C51 COMPILER V9.60.0.0   FPLOGIC                                                           02/09/2023 18:53:05 PAGE 7   
+
+ 363   5                FpIdentifyMgr.TimeCnt = Def_IdendtifySuccessScreenTimeDelay;  
+ 364   5              }
+ 365   4              else
+ 366   4              {
+ 367   5                FpIdentifyMgr.Status = fail;
+ 368   5                FpIdentifyMgr.ErrorType = Error_SerialNumberMismatched;
+ 369   5                FpIdentifyMgr.TimeCnt = Def_IdendtifyFailScreenTimeDelay;
+ 370   5                DEBUG_MARK;
+ 371   5              }
+ 372   4            }
+ 373   3            else
+ 374   3            {
+ 375   4              FpIdentifyMgr.Status = fail;
+ 376   4              FpIdentifyMgr.ErrorType = Error_TimeOut;
+ 377   4              FpIdentifyMgr.TimeCnt = Def_IdendtifyFailScreenTimeDelay;
+ 378   4              DEBUG_MARK;
+ 379   4            }
+ 380   3          }
+ 381   2          else 
+ 382   2          {
+ 383   3            if (--FpIdentifyMgr.TimeCnt < 1)
+ 384   3            {
+ 385   4              FpIdentifyMgr.Status = fail;
+ 386   4              FpIdentifyMgr.ErrorType = Error_TimeOut;
+ 387   4              FpIdentifyMgr.TimeCnt = Def_IdendtifyFailScreenTimeDelay;
+ 388   4              DEBUG_MARK;
+ 389   4            }
+ 390   3          }
+ 391   2        }
+ 392   1        else if ( FpIdentifyMgr.Status == SendGenCharCmd )
+ 393   1        {
+ 394   2          FpIdentifyMgr.Status = WaitForGenCharCmdACK;
+ 395   2          FpmAckMgr.Status = WaitACK;
+ 396   2          FPM_SendGenCharCmd(0x01);   //BuffID is 0x01
+ 397   2          FpIdentifyMgr.TimeCnt = Def_FPMcmdTimeOutDelay;
+ 398   2          DEBUG_MARK;
+ 399   2        }
+ 400   1        else if ( FpIdentifyMgr.Status == WaitForGenCharCmdACK)
+ 401   1        {
+ 402   2          if (FpmAckMgr.Status == GotACK)
+ 403   2          {
+ 404   3            if ( FpmAckMgr.ErrorCode == Error_NONE)
+ 405   3            {
+ 406   4              FpIdentifyMgr.Status = SendSearchCmd;
+ 407   4              //GUI_Flag_RefreshLCD = bTRUE;
+ 408   4            }
+ 409   3            else
+ 410   3            {
+ 411   4              FpIdentifyMgr.Status = fail;
+ 412   4              FpIdentifyMgr.ErrorType = Error_GenChar;
+ 413   4              FpIdentifyMgr.TimeCnt = Def_IdendtifyFailScreenTimeDelay;
+ 414   4              DEBUG_MARK;
+ 415   4            }
+ 416   3            DEBUG_MARK;
+ 417   3          }
+ 418   2          else 
+ 419   2          {
+ 420   3            if (--FpIdentifyMgr.TimeCnt < 1)
+ 421   3            {
+ 422   4              FpIdentifyMgr.Status = fail;
+ 423   4              FpIdentifyMgr.ErrorType = Error_TimeOut;
+ 424   4              FpIdentifyMgr.TimeCnt = Def_IdendtifyFailScreenTimeDelay;
+C51 COMPILER V9.60.0.0   FPLOGIC                                                           02/09/2023 18:53:05 PAGE 8   
+
+ 425   4              DEBUG_MARK;
+ 426   4            }
+ 427   3          }
+ 428   2        }
+ 429   1        else if ( FpIdentifyMgr.Status == SendSearchCmd )
+ 430   1        {
+ 431   2          FpIdentifyMgr.Status = WaitForSearchCmdACK;
+ 432   2          FpmAckMgr.Status = WaitACK;
+ 433   2          FPM_SendSearchCmd(0x01,0x0000,(DEF_MAX_FPMASTER+DEF_MAX_FPUSER));   //BuffID is 0x01,from Page 1~~100
+ 434   2          FpIdentifyMgr.TimeCnt = Def_FPMcmdTimeOutDelay;
+ 435   2          DEBUG_MARK;
+ 436   2        }
+ 437   1        else if ( FpIdentifyMgr.Status == WaitForSearchCmdACK)
+ 438   1        {
+ 439   2          if (FpmAckMgr.Status == GotACK)
+ 440   2          {
+ 441   3            if ( FpmAckMgr.ErrorCode == Error_NONE)
+ 442   3            {
+ 443   4              FpIdentifyMgr.Status = success;
+ 444   4              FpIdentifyMgr.UserID = FpmAckMgr.Para1;
+ 445   4              //GUI_Flag_RefreshLCD = bTRUE;
+ 446   4              FpIdentifyMgr.TimeCnt = Def_IdendtifySuccessScreenTimeDelay;  
+ 447   4            }
+ 448   3            else if (FpmAckMgr.ErrorCode == Error_FingerNotRelease )
+ 449   3            {
+ 450   4              FpIdentifyMgr.Status = FPMcmdStart;
+ 451   4            }
+ 452   3            else{
+ 453   4              FpIdentifyMgr.Status = fail;
+ 454   4              FpIdentifyMgr.ErrorType = Error_NotMatch;
+ 455   4              FpIdentifyMgr.TimeCnt = Def_IdendtifyFailScreenTimeDelay;
+ 456   4            }
+ 457   3            DEBUG_MARK;
+ 458   3          }
+ 459   2          else 
+ 460   2          {
+ 461   3            if (--FpIdentifyMgr.TimeCnt < 1)
+ 462   3            {
+ 463   4              FpIdentifyMgr.Status = fail;
+ 464   4              FpIdentifyMgr.ErrorType = Error_TimeOut;
+ 465   4              FpIdentifyMgr.TimeCnt = Def_IdendtifyFailScreenTimeDelay;
+ 466   4            }
+ 467   3          }
+ 468   2        }
+ 469   1      }
+ 470          
+ 471          bool_t CheckFPMserialNumberIsMatch(uint8_t buff[])//检查FPM序列号是否匹配
+ 472          {
+ 473   1        //uint8_t SavedFPMserialNumber[32];
+ 474   1      
+ 475   1        EEPROM_ReadSequential(FPMserialNumberStartAddr,FPMserialNumberManager.SN,32);
+ 476   1        if( CompareTwoArrayIsSame(buff,FPMserialNumberManager.SN,32) == bTRUE ) 
+ 477   1        {
+ 478   2          FPMserialNumberManager.SNmatched = IsMatched;
+ 479   2          DEBUG_MARK;
+ 480   2          return bTRUE;
+ 481   2        }
+ 482   1        else{
+ 483   2          FPMserialNumberManager.SNmatched = IsNotMatched;
+ 484   2          DEBUG_MARK;
+ 485   2          return bFALSE;
+ 486   2        }
+C51 COMPILER V9.60.0.0   FPLOGIC                                                           02/09/2023 18:53:05 PAGE 9   
+
+ 487   1        
+ 488   1      }
+ 489          
+ 490          uint8_t Get_Availabe_FPmasterID(void)//获取有效指纹管理员ID
+ 491          {
+ 492   1        uint8_t i;
+ 493   1        for (i=0;i<(DEF_MAX_FPMASTER);i++)
+ 494   1        {
+ 495   2          if ( FpUserMemoryMgr[i].RegisterStatus == UnRegistered ){
+ 496   3            return (i+1);
+ 497   3          }
+ 498   2        }
+ 499   1        return 0;
+ 500   1      }
+ 501          
+ 502          uint8_t Get_Availabe_FPuserID(void)//获取有效指纹用户ID
+ 503          {
+ 504   1        uint8_t i;
+ 505   1        for (i=(DEF_MAX_FPMASTER);i<(DEF_MAX_FPUSER+DEF_MAX_FPMASTER);i++)
+ 506   1        {
+ 507   2          if ( FpUserMemoryMgr[i].RegisterStatus == UnRegistered ){
+ 508   3            return (i+1);
+ 509   3          }
+ 510   2        }
+ 511   1        return 0;
+ 512   1      }
+ 513          
+ 514          void DeleteAllFpFromFPM(void)//从FPM中删除所有指纹
+ 515          {
+ 516   1        //uint8_t i;
+ 517   1        
+ 518   1        if ( AllUserFpDeleteMgr.Status == StartAllUserFpDelete )
+ 519   1          {
+ 520   2            AllUserFpDeleteMgr.Status = SendDeleteAllUserFpCmdToFPM;
+ 521   2          }
+ 522   1          else if ( AllUserFpDeleteMgr.Status == SendDeleteAllUserFpCmdToFPM )
+ 523   1          {
+ 524   2            FPM_DeleteAllCharCmd();
+ 525   2            AllUserFpDeleteMgr.Status = WaitForDeleteAllUserFpCmdACKfromFPM;
+ 526   2            AllUserFpDeleteMgr.TimeCnt = Def_FPMcmdTimeOutDelay;
+ 527   2            FpmAckMgr.Status = WaitACK;
+ 528   2          }
+ 529   1        else if ( AllUserFpDeleteMgr.Status == WaitForDeleteAllUserFpCmdACKfromFPM )
+ 530   1          {
+ 531   2            if (FpmAckMgr.Status == GotACK)
+ 532   2            {
+ 533   3              if ( FpmAckMgr.ErrorCode == Error_NONE)
+ 534   3              {
+ 535   4                AllUserFpDeleteMgr.Status = DeleteAllFpUserSuccess;
+ 536   4              }
+ 537   3              else
+ 538   3              {
+ 539   4                AllUserFpDeleteMgr.Status = DeleteAllFpUserFail;
+ 540   4              }
+ 541   3              DEBUG_MARK;
+ 542   3            }
+ 543   2          else if (--AllUserFpDeleteMgr.TimeCnt < 1 )
+ 544   2            {
+ 545   3              AllUserFpDeleteMgr.Status = DeleteAllFpUserFail;
+ 546   3              FpmAckMgr.ErrorCode = Error_TimeOut;
+ 547   3            }
+ 548   2          } 
+C51 COMPILER V9.60.0.0   FPLOGIC                                                           02/09/2023 18:53:05 PAGE 10  
+
+ 549   1      }
+ 550          
+ 551          status_t Get_FPM_SerialNumber(uint8_t buff[])//获取_FPM_序列号
+ 552          {
+ 553   1        uint8_t i,j,k;
+ 554   1        uint8_t z=0;
+ 555   1        
+ 556   1        Hardware_DelayMs(100);
+ 557   1        
+ 558   1        for (i=0;i<5;i++)
+ 559   1        {
+ 560   2          FpmAckMgr.Status = WaitACK;
+ 561   2          FPM_SendGetChipSerialNumberCmd();
+ 562   2          for (j=0;j<20;j++)
+ 563   2          {
+ 564   3            CLRWDT();
+ 565   3            Hardware_DelayMs(10);
+ 566   3            FPMcmd_Excute();
+ 567   3            if ( FpmAckMgr.Status == GotACK )
+ 568   3            {
+ 569   4              if ( FpmAckMgr.ErrorCode == Error_NONE)
+ 570   4              {
+ 571   5                for (k=0;k<32;k++)
+ 572   5                {
+ 573   6                  buff[k]=FpmAckMgr.Buff[10+k];
+ 574   6                }
+ 575   5                DEBUG_MARK;
+ 576   5                return S_SUCCESS;
+ 577   5              }
+ 578   4              else    //GET ACK with Error,try again
+ 579   4              {
+ 580   5                break; 
+ 581   5              }
+ 582   4            }
+ 583   3          }
+ 584   2        }
+ 585   1        return S_FAIL;
+ 586   1      }
+ 587          
+ 588          status_t SaveFPMserialNumberToMemory(void)//将FPM序列号保存到内存
+ 589          {
+ 590   1        if ( Get_FPM_SerialNumber(FPMserialNumberManager.SN) == S_SUCCESS )
+ 591   1        { 
+ 592   2          EEPROM_WriteSequential(FPMserialNumberStartAddr,FPMserialNumberManager.SN,32);
+ 593   2          return S_SUCCESS;
+ 594   2        }
+ 595   1        else{
+ 596   2          return S_FAIL;
+ 597   2        }
+ 598   1      }
+ 599          
+ 600          void CheckIfFpUserIsRegistered(uint16_t USERID)//检查如果指纹用户是已注册
+ 601          {
+ 602   1        uint8_t ByteOffset,BitOffset;
+ 603   1        
+ 604   1        if ( CheckIfFpUserIDisRegistered.Status == StartCheckIfFpUserIDisRegistered )
+ 605   1          {
+ 606   2            FPM_SendReadIndexTableCmd();
+ 607   2            CheckIfFpUserIDisRegistered.TimeCnt = Def_FPMcmdTimeOutDelay;
+ 608   2            CheckIfFpUserIDisRegistered.Status = WaitForCheckIfFpUserIDisRegisteredCmdAck;
+ 609   2            FpmAckMgr.Status = WaitACK;
+ 610   2          }
+C51 COMPILER V9.60.0.0   FPLOGIC                                                           02/09/2023 18:53:05 PAGE 11  
+
+ 611   1        else if ( CheckIfFpUserIDisRegistered.Status == WaitForCheckIfFpUserIDisRegisteredCmdAck)
+ 612   1          {
+ 613   2            if (FpmAckMgr.Status == GotACK)
+ 614   2            {
+ 615   3              if ( FpmAckMgr.ErrorCode == Error_NONE)
+ 616   3              {
+ 617   4                ByteOffset = USERID/8;
+ 618   4                BitOffset = USERID%8;
+ 619   4                CheckIfFpUserIDisRegistered.Status = CheckIfFpUserIDisRegisteredSuccess;
+ 620   4                if ( ((FpmAckMgr.Buff[10+ByteOffset]>>=BitOffset)&0x01) != 0x00 )
+ 621   4                {
+ 622   5                  CheckIfFpUserIDisRegistered.UserIDisRegistered = bTRUE;
+ 623   5                }
+ 624   4                else{
+ 625   5                  CheckIfFpUserIDisRegistered.UserIDisRegistered = bFALSE;
+ 626   5                }
+ 627   4                
+ 628   4              }
+ 629   3              DEBUG_MARK;
+ 630   3            }
+ 631   2            if ( CheckIfFpUserIDisRegistered.TimeCnt-- < 1 )
+ 632   2            {
+ 633   3              CheckIfFpUserIDisRegistered.Status = CheckIfFpUserIDisRegisteredFail;
+ 634   3            }
+ 635   2          }
+ 636   1        
+ 637   1      }
+ 638          
+ 639          void CheckHowManyRegistereFPuser(void)//检查有多少注册指纹用户
+ 640          {
+ 641   1        uint8_t i,j,USERID;
+ 642   1        
+ 643   1        if ( CheckHomManyRegisteredFPuser.Status == StartCheckHowManyRegisteredFPuser )
+ 644   1          {
+ 645   2            FPM_SendReadIndexTableCmd();
+ 646   2            CheckHomManyRegisteredFPuser.TimeCnt = Def_GuiTimeDelayCnt05s;//Def_FPMcmdTimeOutDelay;
+ 647   2            CheckHomManyRegisteredFPuser.Status = WaitForCheckHowManyRegisteredFPuserCmdAck;
+ 648   2            FpmAckMgr.Status = WaitACK;
+ 649   2          }
+ 650   1        else if ( CheckHomManyRegisteredFPuser.Status == WaitForCheckHowManyRegisteredFPuserCmdAck)
+ 651   1          {
+ 652   2            if (FpmAckMgr.Status == GotACK)
+ 653   2            {
+ 654   3              if ( FpmAckMgr.ErrorCode == Error_NONE)
+ 655   3              {
+ 656   4                USERID = 0x00;
+ 657   4                CheckHomManyRegisteredFPuser.UserNum = 0x00;
+ 658   4                CheckHomManyRegisteredFPuser.MasterNum = 0x00;
+ 659   4                for ( i=0;i<32;i++)
+ 660   4                  {
+ 661   5                    for (j=0;j<8;j++)
+ 662   5                    { 
+ 663   6                      if ( (FpmAckMgr.Buff[10+i]&0x01) !=0 )
+ 664   6                      {
+ 665   7                        if ( USERID < DEF_MAX_FPMASTER )
+ 666   7                        {
+ 667   8                          CheckHomManyRegisteredFPuser.MasterNum++;
+ 668   8                          FpUserMemoryMgr[USERID].UserID = USERID;
+ 669   8                          FpUserMemoryMgr[USERID].RegisterStatus = Registered;
+ 670   8                          FpUserMemoryMgr[USERID].UserPriority = Master;
+ 671   8                        }
+ 672   7                        else if ( USERID < (DEF_MAX_FPMASTER+DEF_MAX_FPUSER))
+C51 COMPILER V9.60.0.0   FPLOGIC                                                           02/09/2023 18:53:05 PAGE 12  
+
+ 673   7                        {
+ 674   8                          CheckHomManyRegisteredFPuser.UserNum++;
+ 675   8                          FpUserMemoryMgr[USERID].UserID = USERID;
+ 676   8                          FpUserMemoryMgr[USERID].RegisterStatus = Registered;
+ 677   8                          FpUserMemoryMgr[USERID].UserPriority = User;
+ 678   8                        }
+ 679   7                      }
+ 680   6                      FpmAckMgr.Buff[10+i]>>=1;
+ 681   6                      USERID++;
+ 682   6                    }
+ 683   5                  }
+ 684   4                CheckHomManyRegisteredFPuser.Status = CheckHomManyRegisteredFPuserSuccess;
+ 685   4              }
+ 686   3              else{
+ 687   4                DEBUG_MARK;
+ 688   4                CheckHomManyRegisteredFPuser.Status = CheckHomManyRegisteredFPuserFail;
+ 689   4              }
+ 690   3            }
+ 691   2            if ( CheckHomManyRegisteredFPuser.TimeCnt-- < 1 )
+ 692   2            {
+ 693   3              CheckHomManyRegisteredFPuser.Status = CheckHomManyRegisteredFPuserFail;
+ 694   3            }
+ 695   2          }
+ 696   1        
+ 697   1      }
+ 698          
+ 699          #ifdef Function_FPMbreathingLed//功能_FPM呼吸LED
+ 700          void SetFPMbreathingLed(uint8_t color)//设置FPM呼吸Led
+ 701          {
+ 702   1        uint8_t i;
+ 703   1        FpmAckMgr.Status = WaitACK;
+ 704   1        if( color == FPMbreathingLed_Bule )
+ 705   1        {
+ 706   2          FPM_SetBreathingLED(1,1,1,255);   //Blue LED Breathing
+ 707   2        }
+ 708   1        else if ( color == FPMbreathingLed_Red )
+ 709   1        {
+ 710   2          FPM_SetBreathingLED(1,4,4,255);   //Red LED Breathing
+ 711   2        }
+ 712   1        else if( color == FPMbreathingLed_Green )
+ 713   1        {
+ 714   2          FPM_SetBreathingLED(1,2,2,255);   //Green LED Breathing
+ 715   2        }
+ 716   1        else if( color == FPMbreathingLed_Off )
+ 717   1        {
+ 718   2          FPM_SetBreathingLED(4,0,0,255);   //ALL LED OFF
+ 719   2        }
+ 720   1        #ifdef ProjectIs_BarLock_S6902
+                LEDsCtrlSwitch = color;
+                #endif
+ 723   1        for(i=0;i<25;i++)
+ 724   1        {
+ 725   2          if( i > 15 )
+ 726   2          {
+ 727   3            CLRWDT();
+ 728   3          }
+ 729   2          Hardware_DelayMs(10);
+ 730   2          FPM_Mgr_Task();
+ 731   2          if ( FpmAckMgr.Status == GotACK )
+ 732   2          {
+ 733   3            break;
+ 734   3          }
+C51 COMPILER V9.60.0.0   FPLOGIC                                                           02/09/2023 18:53:05 PAGE 13  
+
+ 735   2        }
+ 736   1      }
+ 737          #endif
+ 738          
+ 739          
+ 740          
+ 741          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   2089    ----
+   CONSTANT SIZE    =      7    ----
+   XDATA SIZE       =   ----      13
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

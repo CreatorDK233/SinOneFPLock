@@ -1,0 +1,756 @@
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MIFARE
+OBJECT MODULE PLACED IN .\Objects\mifare.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Drivers\Protocol\YC_NFC\mifare.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE INC
+                    -DIR(.\Drivers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Protoc
+                    -ol;.\Softwares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic;.\Drivers\Protocol\YC_NFC;.\Drivers\Protocol\WIFI_T
+                    -uya) DEBUG PRINT(.\Listings\mifare.lst) TABS(2) OBJECT(.\Objects\mifare.obj)
+
+line level    source
+
+   1          
+   2          #include <string.h> 
+   3          #include "mifare.h"
+   4          #include "mifare_crypto1.h"
+   5          #include "yc_nfc_contactless_l1.h"
+   6          #include "Project.h"
+   7          
+   8          #ifdef Function_NFCUsed_YC5018
+   9          static u16 transceive_buffer[MIFARE_TRANSMIT_BUFFER_SIZE];
+  10          static crypto1_state mifareCipherState;
+  11          
+  12          static u8 mifareCipherActive;
+  13          static u16 crcUpdateCcitt(u16 crc, u8 dat);
+  14          void calculateParity(u16 *data_m, u32 length);
+  15          
+  16          u16 mifareCalculateIso14443aCrc(const u8 *buffer, u16 length);
+  17          
+  18          unsigned char  ODD_PARITY(unsigned char i)
+  19          {
+  20   1        return   (( (i) ^ (i)>>1 ^ (i)>>2 ^ (i)>>3 ^ (i)>>4 ^ (i)>>5 ^ (i)>>6 ^ (i)>>7 ^ 1) & 0x01);
+  21   1      }
+  22          
+  23          
+  24          uint8_t getbit(uint16_t *source,uint8_t n)
+  25          {
+  26   1          return source[n/9] & (1 << (n % 9)) ? 1:0;
+  27   1      }
+  28          
+  29          u8 u16tobit(u16 *source, u8 *des, u8 snum)
+  30          {
+  31   1          uint8_t bitnum;
+  32   1          uint8_t i;
+  33   1          if (snum > 28)
+  34   1          {
+  35   2              return 1;
+  36   2          }
+  37   1          bitnum = snum * 8 + snum;
+  38   1          for (i = 0; i < (bitnum / 8 + 1); i++)
+  39   1          {
+  40   2              *des = (getbit(source,i * 8)) | (getbit(source,i * 8 + 1) << 1) | (getbit(source,i * 8 + 2) << 2) 
+             -| (getbit(source,i * 8 + 3) << 3) \
+  41   2                     | (getbit(source,i * 8 + 4) << 4) | (getbit(source,i * 8 + 5) << 5) | (getbit(source,i * 8 
+             -+ 6) << 6) | (getbit(source,i * 8 + 7) << 7);
+  42   2      
+  43   2              des++;
+  44   2          }
+  45   1          return 0;
+  46   1      }
+  47          
+  48          u8 getbit1(u8 *source,u8 n)
+  49          {
+  50   1          return source[n/8] & (1 << (n % 8)) ? 1:0;
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 2   
+
+  51   1      }
+  52          u8 bittou16(u8 *source, u16 *des, u8 snum)
+  53          {
+  54   1          u8 i, j;
+  55   1          u16 check;
+  56   1      
+  57   1          if (snum > 32)
+  58   1          {
+  59   2              return 1;
+  60   2          }
+  61   1      
+  62   1          i = snum * 8 / 9;
+  63   1      
+  64   1          for (j = 0; j < i; j++)
+  65   1          {
+  66   2              *des = getbit1(source,j * 9) | (getbit1(source,j * 9 + 1) << 1) | (getbit1(source,j * 9 + 2) << 2)
+             - | (getbit1(source,j * 9 + 3) << 3) | (getbit1(source,j * 9 + 4) << 4)\
+  67   2                     | (getbit1(source,j * 9 + 5) << 5) | (getbit1(source,j * 9 + 6) << 6) | (getbit1(source,j *
+             - 9 + 7) << 7);
+  68   2      
+  69   2              check = (getbit1(source,j * 9 + 8) << 8);
+  70   2              *des += check;
+  71   2              des++;
+  72   2          }
+  73   1          return 0;
+  74   1      }
+  75          
+  76          void mifareSetKey(const u8 *key)
+  77          {
+  78   1         s16 i;
+  79   1         uint64emu_storage_t   corrected_key[2] = {0};
+  80   1      // uint64emu_storage_t corrected_key;
+  81   1      
+  82   1          if (!crypto1_new(&mifareCipherState, CRYPTO1_CIPHER_READER, CRYPTO1_IMPLEMENTATION_CLEAN))
+  83   1          {
+  84   2      // MIFARE_DEBUG("Initialization failed \n");
+  85   2          }
+  86   1      
+  87   1          for (i = 0; i < 6; i++)
+  88   1          {
+  89   2              uint64emu_setbyte(corrected_key, 5 - i, key[i]);
+  90   2          }
+  91   1      
+  92   1          crypto1_init(&mifareCipherState, corrected_key);
+  93   1      // MIFARE_DEBUG("Initialization ok\n");
+  94   1      }
+  95          
+  96          
+  97          void mifareResetCipher(void)
+  98          {
+  99   1          mifareCipherActive = FALSE;
+ 100   1      }
+ 101          
+ 102          s8 mifareAuthenticateStep1(u8 keySelect,
+ 103                  u8 block,
+ 104                  const u8 *uid,
+ 105                  u8 uidLength,
+ 106                  const u8 *key)
+ 107          {
+ 108   1          s8 err = M1_ERR_NONE;
+ 109   1          u8 authenticationCommand[5];
+ 110   1          u8 authenticationResponse[FSD];
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 3   
+
+ 111   1          u16 crc;
+ 112   1          size_t index;
+ 113   1          u16 numReceivedBytes;
+ 114   1          u32 uid_as_u32;
+ 115   1          u32 tag_nonce;
+ 116   1          u16 revbuf[5];
+ 117   1      
+ 118   1          authenticationCommand[0] = keySelect;
+ 119   1          authenticationCommand[1] = block;//&0xfc;
+ 120   1          /* Append CRC. */
+ 121   1          crc = mifareCalculateIso14443aCrc(authenticationCommand, 2);
+ 122   1          authenticationCommand[2] = crc & 0xFF;
+ 123   1          authenticationCommand[3] = (crc >> 8) & 0xFF;
+ 124   1      
+ 125   1          /* Convert authenticate_command to parity_data_t. */
+ 126   1          for(index = 0; index < 4; index++)
+ 127   1              transceive_buffer[index] = authenticationCommand[index];
+ 128   1      
+ 129   1          calculateParity(transceive_buffer, 4);
+ 130   1        /*UID too short. Abort*/
+ 131   1          if(uidLength < 4)
+ 132   1          {
+ 133   2              return M1_ERR_PARAM;   //-2
+ 134   2          }
+ 135   1      
+ 136   1          if(mifareCipherActive)
+ 137   1        {
+ 138   2              crypto1_transcrypt(&mifareCipherState, transceive_buffer, 4);
+ 139   2        }
+ 140   1        
+ 141   1        u16tobit(transceive_buffer,authenticationCommand,4);
+ 142   1        err = NFC_Transceive(CMD_MAUTH1, authenticationCommand, 4*9, 0, authenticationResponse, &numReceivedBytes
+             -, 0);
+ 143   1      
+ 144   1          if(numReceivedBytes != 5)
+ 145   1          {
+ 146   2              mifareResetCipher();
+ 147   2              return M1_ERR_NOTFOUND;   //-3
+ 148   2          }
+ 149   1        
+ 150   1          uid_as_u32 = ARRAY_TO_UINT32(uid);
+ 151   1        bittou16(authenticationResponse,revbuf,5);
+ 152   1          tag_nonce = ARRAY_TO_UINT32(revbuf);
+ 153   1          if(mifareCipherActive)
+ 154   1          {
+ 155   2              mifareResetCipher();
+ 156   2              mifareSetKey(key);
+ 157   2              crypto1_clean_mutual_1_2(&mifareCipherState, uid_as_u32, tag_nonce);
+ 158   2          }
+ 159   1          else
+ 160   1          {
+ 161   2              mifareResetCipher();
+ 162   2              mifareSetKey(key);
+ 163   2              crypto1_mutual_1(&mifareCipherState, uid_as_u32, tag_nonce);
+ 164   2          }
+ 165   1      
+ 166   1          return err;
+ 167   1      }
+ 168          
+ 169          
+ 170          s8 mifareAuthenticateStep2(u32 readerNonce)
+ 171          {
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 4   
+
+ 172   1          s8 err = M1_ERR_NONE;
+ 173   1          u16 auth2Command[8];
+ 174   1        u8 auth2Command_b[10];
+ 175   1          u8 auth2Response[5];
+ 176   1          u16 numReceivedBytes;
+ 177   1      
+ 178   1          UINT32_TO_ARRAY_WITH_PARITY( readerNonce, auth2Command);
+ 179   1          crypto1_mutual_2(&mifareCipherState, auth2Command);
+ 180   1        
+ 181   1        u16tobit(auth2Command,auth2Command_b,8);
+ 182   1        
+ 183   1        NFC_Transceive(CMD_MAUTH2, auth2Command_b, 8*9, 0, auth2Response, &numReceivedBytes, 0);
+ 184   1      
+ 185   1          if (numReceivedBytes != 5)
+ 186   1          {
+ 187   2      
+ 188   2          mifareResetCipher();  
+ 189   2              return M1_ERR_NOTFOUND;
+ 190   2          }
+ 191   1        
+ 192   1        bittou16(auth2Response,transceive_buffer,5);
+ 193   1      
+ 194   1          if(!crypto1_mutual_3(&mifareCipherState, transceive_buffer))
+ 195   1          {
+ 196   2          mifareResetCipher(); 
+ 197   2              return M1_ERR_NOMSG;
+ 198   2          }
+ 199   1        
+ 200   1          mifareCipherActive = TRUE;
+ 201   1      
+ 202   1          return err;
+ 203   1      }
+ 204          
+ 205          
+ 206          s8 mifareSendRequest(const u8 *request, u16 requestLength
+ 207              , u8 *response, u16 maxResponseLength, u16 *responseLength, u16 timeout, bool fourBitResponse)
+ 208          {
+ 209   1          s8 err = M1_ERR_NONE;
+ 210   1          size_t index;
+ 211   1          u16 crc;
+ 212   1        u8 sendbit = 0;
+ 213   1        u8 transceive_buffer_b[32];
+ 214   1        maxResponseLength = 0;
+ 215   1        timeout = 0;
+ 216   1        fourBitResponse = 0;
+ 217   1      
+ 218   1      
+ 219   1          /* Copy request into parity_data_t transmit buffer. */
+ 220   1          for(index = 0; index < requestLength; index++)
+ 221   1          {
+ 222   2              transceive_buffer[index] = request[index];
+ 223   2          }
+ 224   1      
+ 225   1          /* Append CRC. */
+ 226   1          crc = mifareCalculateIso14443aCrc(request, requestLength);
+ 227   1          transceive_buffer[requestLength] = ((u8) (crc & 0xFF));
+ 228   1          transceive_buffer[requestLength+1] = ((u8) ((crc>>8) & 0xFF));
+ 229   1      
+ 230   1          // Calculate Parity
+ 231   1          calculateParity(&transceive_buffer[0], requestLength+2);
+ 232   1      
+ 233   1          // Encrypt if cipher is in use
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 5   
+
+ 234   1          if(mifareCipherActive)
+ 235   1              crypto1_transcrypt(&mifareCipherState, transceive_buffer, requestLength+2);
+ 236   1        
+ 237   1        u16tobit(transceive_buffer,transceive_buffer_b,requestLength+2);
+ 238   1        sendbit = (requestLength+2)*9;
+ 239   1        err = NFC_Transceive(CMD_MTRANSFER, transceive_buffer_b, sendbit, 0, response, responseLength, 0);
+ 240   1      
+ 241   1        if (err != 0)
+ 242   1        {
+ 243   2          return err;
+ 244   2        }
+ 245   1        
+ 246   1          // Decrypt message in transceive buffer if cipher is in use.
+ 247   1          if(mifareCipherActive)
+ 248   1          {
+ 249   2              // If a response with a length of 0 or 1 byte is received it is asumed that this
+ 250   2              // actually was an ACK,NACK and 4 bits are fed into the cipher
+ 251   2              if((*responseLength == 0) || (*responseLength == 1))
+ 252   2              {
+ 253   3            transceive_buffer[0] = response[0];
+ 254   3                  crypto1_transcrypt_bits(&mifareCipherState, &transceive_buffer[0], 0, 4);
+ 255   3              }
+ 256   2              else
+ 257   2          {
+ 258   3            bittou16(response,transceive_buffer,*responseLength);
+ 259   3                  crypto1_transcrypt_bits(&mifareCipherState, transceive_buffer, (*responseLength *8/9), 0);
+ 260   3            
+ 261   3            *responseLength = *responseLength*8/9;
+ 262   3          }
+ 263   2          }
+ 264   1      
+ 265   1          /* Copy decrypted message back into response buffer. */
+ 266   1          /* ToDo: Check why not only numReceivedBytes bytes are copied. */
+ 267   1          for(index = 0; index < *responseLength; index++)
+ 268   1              response[index] = (unsigned char) transceive_buffer[index];
+ 269   1      
+ 270   1          return err;
+ 271   1      }
+ 272          
+ 273          void calculateParity(u16 *data_m, u32 length)
+ 274          {
+ 275   1          u32 index;
+ 276   1      
+ 277   1          for (index = 0; index < length; index++)
+ 278   1          {     
+ 279   2              if(ODD_PARITY(data_m[index]))
+ 280   2              {
+ 281   3                  data_m[index] |= (u16) 0x0100;
+ 282   3              }
+ 283   2              else
+ 284   2              {
+ 285   3                  data_m[index] &= ~((u16) 0x0100);
+ 286   3              }
+ 287   2          }
+ 288   1      }
+ 289          
+ 290          
+ 291          u16 crcCalculateCcitt(u16 preloadValue, const u8* buf, u16 length)
+ 292          {
+ 293   1          u16 crc = preloadValue;
+ 294   1          u16 index;
+ 295   1      
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 6   
+
+ 296   1          for (index = 0; index < length; index++)
+ 297   1          {
+ 298   2              crc = crcUpdateCcitt(crc, buf[index]);
+ 299   2          }
+ 300   1      
+ 301   1          return crc;
+ 302   1      }
+ 303          
+ 304          
+ 305          
+ 306          u16 crcUpdateCcitt(u16 crc, u8 dat)
+ 307          {
+ 308   1          dat ^= ((u8)crc) & 0xFF;
+ 309   1          dat ^= dat << 4;
+ 310   1      
+ 311   1          crc = (crc >> 8)^(((u16) dat) << 8)^(((u16) dat) << 3)^(((u16) dat) >> 4);
+ 312   1      
+ 313   1          return crc;
+ 314   1      }
+ 315          
+ 316          
+ 317          
+ 318          
+ 319          
+ 320          u16 mifareCalculateIso14443aCrc(const u8 *buffer, u16 length)
+ 321          {
+ 322   1          return crcCalculateCcitt(0x6363, buffer, length);
+ 323   1      }
+ 324          
+ 325          u16 Mif_read (u8 blockAddr, u8 * response, u16 *responseLength)
+ 326          {
+ 327   1        u8 luc_send_data[18]; 
+ 328   1        s8 err  = 0x00; 
+ 329   1        *responseLength = 0x00 ;
+ 330   1        luc_send_data[0] = MIFARE_READ_BLOCK;
+ 331   1        luc_send_data[1] = blockAddr; //blockAddr 
+ 332   1        err = mifareSendRequest(luc_send_data,
+ 333   1                    2,
+ 334   1                    response,
+ 335   1                    20,
+ 336   1                    responseLength,
+ 337   1                    6000, //timeout (ms)5
+ 338   1                    FALSE);
+ 339   1        if((NFC_ERR_TIME_OUT ==err )||(*responseLength !=18))
+ 340   1           return MIF_ERROR;
+ 341   1       
+ 342   1        else if (err!=M1_ERR_NONE)
+ 343   1          return MIF_ERROR ;
+ 344   1        else
+ 345   1        { 
+ 346   2          if((*responseLength==0x01)&&(err==M1_ERR_NONE) )
+ 347   2            return MIF_NOTAUTHERR ; 
+ 348   2          
+ 349   2          return MIF_OK ; 
+ 350   2        }
+ 351   1        
+ 352   1      }
+ 353          
+ 354          //u16 Mif_write(u8 blockAddr, u8 * send_value, u16 send_length)
+ 355          //{
+ 356          //  s8 err ; 
+ 357          //  u8 luc_send_data[18]; 
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 7   
+
+ 358          //  u8 luc_p_response[18]={0x00};
+ 359          //  u16 lus_responseLength = 0x00 ;
+ 360          //  
+ 361          //  if(send_length!=16)
+ 362          //    return MIF_LENGTH_ERR ;
+ 363          
+ 364          //  luc_send_data[0] = MIFARE_WRITE_BLOCK;
+ 365          //  luc_send_data[1] = blockAddr;  
+ 366          //  err = mifareSendRequest(luc_send_data,
+ 367          //              2,
+ 368          //              luc_p_response,
+ 369          //              20,
+ 370          //              &lus_responseLength,
+ 371          //              15000, //timeout (5ms)
+ 372          //              TRUE); //返回4bit
+ 373          ////  if((err == 0)&&(luc_p_response[0]==0x0A))
+ 374          //  if(err == 0)
+ 375          //  {
+ 376          //    err = mifareSendRequest(send_value,
+ 377          //                send_length,
+ 378          //                luc_p_response,
+ 379          //                1,
+ 380          //                &lus_responseLength ,
+ 381          //                10000, //timeout (10ms)
+ 382          //                TRUE);   //返回4bit
+ 383          //    if(NFC_ERR_TIME_OUT ==err )
+ 384          //    {
+ 385          //      return MIF_TIMEOVER ; 
+ 386          //    }
+ 387          //    else if (err!=M1_ERR_NONE)
+ 388          //    {
+ 389          //    
+ 390          //      return MIF_WRITEERR ;   /*6ff3*/
+ 391          //    }
+ 392          //    
+ 393          //    else 
+ 394          //      return MIF_OK ; 
+ 395          //    
+ 396          //  }
+ 397          
+ 398          //  else if (err !=0)
+ 399          //  {
+ 400          //    return MIF_WRITEERR;
+ 401          //  }
+ 402          
+ 403          //  else 
+ 404          //  {
+ 405          //    return MIF_ERROR   ;   /*6ff0*/
+ 406          //  }
+ 407          //  
+ 408          //  
+ 409          //}
+ 410          
+ 411          
+ 412          //u16 Mif_Transfer (u8 blockAddr)
+ 413          //{
+ 414          //  s8 err ; 
+ 415          //  u8 luc_send_data[30]; 
+ 416          //  u8 luc_p_response[20]={0x00};
+ 417          //  u16 lus_responseLength = 0x00 ; 
+ 418          //  luc_send_data[0] = MIFARE_TRANSFER_BLOCK;
+ 419          //  luc_send_data[1] = blockAddr; //blockAddr 
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 8   
+
+ 420          //  err = mifareSendRequest(luc_send_data,
+ 421          //              2,
+ 422          //              luc_p_response,
+ 423          //              1,
+ 424          //              &lus_responseLength,
+ 425          //              40000, //timeout (ms)5
+ 426          //              TRUE);//返回4bit
+ 427          //      
+ 428          //  if(NFC_ERR_TIME_OUT ==err )
+ 429          //    return MIF_TIMEOVER ; 
+ 430          //  
+ 431          //  
+ 432          //  else if (err!=M1_ERR_NONE)
+ 433          //    return MIF_TRANSFER_ERR ;
+ 434          //    
+ 435          //  
+ 436          //  else 
+ 437          //    return MIF_OK ; 
+ 438          //  
+ 439          
+ 440          //}
+ 441          
+ 442          
+ 443          //u16 Mif_InitPurchase (u8 blockAddr, u8 * send_value,u16 send_length)
+ 444          //{
+ 445          //  u8 luc_send_data[30]; 
+ 446          //  u8 i = 0 ;
+ 447          //  
+ 448          //  if(send_length!=4)
+ 449          //    return MIF_LENGTH_ERR ; 
+ 450          //  
+ 451          //  memcpy(luc_send_data, send_value ,4);
+ 452          //  
+ 453          //  for(i =0 ; i<4 ; i++)
+ 454          //  {
+ 455          //    luc_send_data[4+i] = ~(*(send_value+i));
+ 456          //  }
+ 457          //  
+ 458          //  memcpy(&luc_send_data[8], send_value ,4); 
+ 459          //  
+ 460          //  luc_send_data[12] =  blockAddr ;// blockAddr
+ 461          //  luc_send_data[13] =  ~blockAddr;//~blockAddr
+ 462          //  luc_send_data[14] =  blockAddr ;  //blockAddr
+ 463          //  luc_send_data[15] = ~blockAddr ;  // ~blockAddr
+ 464          //  
+ 465          //  return  Mif_write (blockAddr, luc_send_data, 16);
+ 466          //}
+ 467          
+ 468          
+ 469          
+ 470          //u16 Mif_Restore (u8 blockAddr,u8 *send_value)
+ 471          //{
+ 472          //  s8 err ; 
+ 473          //  u8 luc_send_data[30]; 
+ 474          //  u8 luc_p_response[20]={0x00};
+ 475          //  u16 lus_responseLength = 0x00 ;
+ 476          //  
+ 477          //  luc_send_data[0] = MIFARE_RESTORE_BLOCK;
+ 478          //  luc_send_data[1] = blockAddr; //blockAddr 
+ 479          //  err = mifareSendRequest(luc_send_data,
+ 480          //              2,
+ 481          //              luc_p_response,
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 9   
+
+ 482          //              20,
+ 483          //              &lus_responseLength,
+ 484          //              10000, //timeout (ms)5
+ 485          //              TRUE);//返回4bit
+ 486          //  //  if((err == 0)&&(luc_p_response[0]==0x0A))
+ 487          //  if(err == 0)                                  
+ 488          //  {
+ 489          //    err = mifareSendRequest(send_value,
+ 490          //                4,
+ 491          //                luc_p_response,
+ 492          //                0,
+ 493          //                &lus_responseLength,
+ 494          //                5000, //timeout (ms)5
+ 495          //                FALSE);   
+ 496          //                
+ 497          //    if(M1_ERR_NONE ==err ) /*没有出现和接收相关的任何中断*/
+ 498          //      return MIF_OK ;
+ 499          //    else
+ 500          //      return MIF_VALERR ;
+ 501          //  }
+ 502          //  else 
+ 503          //  {
+ 504          //    return MIF_VALERR ;
+ 505          //  }
+ 506          //  
+ 507          //  //return MIF_OK ; 
+ 508          //}
+ 509          
+ 510          
+ 511          //u16 Mif_increment (u8 blockAddr, u8 *send_value)
+ 512          //{
+ 513          //  s8 err ; 
+ 514          //  u8 luc_send_data[30]; 
+ 515          //  u8 luc_p_response[20]={0x00};
+ 516          //  u16 lus_responseLength = 0x00 ;
+ 517          //  
+ 518          //  luc_send_data[0] = MIFARE_INCREMENT_BLOCK;
+ 519          //  luc_send_data[1] = blockAddr; //blockAddr 
+ 520          //  err = mifareSendRequest(luc_send_data,
+ 521          //              2,
+ 522          //              luc_p_response,
+ 523          //              20,
+ 524          //              &lus_responseLength,
+ 525          //              15000, //timeout (ms)5
+ 526          //              TRUE);//返回4bit
+ 527          //  if(err == M1_ERR_NONE) 
+ 528          //  {
+ 529          //    err = mifareSendRequest(send_value,
+ 530          //                4,
+ 531          //                luc_p_response,
+ 532          //                0,
+ 533          //                &lus_responseLength,
+ 534          //                5000, //timeout (ms)5
+ 535          //                FALSE);
+ 536          
+ 537          //    if(M1_ERR_NONE !=err )
+ 538          //      return MIF_OK ;
+ 539          //    else
+ 540          //        return MIF_VALERR ;
+ 541          //  }
+ 542          //  else 
+ 543          //  {
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 10  
+
+ 544          //    return MIF_VALERR ;
+ 545          //  }
+ 546          
+ 547          //}
+ 548          
+ 549          
+ 550          
+ 551          //u16 Mif_decrement (u8 blockAddr, u8 * send_value)
+ 552          //{
+ 553          //  s8 err ; 
+ 554          //  u8 luc_send_data[30]; 
+ 555          //  u8 luc_p_response[20]={0x00};
+ 556          //  u16 lus_responseLength = 0x00 ;
+ 557          //  
+ 558          //  luc_send_data[0] = MIFARE_DECREMENT_BLOCK;
+ 559          //  luc_send_data[1] = blockAddr; //blockAddr 
+ 560          //  err = mifareSendRequest(luc_send_data,
+ 561          //              2,
+ 562          //              luc_p_response,
+ 563          //              20,
+ 564          //              &lus_responseLength,
+ 565          //              10000, //timeout (ms)5
+ 566          //              TRUE);//teturn 4bit
+ 567          //  if(err == M1_ERR_NONE)
+ 568          //  {
+ 569          //    err = mifareSendRequest(send_value,
+ 570          //                4,
+ 571          //                luc_p_response,
+ 572          //                20,
+ 573          //                &lus_responseLength,
+ 574          //                10000, //timeout (ms)5
+ 575          //                FALSE);
+ 576          //    if(M1_ERR_NONE !=err ) /*not????*/
+ 577          //      return MIF_OK ;
+ 578          //    else
+ 579          //        return MIF_VALERR ;
+ 580          //  }
+ 581          //  else 
+ 582          //  {
+ 583          //    return MIF_VALERR ;
+ 584          //  }
+ 585          //}
+ 586          
+ 587          u8 Get_Mifare_uid(u8 *uid)
+ 588          {
+ 589   1        * uid = picc_a.UID_CLn[0][0];
+ 590   1        *(uid+1) = picc_a.UID_CLn[0][1];
+ 591   1        *(uid+2) = picc_a.UID_CLn[0][2];
+ 592   1        *(uid+3) = picc_a.UID_CLn[0][3];
+ 593   1        
+ 594   1        mifareResetCipher();
+ 595   1        
+ 596   1        return NFC_ERR_NONE;
+ 597   1      }
+ 598          
+ 599          u16 Mifare_Auth_Fun(u8 *keydata, u8 key_index, u8 *uid, u8 block)
+ 600          {
+ 601   1        
+ 602   1        u8 apdu_data[2];
+ 603   1        s8 err; 
+ 604   1        if (key_index == KEYA)
+ 605   1        {
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 11  
+
+ 606   2          apdu_data[0] = 0x60; 
+ 607   2        }
+ 608   1        else
+ 609   1        {
+ 610   2          apdu_data[0] = 0x61; 
+ 611   2        }
+ 612   1        apdu_data[1] = block;
+ 613   1        err = mifareAuthenticateStep1(apdu_data[0], block, uid, 4, keydata);
+ 614   1        if(err !=M1_ERR_NONE)
+ 615   1        {
+ 616   2        
+ 617   2          return MIF_AUTH_ERR ;
+ 618   2          
+ 619   2        }
+ 620   1        err = mifareAuthenticateStep2(MIFARE_DEFAULT_READER_NONCE);
+ 621   1        if(err != M1_ERR_NONE)
+ 622   1        {
+ 623   2          
+ 624   2          return MIF_AUTH_ERR;
+ 625   2          
+ 626   2        }
+ 627   1        return M1_ERR_NONE;
+ 628   1      }
+ 629          
+ 630          //u16 Mifare0_Read(u8 page, u8 * response, u16 *responseLength)
+ 631          //{
+ 632          //  u8 luc_send_data[30]; 
+ 633          //  u16 send_len = 0;
+ 634          //  u8 err  = 0x00; 
+ 635          //  *responseLength = 0x00 ;
+ 636          //   
+ 637          //  luc_send_data[0] = MIFARE_READ_BLOCK;
+ 638          //  luc_send_data[1] = page; 
+ 639          //  send_len = 2;
+ 640          //  err = NFC_Transceive(CMD_M0READ, luc_send_data, send_len, 0, response, responseLength, 0);
+ 641          //  if(*responseLength == 1) //recv NAK
+ 642          //   {
+ 643          //    return MIF_ERROR;
+ 644          //   }
+ 645          //   return err;
+ 646          //}
+ 647          
+ 648          //u16 Mifare0_Write(u8 page, u8 * send_value, u16 send_length)
+ 649          //{
+ 650          //  u8 luc_send_data[30]; 
+ 651          //  u16 send_len = 0;
+ 652          //  u8 err  = 0x00; 
+ 653          //  u8 i;
+ 654          //  u8 response[2];
+ 655          //  u16 responseLength;
+ 656          //  
+ 657          //  luc_send_data[0] = 0xa2;
+ 658          //  luc_send_data[1] = page; 
+ 659          //  for (i=0;i<send_length;i++)
+ 660          //  {
+ 661          //    luc_send_data[2+i] = *send_value++;
+ 662          //  }
+ 663          //  send_len = 2+send_length;
+ 664          //  responseLength = 0;
+ 665          //  err = NFC_Transceive(CMD_M0WRITE, luc_send_data, send_len, 0, response, &responseLength, 0);
+ 666          //  if((response[0] == 0x0a) && (responseLength == 1) && (err == 0))
+ 667          //  {
+C51 COMPILER V9.60.0.0   MIFARE                                                            04/19/2023 13:57:33 PAGE 12  
+
+ 668          //      return err;
+ 669          //  }
+ 670          //  return MIF_ERROR;
+ 671          //}
+ 672          
+ 673          //u16 Mifare0_Compatibility_Write(u8 page, u8 * send_value, u16 send_length)
+ 674          //{
+ 675          //  
+ 676          //  u8 luc_send_data[4]; 
+ 677          //  u16 send_len = 0;
+ 678          //  u8 err  = 0x00; 
+ 679          //  u8 response[2];
+ 680          //  u16 responseLength;
+ 681          //  
+ 682          //  luc_send_data[0] = 0xa0;
+ 683          //  luc_send_data[1] = page; 
+ 684          //  send_len = 2;
+ 685          //  responseLength = 0;
+ 686          //  err = NFC_Transceive(CMD_M0WRITE, luc_send_data, send_len, 0, response, &responseLength, 0);
+ 687          //  if((response[0] == 0x0a) && (responseLength == 1) && (err == 0))
+ 688          //  {
+ 689          //    err = NFC_Transceive(CMD_M0WRITE, send_value, send_length, 0, response, &responseLength, 0);
+ 690          //    if((response[0] == 0x0a) && (responseLength == 1) && (err == 0))
+ 691          //    {
+ 692          //      return err;
+ 693          //    }
+ 694          //  }
+ 695          //  return MIF_ERROR;
+ 696          //  
+ 697          //}
+ 698          
+ 699          #endif
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   3145    ----
+   CONSTANT SIZE    =      8    ----
+   XDATA SIZE       =     55     469
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

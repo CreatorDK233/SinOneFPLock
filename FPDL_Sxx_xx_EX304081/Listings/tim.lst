@@ -1,0 +1,136 @@
+C51 COMPILER V9.60.0.0   TIM                                                               04/19/2023 14:20:21 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE TIM
+OBJECT MODULE PLACED IN .\Objects\tim.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Drivers\Physical\tim.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE INCDIR(.\Driv
+                    -ers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Protocol;.\Softw
+                    -ares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic) DEBUG PRINT(.\Listings\tim.lst) TABS(2) OBJECT(.\Objects\tim
+                    -.obj)
+
+line level    source
+
+   1          #include "tim.h"
+   2          #include "ISR.h"
+   3          #include "SC95F861xB_C.H"
+   4          
+   5          TimerCount_t TimerCount;
+   6          bit Tim3_Flag = 0; 
+   7          
+   8          void MX_TIM_Init(void)
+   9          {
+  10   1        TMCON |= 0X01;
+  11   1        MX_TIM0_Init();
+  12   1        MX_TIM1_Init();
+  13   1        //MX_TIM3_Init();
+  14   1        TimerCount.Timer0Cnt=0;
+  15   1        TimerCount.Timer1Cnt=0;
+  16   1        //TimerCount.Timer3Cnt=0;
+  17   1      }
+  18          
+  19          void MX_TIM_DeInit(void)
+  20          {
+  21   1        //T0
+  22   1        ET0 = 0;//定时器0允许
+  23   1        TR0 = 0;//打开定时器0
+  24   1        //T1
+  25   1        ET1 = 0;//定时器1允许
+  26   1        TR1 = 0;//打开定时器1
+  27   1      }
+  28          
+  29          void MX_TIM0_Init(void)
+  30          {
+  31   1        //T0设置，频率为1KHZ(主频：32M)
+  32   1        TMOD |= 0x01;                 //0000 0001;Timer0设置工作方式1
+  33   1        TL0 = (65536 - 32000)%256;    //时钟为Fsys，则溢出时间=32000*（1/Fsys）;
+  34   1        TH0 = (65536 - 32000)/256;
+  35   1        TR0 = 0;
+  36   1        ET0 = 1;//定时器0允许
+  37   1        TR0 = 1;//打开定时器0
+  38   1      }
+  39          
+  40          void MX_TIM1_Init(void)
+  41          {
+  42   1        //T1设置，频率为200KHZ(主频：32M)
+  43   1        TMOD |= 0x20;            //0010 0000;Timer1设置工作方式2
+  44   1        TL1 = 256 - 160;         //时钟为Fsys，则溢出时间=160*（1/Fsys）;
+  45   1        TH1 = 256 - 160;
+  46   1        TR1 = 0;
+  47   1        IPT1 =1;//设置Timer1中断优先级为高
+  48   1        ET1 = 1;//定时器1允许
+  49   1        TR1 = 1;//打开定时器1
+  50   1      }
+  51          
+  52          void MX_TIM3_Init(void)
+C51 COMPILER V9.60.0.0   TIM                                                               04/19/2023 14:20:21 PAGE 2   
+
+  53          {
+  54   1        //T3设置，频率为1KHZ(主频：32M)
+  55   1        TXINX = 0x03;    //选择定时器T3
+  56   1        TXMOD = 0x80;    
+  57   1        TXCON = 0x00;  //设置为16位重载寄存器
+  58   1        RCAPXH = (65536-32000)/256;     //时钟为Fsys，则溢出时间=32000*（1/Fsys）;
+  59   1        RCAPXL = (65536-32000)%256;
+  60   1        TRX = 0;
+  61   1        IE1 |= 0x40; //定时器3允许
+  62   1        IP1 |= 0X40;
+  63   1        TRX = 1;     //打开定时器3  
+  64   1      }
+  65          
+  66          //1ms
+  67          void timer0() interrupt 1
+  68          {
+  69   1        TL0 = (65536 - 32000)%256;      //手动重装载值低8位
+  70   1        TH0 = (65536 - 32000)/256;      //手动重装载值高8位
+  71   1      //  TimerCount.Timer0Cnt+=1;
+  72   1      //  if(TimerCount.Timer0Cnt>=1000)
+  73   1      //  {
+  74   1      //    TimerCount.Timer0Cnt=0;
+  75   1      //  }
+  76   1        SysTick_ISR();
+  77   1      }
+  78          
+  79          //60us
+  80          void timer1() interrupt 3
+  81          {
+  82   1        TimerCount.Timer1Cnt+=1;
+  83   1        if(TimerCount.Timer1Cnt>=5)//300us
+  84   1        {
+  85   2          TimerCount.Timer1Cnt=0;
+  86   2          TIM3_ISR();
+  87   2        }
+  88   1      }
+  89          
+  90          //1ms
+  91          void Timer3Int(void) interrupt 13
+  92          {   
+  93   1        TXINX = 0x03;   //选择定时器T3
+  94   1        TFX = 0;        //溢出清零
+  95   1      
+  96   1        TimerCount.Timer3Cnt+=1;
+  97   1        if(TimerCount.Timer3Cnt>=1000)
+  98   1        {
+  99   2          TimerCount.Timer3Cnt=0;
+ 100   2          Tim3_Flag=1;
+ 101   2        }
+ 102   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    312    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =      6    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+C51 COMPILER V9.60.0.0   TIM                                                               04/19/2023 14:20:21 PAGE 3   
+
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

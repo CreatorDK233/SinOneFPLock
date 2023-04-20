@@ -1,0 +1,479 @@
+C51 COMPILER V9.60.0.0   LCDLOGIC                                                          02/09/2023 18:47:27 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE LCDLOGIC
+OBJECT MODULE PLACED IN .\Objects\LCDLogic.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Softwares\ModuleLogic\LCDLogic.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE INC
+                    -DIR(.\Drivers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Protoc
+                    -ol;.\Softwares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic) DEBUG PRINT(.\Listings\LCDLogic.lst) TABS(2) OBJEC
+                    -T(.\Objects\LCDLogic.obj)
+
+line level    source
+
+   1          #include "LCDLogic.h"
+   2          #include "LCD_HFG12864.h"
+   3          #include "Font.h"
+   4          
+   5          
+   6          extern uint8_t G_DisRAM[1024];
+   7          
+   8          
+   9          #ifdef Function_DisplayUsed_HFG12864 
+  10          
+  11          
+  12          void Clear_Screen(void)
+  13          {
+  14   1        uint16_t i;
+  15   1      
+  16   1        for (i=0;i<1024;i++)
+  17   1        {
+  18   2          G_DisRAM[i] = 0x00;
+  19   2        }
+  20   1        
+  21   1      }
+  22          
+  23          void Clear_Screen_Page(uint8_t page)
+  24          {
+  25   1        uint16_t i;
+  26   1      
+  27   1        for (i=0;i<128;i++)
+  28   1        {
+  29   2          G_DisRAM[page*128+i] = 0x00;
+  30   2        }
+  31   1        
+  32   1      }
+  33          
+  34          void Display_FullScreen(void)
+  35          {
+  36   1        uint16_t i;
+  37   1        for (i=0;i<1024;i++)
+  38   1        {
+  39   2          G_DisRAM[i] = 0xFF;
+  40   2        }
+  41   1      }
+  42          
+  43          void Display_Init(void)
+  44          {
+  45   1      
+  46   1      }
+  47          
+  48          void DisHZ16x14Str(uint8_t StartPage,uint8_t StartColumn, uint8_t /*code */ *BUFF,uint8_t Color)
+  49          {
+  50   1        uint8_t i,j,Page,Column;
+  51   1        uint16_t StartByte;
+  52   1        uint8_t *Point;
+C51 COMPILER V9.60.0.0   LCDLOGIC                                                          02/09/2023 18:47:27 PAGE 2   
+
+  53   1        
+  54   1        Page=  StartPage;
+  55   1        Column = StartColumn;
+  56   1        
+  57   1        for (i=0;i<36;i++)
+  58   1        {
+  59   2          if ( *BUFF==HZ_end )
+  60   2          {
+  61   3            break;
+  62   3          }
+  63   2          if (((*BUFF<200)&&( Column >113 ))||((*BUFF>199)&&( Column >120 )))//it is not enough to display one HZ 
+  64   2          {
+  65   3            Column=0;
+  66   3            Page+=2;
+  67   3          }
+  68   2          
+  69   2          StartByte = (128*Page) + Column;
+  70   2      
+  71   2          if (*BUFF<200)    //the char is HZ16*14
+  72   2          {
+  73   3            Point = &HZ16x14[*BUFF][0];
+  74   3            for (j=0;j<14;j++)
+  75   3            {
+  76   4              if ( Color == NormalDisplay ) { //normal display
+  77   5                G_DisRAM[StartByte+j]=*Point;
+  78   5              }else{    //inverse display
+  79   5                G_DisRAM[StartByte+j]=(*Point)^0xFF;
+  80   5              }
+  81   4              Point++;
+  82   4            }
+  83   3            for (j=0;j<14;j++)
+  84   3            {
+  85   4              if ( Color == NormalDisplay ) { //normal display
+  86   5                G_DisRAM[StartByte+j+128]=*Point;
+  87   5              }else{    //inverse display
+  88   5                G_DisRAM[StartByte+j+128]=(*Point)^0xFF;
+  89   5              }
+  90   4              Point++;
+  91   4            }
+  92   3            BUFF++;
+  93   3            Column+=14;
+  94   3          }
+  95   2          else if (*BUFF < HZ_end )   //the char is ZF
+  96   2          {
+  97   3            Point = &ZF16x8[(*BUFF)-200][0];
+  98   3            for (j=0;j<8;j++)
+  99   3            {
+ 100   4              if ( Color == NormalDisplay ) { //normal display
+ 101   5                G_DisRAM[StartByte+j]=*Point;
+ 102   5              }else{    //inverse display
+ 103   5                G_DisRAM[StartByte+j]=(*Point)^0xFF;
+ 104   5              }
+ 105   4              Point++;
+ 106   4            }
+ 107   3            for (j=0;j<8;j++)
+ 108   3            {
+ 109   4              if ( Color == NormalDisplay ) { //normal display
+ 110   5                G_DisRAM[StartByte+j+128]=*Point;
+ 111   5              }else{    //inverse display
+ 112   5                G_DisRAM[StartByte+j+128]=(*Point)^0xFF;
+ 113   5              }
+ 114   4              Point++;
+C51 COMPILER V9.60.0.0   LCDLOGIC                                                          02/09/2023 18:47:27 PAGE 3   
+
+ 115   4            }
+ 116   3            BUFF++;
+ 117   3            Column+=8;
+ 118   3          }
+ 119   2        }
+ 120   1      }
+ 121          
+ 122          void DisEN16x8Str(uint8_t StartPage,uint8_t StartColumn, /*code */  uint8_t *BUFF,uint8_t Color)
+ 123          {
+ 124   1        uint8_t i,j,Page,Column;
+ 125   1        uint16_t StartByte;
+ 126   1        uint8_t *Point;
+ 127   1        
+ 128   1        Page=  StartPage;
+ 129   1        Column = StartColumn;
+ 130   1        
+ 131   1        for (i=0;i<16;i++)
+ 132   1        {
+ 133   2          if ( *BUFF=='\0' )
+ 134   2          {
+ 135   3            break;
+ 136   3          }
+ 137   2          if ( Column >120 )    //it is not enough to display one English char
+ 138   2          {
+ 139   3            break;
+ 140   3          }
+ 141   2          
+ 142   2          StartByte = (128*Page) + Column;
+ 143   2      
+ 144   2          if  ( (*BUFF>0x1F)&&(*BUFF<0x7B) )    //FROM space to 'z'
+ 145   2          {
+ 146   3            Point = &EN16x8[(*BUFF)-0x20][0];
+ 147   3          }
+ 148   2          else
+ 149   2          {
+ 150   3            Point = &EN16x8[0][0];  //SPACE
+ 151   3          }
+ 152   2          
+ 153   2          for (j=0;j<8;j++)
+ 154   2          {
+ 155   3            if ( Color == NormalDisplay ) { //normal display
+ 156   4              G_DisRAM[StartByte+j]=*Point;
+ 157   4            }else{    //inverse display
+ 158   4              G_DisRAM[StartByte+j]=(*Point)^0xFF;
+ 159   4            }
+ 160   3            Point++;
+ 161   3          }
+ 162   2          for (j=0;j<8;j++)
+ 163   2          {
+ 164   3            if ( Color == NormalDisplay ) { //normal display
+ 165   4              G_DisRAM[StartByte+j+128]=*Point;
+ 166   4            }else{    //inverse display
+ 167   4              G_DisRAM[StartByte+j+128]=(*Point)^0xFF;
+ 168   4            }
+ 169   3            Point++;
+ 170   3          }
+ 171   2          BUFF++;
+ 172   2          Column+=8;
+ 173   2        }
+ 174   1      }
+ 175          
+ 176          void DisZF16x8(uint8_t StartPage,uint8_t StartColumn,uint8_t  Value,uint8_t Color)
+C51 COMPILER V9.60.0.0   LCDLOGIC                                                          02/09/2023 18:47:27 PAGE 4   
+
+ 177          {
+ 178   1        uint8_t j,Page,Column;
+ 179   1        uint16_t StartByte;
+ 180   1        uint8_t *Point;
+ 181   1        //uint8_t DigitalPosition;
+ 182   1      
+ 183   1        //DigitalPosition =0x00;
+ 184   1        
+ 185   1        Page=  StartPage;
+ 186   1        Column = StartColumn;
+ 187   1      
+ 188   1        if ( Column >120 )    //it is not enough to display one English char
+ 189   1        {
+ 190   2          return;
+ 191   2        }
+ 192   1        
+ 193   1        StartByte = (128*Page) + Column;
+ 194   1      
+ 195   1        if ( Value >199 )
+ 196   1        {
+ 197   2          Point = &ZF16x8[Value-200][0];
+ 198   2          for (j=0;j<8;j++)
+ 199   2          {
+ 200   3            if ( Color == NormalDisplay ) { //normal display
+ 201   4              G_DisRAM[StartByte+j]=*Point;
+ 202   4            }else{    //inverse display
+ 203   4              G_DisRAM[StartByte+j]=(*Point)^0xFF;
+ 204   4            }
+ 205   3            Point++;
+ 206   3          }
+ 207   2          for (j=0;j<8;j++)
+ 208   2          {
+ 209   3            if ( Color == NormalDisplay ) { //normal display
+ 210   4              G_DisRAM[StartByte+j+128]=*Point;
+ 211   4            }else{    //inverse display
+ 212   4              G_DisRAM[StartByte+j+128]=(*Point)^0xFF;
+ 213   4            }
+ 214   3            Point++;
+ 215   3          }
+ 216   2        }
+ 217   1      
+ 218   1      }
+ 219          
+ 220          void DisOneDigital16x8(uint8_t StartPage,uint8_t StartColumn,uint8_t  Value,uint8_t Color)
+ 221          {
+ 222   1        uint8_t j,Page,Column;
+ 223   1        uint16_t StartByte;
+ 224   1        uint8_t *Point;
+ 225   1        //uint8_t DigitalPosition;
+ 226   1        //DigitalPosition =0x00;
+ 227   1        Page=  StartPage;
+ 228   1        Column = StartColumn;
+ 229   1      
+ 230   1        
+ 231   1        StartByte = (128*Page) + Column;
+ 232   1      
+ 233   1        Point = &ZF16x8[Value%10][0];
+ 234   1        for (j=0;j<8;j++)
+ 235   1        {
+ 236   2          if ( Color == NormalDisplay ) 
+ 237   2          { //normal display
+ 238   3            G_DisRAM[StartByte+j]=*Point;
+C51 COMPILER V9.60.0.0   LCDLOGIC                                                          02/09/2023 18:47:27 PAGE 5   
+
+ 239   3          }else
+ 240   2          {   //inverse display
+ 241   3            G_DisRAM[StartByte+j]=(*Point)^0xFF;
+ 242   3          }
+ 243   2          Point++;
+ 244   2        }
+ 245   1        for (j=0;j<8;j++)
+ 246   1        {
+ 247   2          if ( Color == NormalDisplay ) 
+ 248   2          { //normal display
+ 249   3            G_DisRAM[StartByte+j+128]=*Point;
+ 250   3          }else
+ 251   2          {   //inverse display
+ 252   3            G_DisRAM[StartByte+j+128]=(*Point)^0xFF;
+ 253   3          }
+ 254   2          Point++;
+ 255   2        }
+ 256   1      
+ 257   1      }
+ 258          
+ 259          void DisBcdDigital16x8(uint8_t StartPage,uint8_t StartColumn,uint8_t  Value,uint8_t Color)
+ 260          {
+ 261   1        uint8_t i,j,Page,Column;
+ 262   1        uint16_t StartByte;
+ 263   1        uint8_t *Point;
+ 264   1      
+ 265   1        
+ 266   1        Page=  StartPage;
+ 267   1        Column = StartColumn;
+ 268   1      
+ 269   1      
+ 270   1        for (i=0;i<2;i++)
+ 271   1        {
+ 272   2          
+ 273   2          StartByte = (128*Page) + Column;
+ 274   2          Point = &ZF16x8[Value>>4][0];
+ 275   2          for (j=0;j<8;j++)
+ 276   2          {
+ 277   3            if ( Color == NormalDisplay ) 
+ 278   3            { //normal display
+ 279   4              G_DisRAM[StartByte+j]=*Point;
+ 280   4            }else{    //inverse display
+ 281   4              G_DisRAM[StartByte+j]=(*Point)^0xFF;
+ 282   4            }
+ 283   3            Point++;
+ 284   3          }
+ 285   2          for (j=0;j<8;j++)
+ 286   2          {
+ 287   3            if ( Color == NormalDisplay ) { //normal display
+ 288   4              G_DisRAM[StartByte+j+128]=*Point;
+ 289   4            }else{    //inverse display
+ 290   4              G_DisRAM[StartByte+j+128]=(*Point)^0xFF;
+ 291   4            }
+ 292   3            Point++;
+ 293   3          }
+ 294   2          Column+=8;
+ 295   2          Value <<=4;
+ 296   2        }
+ 297   1      }
+ 298          
+ 299          void DisDigital16x8Str(uint8_t StartPage,uint8_t StartColumn,uint16_t  Value,uint8_t Color)
+ 300          {
+C51 COMPILER V9.60.0.0   LCDLOGIC                                                          02/09/2023 18:47:27 PAGE 6   
+
+ 301   1        uint8_t i,j,Page,Column;
+ 302   1        uint16_t StartByte;
+ 303   1        const uint8_t *Point;
+ 304   1        uint16_t DataValue;
+ 305   1        
+ 306   1        Page=  StartPage;
+ 307   1        Column = StartColumn;
+ 308   1        DataValue = Value;
+ 309   1      
+ 310   1        for (i=0;i<3;i++)
+ 311   1        {
+ 312   2          if ( Column >120 )    //it is not enough to display one HZ
+ 313   2          {
+ 314   3            Column=0;
+ 315   3            Page++;
+ 316   3          }
+ 317   2          
+ 318   2          StartByte = (128*Page) + Column;
+ 319   2      
+ 320   2          Point = &ZF16x8[DataValue/100][0];
+ 321   2          for (j=0;j<8;j++)
+ 322   2          {
+ 323   3            if ( Color == NormalDisplay ) { //normal display
+ 324   4              G_DisRAM[StartByte+j]=*Point;
+ 325   4            }else{    //inverse display
+ 326   4              G_DisRAM[StartByte+j]=(*Point)^0xFF;
+ 327   4            }
+ 328   3            Point++;
+ 329   3          }
+ 330   2          for (j=0;j<8;j++)
+ 331   2          {
+ 332   3            if ( Color == NormalDisplay ) { //normal display
+ 333   4              G_DisRAM[StartByte+j+128]=*Point;
+ 334   4            }else{    //inverse display
+ 335   4              G_DisRAM[StartByte+j+128]=(*Point)^0xFF;
+ 336   4            }
+ 337   3            Point++;
+ 338   3          }
+ 339   2          Column+=8;
+ 340   2          DataValue=(DataValue%100)*10;
+ 341   2      
+ 342   2        }
+ 343   1      }
+ 344          
+ 345          void DisImage(uint8_t StartPage,uint8_t StartColumn,uint8_t Width,uint8_t Heigth, /*code */  uint8_t *BUFF
+             -,uint8_t Color)
+ 346          {
+ 347   1        uint8_t i,j,Page,Column;
+ 348   1        uint16_t StartByte;
+ 349   1        
+ 350   1        Page=  StartPage;
+ 351   1        Column = StartColumn;
+ 352   1      
+ 353   1        StartByte = (128*Page) + Column;  
+ 354   1        for (j=0;j<(Heigth/8);j++)
+ 355   1        {
+ 356   2          for (i=0;i<Width;i++)
+ 357   2          {
+ 358   3            if ( Color == NormalDisplay ) { //normal display
+ 359   4              G_DisRAM[StartByte+i]=*(BUFF+i);
+ 360   4            }else{    //inverse display
+ 361   4              G_DisRAM[StartByte+i]=(*(BUFF+i))^0xFF;
+C51 COMPILER V9.60.0.0   LCDLOGIC                                                          02/09/2023 18:47:27 PAGE 7   
+
+ 362   4            }
+ 363   3          }
+ 364   2          StartByte+=128;
+ 365   2          BUFF+=Width;
+ 366   2        } 
+ 367   1      }
+ 368          
+ 369          void DisImage_RAM(uint8_t StartPage,uint8_t StartColumn,uint8_t Width,uint8_t Heigth,uint8_t *BUFF,uint8_t
+             - Color)
+ 370          {
+ 371   1        uint8_t i,j,Page,Column;
+ 372   1        uint16_t StartByte;
+ 373   1        
+ 374   1        Page=  StartPage;
+ 375   1        Column = StartColumn;
+ 376   1      
+ 377   1        StartByte = (128*Page) + Column;  
+ 378   1        for (j=0;j<(Heigth/8);j++)
+ 379   1        {
+ 380   2          for (i=0;i<Width;i++)
+ 381   2          {
+ 382   3            if ( Color == NormalDisplay ) { //normal display
+ 383   4              G_DisRAM[StartByte+i]=*(BUFF+i);
+ 384   4            }else{    //inverse display
+ 385   4              G_DisRAM[StartByte+i]=(*(BUFF+i))^0xFF;
+ 386   4            }
+ 387   3          }
+ 388   2          StartByte+=128;
+ 389   2          BUFF+=Width;
+ 390   2        } 
+ 391   1      }
+ 392          
+ 393          void DisBcdDigital32x20(uint8_t StartPage,uint8_t StartColumn,uint8_t  Value,uint8_t Color)
+ 394          {
+ 395   1        uint8_t i,j,k,Page,Column;
+ 396   1        uint16_t StartByte;
+ 397   1        const uint8_t *Point;
+ 398   1        
+ 399   1        Page=  StartPage;
+ 400   1        Column = StartColumn;
+ 401   1      
+ 402   1        for (k=0;k<2;k++)
+ 403   1        {
+ 404   2          
+ 405   2          StartByte = (128*Page) + Column;  
+ 406   2          Point = &ZF32x20[Value>>4][0];
+ 407   2          for (j=0;j<4;j++)
+ 408   2          {
+ 409   3            for (i=0;i<20;i++)
+ 410   3            {
+ 411   4              if ( Color == NormalDisplay ) { //normal display
+ 412   5                G_DisRAM[StartByte+i]=*(Point);
+ 413   5              }else{    //inverse display
+ 414   5                G_DisRAM[StartByte+i]=(*Point)^0xFF;
+ 415   5              }
+ 416   4              Point++;
+ 417   4            }
+ 418   3            StartByte+=128;
+ 419   3          }
+ 420   2          Column+=20;
+ 421   2          Value <<=4;
+ 422   2        }
+C51 COMPILER V9.60.0.0   LCDLOGIC                                                          02/09/2023 18:47:27 PAGE 8   
+
+ 423   1      }
+ 424          
+ 425          
+ 426          
+ 427          #endif
+ 428          
+ 429          
+ 430          
+ 431          
+ 432          
+ 433          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   2391    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----     117
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

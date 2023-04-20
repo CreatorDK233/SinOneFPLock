@@ -1,0 +1,300 @@
+C51 COMPILER V9.60.0.0   GPIO                                                              04/19/2023 13:57:29 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE GPIO
+OBJECT MODULE PLACED IN .\Objects\gpio.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Drivers\Physical\gpio.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE INCDIR(.\Dri
+                    -vers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Protocol;.\Soft
+                    -wares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic;.\Drivers\Protocol\YC_NFC;.\Drivers\Protocol\WIFI_Tuya) DEBU
+                    -G PRINT(.\Listings\gpio.lst) TABS(2) OBJECT(.\Objects\gpio.obj)
+
+line level    source
+
+   1          #include "gpio.h"
+   2          #include "Project.h"
+   3          #include "global_variable.h"
+   4          #include "SC95F861xB_C.H"
+   5          #include "IO.h"
+   6          uint8_t INT1flag = 0x00;
+   7          
+   8          void GPIO_Config(GPIO_Port_type Port,Pin_type Pin,GPIO_Mode_type Mode)
+   9          {
+  10   1        if((Port>=0&&Port<=5&&Pin>=0&&Pin<8)!=1)return;
+  11   1        switch (Port)
+  12   1        {
+  13   2        case 0:
+  14   2          switch (Mode)
+  15   2              {
+  16   3              case GPIO_Mode_OUT_PP:
+  17   3                P0CON |=(1<<Pin);
+  18   3                P0PH  &=~(1<<Pin);
+  19   3                break;
+  20   3              case GPIO_Mode_INPUT_PU:
+  21   3                  P0CON &=~(1<<Pin);
+  22   3                P0PH  |= (1<<Pin);
+  23   3                break;
+  24   3              case GPIO_Mode_INPUT_HZ:
+  25   3                P0CON &=~(1<<Pin);
+  26   3                P0PH  &=~(1<<Pin);
+  27   3                break;
+  28   3              default:
+  29   3                break;
+  30   3              }
+  31   2          break;
+  32   2        case 1:
+  33   2          switch (Mode)
+  34   2              {
+  35   3              case GPIO_Mode_OUT_PP:
+  36   3                P1CON |=(1<<Pin);
+  37   3                P1PH  &=~(1<<Pin);
+  38   3                break;
+  39   3              case GPIO_Mode_INPUT_PU:
+  40   3                P1CON &=~(1<<Pin);
+  41   3                P1PH  |= (1<<Pin);
+  42   3                break;
+  43   3              case GPIO_Mode_INPUT_HZ:
+  44   3                  P1CON &=~(1<<Pin);
+  45   3                P1PH  &=~(1<<Pin);
+  46   3                break;
+  47   3              default:
+  48   3                break;
+  49   3              }
+  50   2          break;
+  51   2        case 2:
+  52   2          switch (Mode)
+C51 COMPILER V9.60.0.0   GPIO                                                              04/19/2023 13:57:29 PAGE 2   
+
+  53   2              {
+  54   3              case GPIO_Mode_OUT_PP:
+  55   3                P2CON |=(1<<Pin);
+  56   3                P2PH  &=~(1<<Pin);
+  57   3                break;
+  58   3              case GPIO_Mode_INPUT_PU:
+  59   3                  P2CON &=~(1<<Pin);
+  60   3                P2PH  |= (1<<Pin);
+  61   3                break;
+  62   3              case GPIO_Mode_INPUT_HZ:
+  63   3                  P2CON &=~(1<<Pin);
+  64   3                P2PH  &=~(1<<Pin);
+  65   3                break;
+  66   3              default:
+  67   3                break;
+  68   3              }
+  69   2          break;
+  70   2        
+  71   2        case 3:
+  72   2          switch (Mode)
+  73   2              {
+  74   3              case GPIO_Mode_OUT_PP:
+  75   3                P3CON |=(1<<Pin);
+  76   3                P3PH  &=~(1<<Pin);
+  77   3                break;
+  78   3              case GPIO_Mode_INPUT_PU:
+  79   3                  P3CON &=~(1<<Pin);
+  80   3                P3PH  |= (1<<Pin);
+  81   3                break;
+  82   3              case GPIO_Mode_INPUT_HZ:
+  83   3                  P3CON &=~(1<<Pin);
+  84   3                P3PH  &=~(1<<Pin);
+  85   3                break;
+  86   3              default:
+  87   3                break;
+  88   3              }
+  89   2          break;
+  90   2        
+  91   2        case 4:
+  92   2          switch (Mode)
+  93   2              {
+  94   3              case GPIO_Mode_OUT_PP:
+  95   3                P4CON |=(1<<Pin);
+  96   3                P4PH  &=~(1<<Pin);
+  97   3                break;
+  98   3              case GPIO_Mode_INPUT_PU:
+  99   3                  P4CON &=~(1<<Pin);
+ 100   3                P4PH  |= (1<<Pin);
+ 101   3                break;
+ 102   3              case GPIO_Mode_INPUT_HZ:
+ 103   3                  P4CON &=~(1<<Pin);
+ 104   3                P4PH  &=~(1<<Pin);
+ 105   3                break;
+ 106   3              default:
+ 107   3                break;
+ 108   3              }
+ 109   2          break;
+ 110   2        
+ 111   2        case 5:
+ 112   2          switch (Mode)
+ 113   2              {
+ 114   3              case GPIO_Mode_OUT_PP:
+C51 COMPILER V9.60.0.0   GPIO                                                              04/19/2023 13:57:29 PAGE 3   
+
+ 115   3                P5CON |=(1<<Pin);
+ 116   3                P5PH  &=~(1<<Pin);
+ 117   3                break;
+ 118   3              case GPIO_Mode_INPUT_PU:
+ 119   3                P5CON &=~(1<<Pin);
+ 120   3                P5PH  |= (1<<Pin);
+ 121   3                break;
+ 122   3              case GPIO_Mode_INPUT_HZ:
+ 123   3                P5CON &=~(1<<Pin);
+ 124   3                P5PH  &=~(1<<Pin);
+ 125   3                break;
+ 126   3              default:
+ 127   3                break;
+ 128   3              }
+ 129   2          break;
+ 130   2      
+ 131   2        default:
+ 132   2          break;
+ 133   2        }
+ 134   1      }
+ 135          
+ 136          void MX_GPIO_Init(void)
+ 137          {
+ 138   1        P0CON = 0x8F;  //设置P0为强推挽模式
+ 139   1        P0PH  = 0x00;
+ 140   1        P1CON = 0xF5;  //设置P1为强推挽模式
+ 141   1        P1PH  = 0x00;
+ 142   1        P2CON = 0xFF;  //设置P2为强推挽模式
+ 143   1        P2PH  = 0x00;
+ 144   1        P3CON = 0xFF;  //设置P3为强推挽模式
+ 145   1        P3PH  = 0x00;
+ 146   1        P4CON = 0xF1;  //设置P4为强推挽模式
+ 147   1        P4PH  = 0x00;
+ 148   1        P5CON = 0xF7;  //设置P5为强推挽模式
+ 149   1        P5PH  = 0x00;
+ 150   1        #if defined ProjectIs_BarLock_S5514 || defined ProjectIs_BarLock_S9201
+                //MFC_IRQ
+                GPIO_Config(PORT2,PIN0,GPIO_Mode_INPUT_PU);
+                //HALLSENSOR INT
+                GPIO_Config(PORT4,PIN0,GPIO_Mode_INPUT_HZ);
+                #else
+ 156   1        //MFC_IRQ
+ 157   1        GPIO_Config(PORT0,PIN0,GPIO_Mode_INPUT_PU);
+ 158   1        #endif
+ 159   1        //AD检测
+ 160   1        GPIO_Config(PORT3,PIN7,GPIO_Mode_INPUT_HZ);
+ 161   1        //VOICE BUSY
+ 162   1        GPIO_Config(PORT5,PIN3,GPIO_Mode_INPUT_PU);
+ 163   1        //PRYING INT
+ 164   1        GPIO_Config(PORT4,PIN1,GPIO_Mode_INPUT_HZ);
+ 165   1        //RESET KEY INT
+ 166   1        GPIO_Config(PORT4,PIN2,GPIO_Mode_INPUT_HZ);
+ 167   1        //P42(INT12)下降沿中断
+ 168   1        //INT1F |= 0x04;  
+ 169   1        //P41(INT11)上升沿中断
+ 170   1        INT1R |= 0x02;
+ 171   1        IE  |= 0x04;  //外部中断1中断使能
+ 172   1        IP  |= 0X00;  //配置中断优先级
+ 173   1        IP1 |= 0X00;
+ 174   1        EA = 1;
+ 175   1      }
+ 176          
+C51 COMPILER V9.60.0.0   GPIO                                                              04/19/2023 13:57:29 PAGE 4   
+
+ 177          void MX_GPIO_DeInit(void)
+ 178          {
+ 179   1        #if defined ProjectIs_BarLock_S5514 || defined ProjectIs_BarLock_S9201
+                P0CON = 0xff;  //设置P0为强推挽模式
+                P0PH  = 0x00;
+                P1CON = 0xff;  //设置P1为强推挽模式//f5
+                P1PH  = 0x00;
+                P2CON = 0xce;  //设置P2为强推挽模式
+                P2PH  = 0x01;
+                P3CON = 0xff;  //设置P3为强推挽模式//3f
+                P3PH  = 0x00;
+                P4CON = 0xf0;  //设置P4为强推挽模式
+                P4PH  = 0x00;
+                P5CON = 0xff;  //设置P5为强推挽模式
+                P5PH  = 0x00;
+                #else
+ 193   1        P0CON = 0xfe;  //设置P0为强推挽模式
+ 194   1        P0PH  = 0x01;
+ 195   1        P1CON = 0xff;  //设置P1为强推挽模式//f5
+ 196   1        P1PH  = 0x00;
+ 197   1        P2CON = 0xcf;  //设置P2为强推挽模式
+ 198   1        P2PH  = 0x00;
+ 199   1        P3CON = 0xff;  //设置P3为强推挽模式//3f
+ 200   1        P3PH  = 0x00;
+ 201   1        P4CON = 0xf1;  //设置P4为强推挽模式
+ 202   1        P4PH  = 0x00;
+ 203   1        P5CON = 0xff;  //设置P5为强推挽模式
+ 204   1        P5PH  = 0x00;
+ 205   1        #endif
+ 206   1        P0=0x00;
+ 207   1        P1=0x00;
+ 208   1        P2=0x00;
+ 209   1        P3=0x00;
+ 210   1        P4=0x00;
+ 211   1        P5=0x00;
+ 212   1      }
+ 213          
+ 214          void Enable_EX_Interrupt(void)
+ 215          {
+ 216   1        //PRYING INT
+ 217   1        GPIO_Config(PORT4,PIN1,GPIO_Mode_INPUT_HZ);
+ 218   1        //RESET KEY INT
+ 219   1        GPIO_Config(PORT4,PIN2,GPIO_Mode_INPUT_HZ);
+ 220   1        //TOUCH INT
+ 221   1        GPIO_Config(PORT4,PIN3,GPIO_Mode_INPUT_HZ);
+ 222   1        //P42(INT12)下降沿中断
+ 223   1        //INT1F |= 0x04;  
+ 224   1        //P41(INT11)上升沿中断
+ 225   1        INT1R |= 0x02;  
+ 226   1        IE  |= 0x04;  //外部中断1中断使能
+ 227   1        //IE1 |= 0x10;  //TK中断打开
+ 228   1        IP  |= 0X00;  //配置中断优先级
+ 229   1        IP1 |= 0X00;
+ 230   1        EA = 1;
+ 231   1      }
+ 232          
+ 233          void EnableAntiPrying_Interrupt(void)
+ 234          {
+ 235   1        GPIO_Config(PORT4,PIN1,GPIO_Mode_INPUT_HZ);
+ 236   1        INT1R |= 0x02;
+ 237   1      }
+ 238          
+C51 COMPILER V9.60.0.0   GPIO                                                              04/19/2023 13:57:29 PAGE 5   
+
+ 239          void DisableAntiPrying_Interrupt(void)
+ 240          {
+ 241   1        GPIO_Config(PORT4,PIN1,GPIO_Mode_INPUT_HZ);
+ 242   1        INT1R &= (~0x02);
+ 243   1      }
+ 244          
+ 245          void INT1_RST(void)
+ 246          {
+ 247   1        INT1flag = 0x00;
+ 248   1      }
+ 249          
+ 250          void INT1Interrupt() interrupt  2
+ 251          {
+ 252   1        if(PINMACRO_PICKLOCK_STATUS == 1)
+ 253   1        {
+ 254   2          INT1flag = 0x20; //INT11产生中断
+ 255   2          if( PickAlarmEnableMgr.Enable == bTRUE )
+ 256   2          {
+ 257   3            AntiPryingMgr.AntiPryingSignalRelease = bTRUE;
+ 258   3          }
+ 259   2        }
+ 260   1      }
+ 261          
+ 262          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    729    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =      1    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,282 @@
+C51 COMPILER V9.60.0.0   KEY_SINONE                                                        04/19/2023 13:57:30 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE KEY_SINONE
+OBJECT MODULE PLACED IN .\Objects\Key_SinOne.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Drivers\Protocol\Key_SinOne.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE INCDIR
+                    -(.\Drivers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Protocol;
+                    -.\Softwares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic;.\Drivers\Protocol\YC_NFC;.\Drivers\Protocol\WIFI_Tuya
+                    -) DEBUG PRINT(.\Listings\Key_SinOne.lst) TABS(2) OBJECT(.\Objects\Key_SinOne.obj)
+
+line level    source
+
+   1          #include "KeyScan.h"
+   2          #include "SensorMethod.h"
+   3          #include "Project.h"
+   4          
+   5          uint8_t TouchKeyBuff[4]={0};
+   6            
+   7          #if (defined ProjectIs_BarLock_S6421) || (defined ProjectIs_BarLock_S6421v2)  \
+   8           || (defined ProjectIs_BarLock_S6428) || (defined ProjectIs_BarLock_S6428v2)  \
+   9           || (defined ProjectIs_BarLock_S6430) 
+  10          uint16_t ValidKeyValue[]={0x0400,0x8000,0x0008,0x0004,0x4000,0x0010,0x0040,0x2000,0x0020,0x0080,0x1000,0x0
+             -100};//0 1 2 3 4 5 6 7 8 9 * # 
+  11          
+  12          #elif defined ProjectIs_BarLock_S6904 || defined ProjectIs_BarLock_S6904v2
+              uint16_t ValidKeyValue[]={0x0008,0x0100,0x0400,0x1000,0x0080,0x0020,0x2000,0x0040,0x0010,0x4000,0x0004,0x8
+             -000,0x0002};//0 1 2 3 4 5 6 7 8 9 * # bell
+              
+              #elif defined ProjectIs_BarLock_S6117 || defined ProjectIs_BarLock_S6117v2
+              uint16_t ValidKeyValue[]={0x0040,0x4000,0x8000,0x0004,0x2000,0x1000,0x0008,0x0100,0x0400,0x0010,0x0080,0x0
+             -020};//0 1 2 3 4 5 6 7 8 9 * #
+              
+              #elif defined ProjectIs_BarLock_S1734 || defined ProjectIs_BarLock_S8106  \
+                 || defined ProjectIs_BarLock_S1735 || defined ProjectIs_BarLock_S7203  \
+                 || defined ProjectIs_BarLock_S1736 
+              uint16_t ValidKeyValue[]={0x0080,0x0020,0x0400,0x1000,0x0010,0x0100,0x2000,0x0008,0x0040,0x4000,0x0004,0x8
+             -000};//0 1 2 3 4 5 6 7 8 9 * # 
+              
+              #elif defined ProjectIs_BarLock_S7702 || defined ProjectIs_BarLock_S7705
+              uint16_t ValidKeyValue[]={0x0004,0x0020,0x0400,0x1000,0x0040,0x0080,0x2000,0x0010,0x0100,0x4000,0x0008,0x8
+             -000};//0 1 2 3 4 5 6 7 8 9 * #
+              
+              #elif defined ProjectIs_BarLock_S0607
+              uint16_t ValidKeyValue[]={0x0080,0x8000,0x0400,0x0004,0x4000,0x2000,0x0008,0x1000,0x0040,0x0010,0x0100,0x0
+             -020};//0 1 2 3 4 5 6 7 8 9 * #
+              
+              #elif defined ProjectIs_BarLock_S9901
+              uint16_t ValidKeyValue[]={0x0400,0x8000,0x0008,0x0004,0x4000,0x0020,0x0010,0x2000,0x0040,0x0080,0x1000,0x0
+             -100};
+              
+              #elif defined ProjectIs_BarLock_S3008
+              uint16_t ValidKeyValue[]={0x1000,0x0040,0x0004,0x0008,0x8000,0x0020,0x0010,0x4000,0x0080,0x0100,0x2000,0x0
+             -400};//0 1 2 3 4 5 6 7 8 9 * #
+              
+              #endif
+  36          
+  37          uint32_t KeyScanDrive()
+  38          {
+  39   1        uint32_t TK_Value;
+  40   1        //uint32_t TK_ValueBuff;
+  41   1        uint8_t i;
+  42   1        
+  43   1        if( SOCAPI_TouchKeyStatus & 0x40 )  // bit6-半轮扫描完成标志  1:完成  0：未完成
+  44   1        {
+C51 COMPILER V9.60.0.0   KEY_SINONE                                                        04/19/2023 13:57:30 PAGE 2   
+
+  45   2          SOCAPI_TouchKeyStatus &= 0xBF;  //清半轮扫描标志位
+  46   2          TouchKeyRestart();
+  47   2        }
+  48   1        else
+  49   1        {
+  50   2          if( SOCAPI_TouchKeyStatus & 0x80 )  //bit7-一轮扫描完成标志  1:完成   0：未完成
+  51   2          {
+  52   3            TK_Value = TouchKeyScan();
+  53   3            //TK_ValueBuff = TK_Value;
+  54   3            SOCAPI_TouchKeyStatus &= 0x7F;    //清一轮扫描标志位
+  55   3            for(i=0; i<4; i++)
+  56   3            {
+  57   4              TouchKeyBuff[i] = TK_Value >> (24-(8*i));
+  58   4            }
+  59   3            TouchKeyRestart();
+  60   3          }
+  61   2        }
+  62   1        return TK_Value;
+  63   1      }
+  64          
+  65          void KeyPressedJudge(uint32_t InputKeyValue)
+  66          {
+  67   1        uint16_t InputValidKeyValue;
+  68   1        uint8_t i;
+  69   1        uint8_t TK_Flag;
+  70   1        
+  71   1        InputValidKeyValue = InputKeyValue;
+  72   1        
+  73   1      
+  74   1        
+  75   1        for(i=0;i<13;i++)//最多有可能有13个键
+  76   1        {
+  77   2          TK_Flag = 0;
+  78   2          if( (InputValidKeyValue & ValidKeyValue[i]) > 0 )
+  79   2          {
+  80   3            TK_Flag = 1;
+  81   3          }
+  82   2          switch(i)
+  83   2          {
+  84   3            case 0:
+  85   3              if( TK_Flag )
+  86   3              {
+  87   4                TouchKeyStatus.KEY_ZERO_Pressed = bTRUE;
+  88   4              }
+  89   3              else
+  90   3              {
+  91   4                TouchKeyStatus.KEY_ZERO_Pressed = bFALSE;
+  92   4              }
+  93   3              break;
+  94   3                
+  95   3            case 1:
+  96   3              if( TK_Flag )
+  97   3              {
+  98   4                TouchKeyStatus.KEY_ONE_Pressed = bTRUE;
+  99   4              }
+ 100   3              else
+ 101   3              {
+ 102   4                TouchKeyStatus.KEY_ONE_Pressed = bFALSE;
+ 103   4              }
+ 104   3              break;
+ 105   3                
+ 106   3            case 2:
+C51 COMPILER V9.60.0.0   KEY_SINONE                                                        04/19/2023 13:57:30 PAGE 3   
+
+ 107   3              if( TK_Flag )
+ 108   3              {
+ 109   4                TouchKeyStatus.KEY_TWO_Pressed = bTRUE;
+ 110   4              }
+ 111   3              else
+ 112   3              {
+ 113   4                TouchKeyStatus.KEY_TWO_Pressed = bFALSE;
+ 114   4              }
+ 115   3              break;
+ 116   3                
+ 117   3            case 3:
+ 118   3              if( TK_Flag )
+ 119   3              {
+ 120   4                TouchKeyStatus.KEY_THREE_Pressed = bTRUE;
+ 121   4              }
+ 122   3              else
+ 123   3              {
+ 124   4                TouchKeyStatus.KEY_THREE_Pressed = bFALSE;
+ 125   4              }
+ 126   3              break;
+ 127   3                
+ 128   3            case 4:
+ 129   3              if( TK_Flag )
+ 130   3              {
+ 131   4                TouchKeyStatus.KEY_FOUR_Pressed = bTRUE;
+ 132   4              }
+ 133   3              else
+ 134   3              {
+ 135   4                TouchKeyStatus.KEY_FOUR_Pressed = bFALSE;
+ 136   4              }
+ 137   3              break;
+ 138   3                
+ 139   3            case 5:
+ 140   3              if( TK_Flag )
+ 141   3              {
+ 142   4                TouchKeyStatus.KEY_FIVE_Pressed = bTRUE;
+ 143   4              }
+ 144   3              else
+ 145   3              {
+ 146   4                TouchKeyStatus.KEY_FIVE_Pressed = bFALSE;
+ 147   4              }
+ 148   3              break;
+ 149   3                
+ 150   3            case 6:
+ 151   3              if( TK_Flag )
+ 152   3              {
+ 153   4                TouchKeyStatus.KEY_SIX_Pressed = bTRUE;
+ 154   4              }
+ 155   3              else
+ 156   3              {
+ 157   4                TouchKeyStatus.KEY_SIX_Pressed = bFALSE;
+ 158   4              }
+ 159   3              break;
+ 160   3                
+ 161   3            case 7:
+ 162   3              if( TK_Flag )
+ 163   3              {
+ 164   4                TouchKeyStatus.KEY_SEVEN_Pressed = bTRUE;
+ 165   4              }
+ 166   3              else
+ 167   3              {
+ 168   4                TouchKeyStatus.KEY_SEVEN_Pressed = bFALSE;
+C51 COMPILER V9.60.0.0   KEY_SINONE                                                        04/19/2023 13:57:30 PAGE 4   
+
+ 169   4              }
+ 170   3              break;
+ 171   3                
+ 172   3            case 8:
+ 173   3              if( TK_Flag )
+ 174   3              {
+ 175   4                TouchKeyStatus.KEY_EIGHT_Pressed = bTRUE;
+ 176   4              }
+ 177   3              else
+ 178   3              {
+ 179   4                TouchKeyStatus.KEY_EIGHT_Pressed = bFALSE;
+ 180   4              }
+ 181   3              break;
+ 182   3                
+ 183   3            case 9:
+ 184   3              if( TK_Flag )
+ 185   3              {
+ 186   4                TouchKeyStatus.KEY_NINE_Pressed = bTRUE;
+ 187   4              }
+ 188   3              else
+ 189   3              {
+ 190   4                TouchKeyStatus.KEY_NINE_Pressed = bFALSE;
+ 191   4              }
+ 192   3              break;
+ 193   3                
+ 194   3            case 10:
+ 195   3              if( TK_Flag )
+ 196   3              {
+ 197   4                TouchKeyStatus.KEY_ASTERISK_Pressed = bTRUE;
+ 198   4              }
+ 199   3              else
+ 200   3              {
+ 201   4                TouchKeyStatus.KEY_ASTERISK_Pressed = bFALSE;
+ 202   4              }
+ 203   3              break;
+ 204   3                
+ 205   3            case 11:
+ 206   3              if( TK_Flag )
+ 207   3              {
+ 208   4                TouchKeyStatus.KEY_POUNDSIGN_Pressed = bTRUE;
+ 209   4              }
+ 210   3              else
+ 211   3              {
+ 212   4                TouchKeyStatus.KEY_POUNDSIGN_Pressed = bFALSE;
+ 213   4              }
+ 214   3              break;
+ 215   3              
+ 216   3            case 12:
+ 217   3              if( TK_Flag )
+ 218   3              {
+ 219   4                TouchKeyStatus.KEY_DOORBELL_Pressed = bTRUE;
+ 220   4              }
+ 221   3              else
+ 222   3              {
+ 223   4                TouchKeyStatus.KEY_DOORBELL_Pressed = bFALSE;
+ 224   4              }
+ 225   3              break;
+ 226   3      
+ 227   3            default:
+ 228   3              break;
+ 229   3          }
+ 230   2        }
+C51 COMPILER V9.60.0.0   KEY_SINONE                                                        04/19/2023 13:57:30 PAGE 5   
+
+ 231   1      }
+ 232          
+ 233          void Touch_Init(void)
+ 234          {
+ 235   1        TouchKeyInit();
+ 236   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    429    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     28       6
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
