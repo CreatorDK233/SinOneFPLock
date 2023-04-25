@@ -71,6 +71,7 @@ void Main_System_Init(void)
   SafetyMonitorMgr.PasscodeIdentifyFailedTimes = 0;
 	SafetyMonitorMgr.ManagerPasscodeIdentifyFailedTimes = 0;
 	SafetyMonitorMgr.SystemLocked = bFALSE;
+	UserIdentifyResultMgr.FlagContinuedOpenEnabled = bFALSE;
 	
 	/* Configure The Touch*/
 	LogMgr_Init();

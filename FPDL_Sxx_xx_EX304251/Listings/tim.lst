@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   TIM                                                               04/24/2023 17:07:22 PAGE 1   
+C51 COMPILER V9.60.0.0   TIM                                                               04/25/2023 10:52:15 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE TIM
@@ -62,7 +62,7 @@ line level    source
   50   1      }
   51          
   52          void MX_TIM3_Init(void)
-C51 COMPILER V9.60.0.0   TIM                                                               04/24/2023 17:07:22 PAGE 2   
+C51 COMPILER V9.60.0.0   TIM                                                               04/25/2023 10:52:15 PAGE 2   
 
   53          {
   54   1        //T3设置，频率为1KHZ(主频：32M)
@@ -126,7 +126,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    BIT SIZE         =      1    ----
    EDATA SIZE       =   ----    ----
    HDATA SIZE       =   ----    ----
-C51 COMPILER V9.60.0.0   TIM                                                               04/24/2023 17:07:22 PAGE 3   
+C51 COMPILER V9.60.0.0   TIM                                                               04/25/2023 10:52:15 PAGE 3   
 
    XDATA CONST SIZE =   ----    ----
    FAR CONST SIZE   =   ----    ----

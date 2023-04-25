@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   LCD_HFG12864                                                      04/24/2023 17:07:23 PAGE 1   
+C51 COMPILER V9.60.0.0   LCD_HFG12864                                                      04/25/2023 10:52:15 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE LCD_HFG12864
@@ -57,14 +57,14 @@ line level    source
   45   1      
   46   1      #if defined ProjectIs_BarLock_S0608 || defined ProjectIs_BarLock_S5514 \
   47   1       || defined ProjectIs_BarLock_S9201 || defined ProjectIs_BarLock_S3007
-  48   1        WriteComm(0xa0); //0xA0 or 0xA1, 列地址移动方向:ADC=0(SEG1->SEG132)
-  49   1        WriteComm(0xc0); //0xC0 or 0xC8, 行扫描方向:SHL=1(COM64->COM1)
-  50   1      #else
-                WriteComm(0xa1); //0xA0 or 0xA1, 列地址移动方向:ADC=0(SEG1->SEG132)
-                WriteComm(0xc8); //0xC0 or 0xC8, 行扫描方向:SHL=1(COM64->COM1)
-C51 COMPILER V9.60.0.0   LCD_HFG12864                                                      04/24/2023 17:07:23 PAGE 2   
+                WriteComm(0xa0); //0xA0 or 0xA1, 列地址移动方向:ADC=0(SEG1->SEG132)
+                WriteComm(0xc0); //0xC0 or 0xC8, 行扫描方向:SHL=1(COM64->COM1)
+              #else
+  51   1        WriteComm(0xa1); //0xA0 or 0xA1, 列地址移动方向:ADC=0(SEG1->SEG132)
+  52   1        WriteComm(0xc8); //0xC0 or 0xC8, 行扫描方向:SHL=1(COM64->COM1)
+C51 COMPILER V9.60.0.0   LCD_HFG12864                                                      04/25/2023 10:52:15 PAGE 2   
 
-              #endif
+  53   1      #endif
   54   1      
   55   1        
   56   1        WriteComm(0x2c); //VC ON
@@ -89,10 +89,10 @@ line level    source
   75   2          WriteComm(0x10);// set start and end column addr
   76   2          #if defined ProjectIs_BarLock_S0608 || defined ProjectIs_BarLock_S5514 \
   77   2           || defined ProjectIs_BarLock_S9201 || defined ProjectIs_BarLock_S3007
-  78   2          WriteComm(0x01);// set start column addr  
-  79   2          #else
-                  WriteComm(0x05);// set start column addr
-                  #endif    
+                  WriteComm(0x01);// set start column addr  
+                  #else
+  80   2          WriteComm(0x05);// set start column addr
+  81   2          #endif    
   82   2      
   83   2          WriteComm(0xB0+i);// set start page addr  
   84   2          
@@ -126,7 +126,7 @@ line level    source
  112   1        {
  113   2          SwitchPageNumber = 0x00;
  114   2        }
-C51 COMPILER V9.60.0.0   LCD_HFG12864                                                      04/24/2023 17:07:23 PAGE 3   
+C51 COMPILER V9.60.0.0   LCD_HFG12864                                                      04/25/2023 10:52:15 PAGE 3   
 
  115   1        else SwitchPageNumber++;
  116   1      //
@@ -134,10 +134,10 @@ line level    source
  118   1        
  119   1        #if defined ProjectIs_BarLock_S0608 || defined ProjectIs_BarLock_S5514 \
  120   1         || defined ProjectIs_BarLock_S9201 || defined ProjectIs_BarLock_S3007
- 121   1        WriteComm(0x00);// set start column addr  
- 122   1        #else
-                WriteComm(0x04);// set start column addr
-                #endif  
+                WriteComm(0x00);// set start column addr  
+                #else
+ 123   1        WriteComm(0x04);// set start column addr
+ 124   1        #endif  
  125   1        
  126   1        WriteComm(0xB0+SwitchPageNumber);// set start page addr 
  127   1        

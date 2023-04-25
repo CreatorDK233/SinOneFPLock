@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   VOICE_MENU                                                        04/24/2023 17:07:25 PAGE 1   
+C51 COMPILER V9.60.0.0   VOICE_MENU                                                        04/25/2023 10:52:18 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE VOICE_MENU
@@ -62,7 +62,7 @@ line level    source
   50            {VOICE_PressAsteriskKey,VOICE_ReturnPreviousMenu,DEF_VoiceSegmentEndFlag}
   51          };
   52          
-C51 COMPILER V9.60.0.0   VOICE_MENU                                                        04/24/2023 17:07:25 PAGE 2   
+C51 COMPILER V9.60.0.0   VOICE_MENU                                                        04/25/2023 10:52:18 PAGE 2   
 
   53          //code uint8_t VolumeSetLanguageBuff[][4]={ 
   54          //  {VOICE_Press,VOICE_One,VOICE_Chinese,DEF_VoiceSegmentEndFlag},
@@ -126,7 +126,7 @@ line level    source
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =   ----    ----
-C51 COMPILER V9.60.0.0   VOICE_MENU                                                        04/24/2023 17:07:25 PAGE 3   
+C51 COMPILER V9.60.0.0   VOICE_MENU                                                        04/25/2023 10:52:18 PAGE 3   
 
    CONSTANT SIZE    =    282    ----
    XDATA SIZE       =   ----    ----

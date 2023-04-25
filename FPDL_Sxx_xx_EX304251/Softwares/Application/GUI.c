@@ -4811,7 +4811,6 @@ void GUI_Init(void)//
 	UserIdentifyResultMgr.CardIdentifyStatus = S_FAIL;
 	UserIdentifyResultMgr.FPIdentifyStatus = S_FAIL;
 	UserIdentifyResultMgr.PasscodeIdentifyStatus = S_FAIL;
-	UserIdentifyResultMgr.FlagContinuedOpenEnabled = bFALSE;
 	UserIdentifyResultMgr.VoiceDelay = 0;
 
 	g_ASTERISK_PressedOnMainScreen = bFALSE;

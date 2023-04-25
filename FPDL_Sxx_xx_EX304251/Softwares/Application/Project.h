@@ -13,12 +13,12 @@
 //#define ProjectIs_BarLock_S9201		//		内部rtc		指纹验证5次(同5514)
 //#define ProjectIs_BarLock_S3007		//		内部rtc		指纹验证5次(同5514)
 //#define ProjectIs_BarLock_S3009		//FJ04			指纹验证5次
-#define ProjectIs_BarLock_S0608		//FJ04		指纹验证5次
+//#define ProjectIs_BarLock_S0608		//FJ04		指纹验证5次
 //#define ProjectIs_BarLock_S7703		//383F			指纹验证8次(同6902，去灯板)
 //#define ProjectIs_BarLock_S8705		//583F			指纹验证5次(同1728)(电机参数特调)
 //#define ProjectIs_BarLock_S8706		//贝特来		指纹验证5次(同1728)(电机参数特调)
 //#define ProjectIs_BarLock_S7204		//FJ04			指纹验证5次(同1728)
-//#define ProjectIs_BarLock_S6431		//FJ04			指纹验证5次
+#define ProjectIs_BarLock_S6431		//FJ04			指纹验证5次
 //#define ProjectIs_BarLock_S9702		//FJ04		指纹验证5次(同1728)
 
 
@@ -269,9 +269,9 @@
 #define DEF_CustomerNumber	64			//should be less than 256
 #define DEF_ModelNumber			31			//should be less than 256
 #define DEF_HardwareVerion	100			//should be less than 256
-#define DEF_FirmwareVerion	202			//should be less than 256
+#define DEF_FirmwareVerion	203			//should be less than 256
 #define SystemHardwareVersion	{VOICE_Six,VOICE_Four,VOICE_Three,VOICE_One,DEF_VoiceSegmentEndFlag}
-#define SystemFirmwareVersion	{VOICE_One,VOICE_Zero,VOICE_Zero,VOICE_Mute20ms,VOICE_Two,VOICE_Zero,VOICE_Two,DEF_VoiceSegmentEndFlag}
+#define SystemFirmwareVersion	{VOICE_One,VOICE_Zero,VOICE_Zero,VOICE_Mute20ms,VOICE_Two,VOICE_Zero,VOICE_Three,DEF_VoiceSegmentEndFlag}
 //#define Function_CardReaderUseSPI
 #define Function_AppUnlock
 #define Function_ScreenDisplay

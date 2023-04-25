@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              04/24/2023 17:07:25 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              04/25/2023 10:52:18 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   50   1        VOICE_Init();
   51   1        MFC_Init();
   52   1        Hardware_DelayMs(10);
-C51 COMPILER V9.60.0.0   MAIN                                                              04/24/2023 17:07:25 PAGE 2   
+C51 COMPILER V9.60.0.0   MAIN                                                              04/25/2023 10:52:18 PAGE 2   
 
   53   1        Touch_Init();
   54   1        Hardware_DelayMs(10);
@@ -85,144 +85,145 @@ line level    source
   71   1        SafetyMonitorMgr.PasscodeIdentifyFailedTimes = 0;
   72   1        SafetyMonitorMgr.ManagerPasscodeIdentifyFailedTimes = 0;
   73   1        SafetyMonitorMgr.SystemLocked = bFALSE;
-  74   1        
-  75   1        /* Configure The Touch*/
-  76   1        LogMgr_Init();
-  77   1        /* Configure The Motor*/
-  78   1        Hardware_MotorMgr_Init();
-  79   1        
-  80   1        CurrentScreen = SCREEN_Initialization;
-  81   1        InitializationMgr.Status = StartInitialization;
-  82   1        BatteryMgr.ProtectVoltageTriggerTimes = 0;
-  83   1        BatteryMgr.LowBatteryProtectionEnabled = bFALSE;
-  84   1        BatteryMgr.BatteryVoltage = 0;
-  85   1        VoiceMgr.volume = 20; // default volume
-  86   1        SET_VOLUME(VoiceMgr.volume);
-  87   1        
-  88   1        AntiPryingMgr.AntiPryingTrigger = bFALSE;
-  89   1        AntiPryingMgr.AntiPryingSignalRelease = bFALSE; 
-  90   1        #ifdef Function_HallSlideCover
+  74   1        UserIdentifyResultMgr.FlagContinuedOpenEnabled = bFALSE;
+  75   1        
+  76   1        /* Configure The Touch*/
+  77   1        LogMgr_Init();
+  78   1        /* Configure The Motor*/
+  79   1        Hardware_MotorMgr_Init();
+  80   1        
+  81   1        CurrentScreen = SCREEN_Initialization;
+  82   1        InitializationMgr.Status = StartInitialization;
+  83   1        BatteryMgr.ProtectVoltageTriggerTimes = 0;
+  84   1        BatteryMgr.LowBatteryProtectionEnabled = bFALSE;
+  85   1        BatteryMgr.BatteryVoltage = 0;
+  86   1        VoiceMgr.volume = 20; // default volume
+  87   1        SET_VOLUME(VoiceMgr.volume);
+  88   1        
+  89   1        AntiPryingMgr.AntiPryingTrigger = bFALSE;
+  90   1        AntiPryingMgr.AntiPryingSignalRelease = bFALSE; 
+  91   1        #ifdef Function_HallSlideCover
                 HallSlideCover_Init();
                 #endif
-  93   1        RefreshSystemSleepTime();
-  94   1      }
-  95          void main(void)
-  96          {
-  97   1        uint8_t i;
-  98   1        
-  99   1        FLASH_OB_Config();      //v121和中微有差异
- 100   1        Main_System_Init();
- 101   1        
- 102   1        for (i = 0; i < 50; i++) 
- 103   1        {
- 104   2            Hardware_Task_Analog();
- 105   2            HardwareBatteryMgr_Task();
- 106   2        } //更新50次ADC
- 107   1        #ifdef Function_FPMbreathingLed
- 108   1        SetFPMbreathingLed(FPMbreathingLed_Bule);
- 109   1        #endif
- 110   1        Hardware_MotorMgr_Init(); //电机初始化
- 111   1        
+  94   1        RefreshSystemSleepTime();
+  95   1      }
+  96          void main(void)
+  97          {
+  98   1        uint8_t i;
+  99   1        
+ 100   1        FLASH_OB_Config();      //v121和中微有差异
+ 101   1        Main_System_Init();
+ 102   1        
+ 103   1        for (i = 0; i < 50; i++) 
+ 104   1        {
+ 105   2            Hardware_Task_Analog();
+ 106   2            HardwareBatteryMgr_Task();
+ 107   2        } //更新50次ADC
+ 108   1        #ifdef Function_FPMbreathingLed
+ 109   1        SetFPMbreathingLed(FPMbreathingLed_Bule);
+ 110   1        #endif
+ 111   1        Hardware_MotorMgr_Init(); //电机初始化
  112   1        
- 113   1        while (1)
- 114   1        {
-C51 COMPILER V9.60.0.0   MAIN                                                              04/24/2023 17:07:25 PAGE 3   
+ 113   1        
+ 114   1        while (1)
+C51 COMPILER V9.60.0.0   MAIN                                                              04/25/2023 10:52:18 PAGE 3   
 
- 115   2          if ( G_tflagbits.T1024Hz == 1 )
- 116   2          {
- 117   3            G_tflagbits.T1024Hz =0;
- 118   3          }
- 119   2      
- 120   2          if ( G_tflagbits.T256Hz == 1 )
- 121   2          {
- 122   3            G_tflagbits.T256Hz =0;      
- 123   3          }
- 124   2          
- 125   2          if ( G_tflagbits.T64Hz == 1 )
- 126   2          {
- 127   3            G_tflagbits.T64Hz = 0;
- 128   3        
- 129   3            FPM_Mgr_Task();
- 130   3      
- 131   3            GUI_Task();
- 132   3            
- 133   3            Hardware_MotorMgr_Task(); 
- 134   3      
- 135   3            #if (defined ProjectIs_BarLock_S6902)
+ 115   1        {
+ 116   2          if ( G_tflagbits.T1024Hz == 1 )
+ 117   2          {
+ 118   3            G_tflagbits.T1024Hz =0;
+ 119   3          }
+ 120   2      
+ 121   2          if ( G_tflagbits.T256Hz == 1 )
+ 122   2          {
+ 123   3            G_tflagbits.T256Hz =0;      
+ 124   3          }
+ 125   2          
+ 126   2          if ( G_tflagbits.T64Hz == 1 )
+ 127   2          {
+ 128   3            G_tflagbits.T64Hz = 0;
+ 129   3        
+ 130   3            FPM_Mgr_Task();
+ 131   3      
+ 132   3            GUI_Task();
+ 133   3            
+ 134   3            Hardware_MotorMgr_Task(); 
+ 135   3      
+ 136   3            #if (defined ProjectIs_BarLock_S6902)
                     LEDsMgr_Task();
                     #endif
- 138   3      
- 139   3            if ( SystemPowerMgr.SleepDelayTimerCnt > 0 )
- 140   3            {
- 141   4              SystemPowerMgr.SleepDelayTimerCnt--;
- 142   4            }
- 143   3            
- 144   3            if (SystemPowerMgr.AwakeTimerCnt < 60)
- 145   3            {
- 146   4              SystemPowerMgr.AwakeTimerCnt++;
- 147   4            }
- 148   3            #ifdef Function_HallSlideCover
+ 139   3      
+ 140   3            if ( SystemPowerMgr.SleepDelayTimerCnt > 0 )
+ 141   3            {
+ 142   4              SystemPowerMgr.SleepDelayTimerCnt--;
+ 143   4            }
+ 144   3            
+ 145   3            if (SystemPowerMgr.AwakeTimerCnt < 60)
+ 146   3            {
+ 147   4              SystemPowerMgr.AwakeTimerCnt++;
+ 148   4            }
+ 149   3            #ifdef Function_HallSlideCover
                     HallSleep_Task();
                     #endif
- 151   3            if (( MotorMgr.MotorStatus == IDLE )
- 152   3              //&&( PINMACRO_KB_IRQ_STATUS != 0x00 )   
- 153   3              &&( CurrentScreen != SCREEN_Initialization )
- 154   3              &&( CurrentScreen != SCREEN_PickLockAlarm )
- 155   3              &&( CurrentScreen != SCREEN_SystemLocked )
- 156   3              &&( CurrentScreen != SCREEN_AgingTest )
- 157   3      //        &&(CurrentScreen != SCREEN_SelfTest)
- 158   3              &&((SystemPowerMgr.SleepDelayTimerCnt == 0x0000)  
- 159   3                ) //casing closed
- 160   3              )
- 161   3            {
- 162   4              System_PowerDown();
- 163   4              System_Awake();
- 164   4              CLRWDT();
- 165   4              RefreshSystemSleepTime();
- 166   4              SystemPowerMgr.AwakeTimerCnt=0x0000;
- 167   4            }
- 168   3          }
- 169   2          
- 170   2      //    if ( G_tflagbits.T16Hz == 1 )
- 171   2      //    {
- 172   2      //      
- 173   2      //    }
- 174   2          
- 175   2          if ( G_tflagbits.T8Hz == 1 )
- 176   2          {
-C51 COMPILER V9.60.0.0   MAIN                                                              04/24/2023 17:07:25 PAGE 4   
+ 152   3            if (( MotorMgr.MotorStatus == IDLE )
+ 153   3              //&&( PINMACRO_KB_IRQ_STATUS != 0x00 )   
+ 154   3              &&( CurrentScreen != SCREEN_Initialization )
+ 155   3              &&( CurrentScreen != SCREEN_PickLockAlarm )
+ 156   3              &&( CurrentScreen != SCREEN_SystemLocked )
+ 157   3              &&( CurrentScreen != SCREEN_AgingTest )
+ 158   3      //        &&(CurrentScreen != SCREEN_SelfTest)
+ 159   3              &&((SystemPowerMgr.SleepDelayTimerCnt == 0x0000)  
+ 160   3                ) //casing closed
+ 161   3              )
+ 162   3            {
+ 163   4              System_PowerDown();
+ 164   4              System_Awake();
+ 165   4              CLRWDT();
+ 166   4              RefreshSystemSleepTime();
+ 167   4              SystemPowerMgr.AwakeTimerCnt=0x0000;
+ 168   4            }
+ 169   3          }
+ 170   2          
+ 171   2      //    if ( G_tflagbits.T16Hz == 1 )
+ 172   2      //    {
+ 173   2      //      
+ 174   2      //    }
+ 175   2          
+ 176   2          if ( G_tflagbits.T8Hz == 1 )
+C51 COMPILER V9.60.0.0   MAIN                                                              04/25/2023 10:52:18 PAGE 4   
 
- 177   3            G_tflagbits.T8Hz =0;
- 178   3            CLRWDT();
- 179   3            #ifdef Function_ScreenDisplay
- 180   3            //if(system_IC_busy_Flag == 0)
- 181   3            {
- 182   4              for(i=0;i<8;i++)
- 183   4              { 
- 184   5                Display_Task();
- 185   5              }
- 186   4            }
- 187   3            #endif  
- 188   3          }
- 189   2      
- 190   2          if ( G_tflagbits.T2Hz == 1 )
- 191   2          {
- 192   3            G_tflagbits.T2Hz =0;  
- 193   3          }
- 194   2          
- 195   2          if ( G_tflagbits.T1Hz == 1 )
- 196   2          {
- 197   3            G_tflagbits.T1Hz =0;
- 198   3            //SystemTimeUpdate();   
- 199   3      
- 200   3            //EEPROM_TESTING();
- 201   3      
- 202   3            //MFC_Test();
- 203   3            //Flash_Test();
- 204   3            //AppUnlockTest();
- 205   3            #ifdef Function_USE_Internal_RTC
- 206   3            SystemTime = UTCToSystemtime(G_SystemUTCTime);
- 207   3            #else
+ 177   2          {
+ 178   3            G_tflagbits.T8Hz =0;
+ 179   3            CLRWDT();
+ 180   3            #ifdef Function_ScreenDisplay
+ 181   3            //if(system_IC_busy_Flag == 0)
+ 182   3            {
+ 183   4              for(i=0;i<8;i++)
+ 184   4              { 
+ 185   5                Display_Task();
+ 186   5              }
+ 187   4            }
+ 188   3            #endif  
+ 189   3          }
+ 190   2      
+ 191   2          if ( G_tflagbits.T2Hz == 1 )
+ 192   2          {
+ 193   3            G_tflagbits.T2Hz =0;  
+ 194   3          }
+ 195   2          
+ 196   2          if ( G_tflagbits.T1Hz == 1 )
+ 197   2          {
+ 198   3            G_tflagbits.T1Hz =0;
+ 199   3            //SystemTimeUpdate();   
+ 200   3      
+ 201   3            //EEPROM_TESTING();
+ 202   3      
+ 203   3            //MFC_Test();
+ 204   3            //Flash_Test();
+ 205   3            //AppUnlockTest();
+ 206   3            #ifdef Function_USE_Internal_RTC
+ 207   3            SystemTime = UTCToSystemtime(G_SystemUTCTime);
+ 208   3            #else
                     if( ReadRTC == 0 )
                     {
                       PCF8563_ReadTime();
@@ -231,19 +232,19 @@ line level    source
                     if(ReadRTC >= 5)
                     ReadRTC = 0;
                     #endif
- 216   3            DEBUG_MARK;
- 217   3            
- 218   3          }
- 219   2        }
- 220   1      }
- 221          
+ 217   3            DEBUG_MARK;
+ 218   3            
+ 219   3          }
+ 220   2        }
+ 221   1      }
  222          
  223          
  224          
+ 225          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    485    ----
+   CODE SIZE        =    489    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =      1       1
    PDATA SIZE       =   ----    ----
@@ -253,9 +254,9 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    EDATA SIZE       =   ----    ----
    HDATA SIZE       =   ----    ----
    XDATA CONST SIZE =   ----    ----
-   FAR CONST SIZE   =   ----    ----
-C51 COMPILER V9.60.0.0   MAIN                                                              04/24/2023 17:07:25 PAGE 5   
+C51 COMPILER V9.60.0.0   MAIN                                                              04/25/2023 10:52:18 PAGE 5   
 
+   FAR CONST SIZE   =   ----    ----
 END OF MODULE INFORMATION.
 
 

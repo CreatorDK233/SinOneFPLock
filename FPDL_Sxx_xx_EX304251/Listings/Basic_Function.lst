@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   BASIC_FUNCTION                                                    04/24/2023 17:07:22 PAGE 1   
+C51 COMPILER V9.60.0.0   BASIC_FUNCTION                                                    04/25/2023 10:52:15 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BASIC_FUNCTION
@@ -62,7 +62,7 @@ line level    source
   50   2        }
   51   1      }
   52          
-C51 COMPILER V9.60.0.0   BASIC_FUNCTION                                                    04/24/2023 17:07:22 PAGE 2   
+C51 COMPILER V9.60.0.0   BASIC_FUNCTION                                                    04/25/2023 10:52:15 PAGE 2   
 
   53          void Soft_Delay1ms(unsigned int time)
   54          {
