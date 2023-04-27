@@ -1,0 +1,521 @@
+C51 COMPILER V9.60.0.0   FINGERPRINT                                                       04/25/2023 17:24:16 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE FINGERPRINT
+OBJECT MODULE PLACED IN .\Objects\FingerPrint.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Drivers\Protocol\FingerPrint.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE INCDI
+                    -R(.\Drivers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Protocol
+                    -;.\Softwares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic) DEBUG PRINT(.\Listings\FingerPrint.lst) TABS(2) OBJE
+                    -CT(.\Objects\FingerPrint.obj)
+
+line level    source
+
+   1          #include "global_variable.h"
+   2          #include "Project.h"
+   3          #include "FingerPrint.h"
+   4          #include "usart.h"
+   5          
+   6          
+   7          #define CMD_TEST_CONNECTION   0x0001    //Ω¯––”Î…Ë±∏µƒÕ®—∂≤‚ ‘
+   8          #define CMD_SET_PARAM         0x0002    //…Ë ÷√ …Ë ±∏ ≤Œ  ˝ (Device ID, Security Level, Baudrate,Duplication Ch
+             -eck,      
+   9                                                  //AutoLearn,TimeOut)◊¢£∫TimeOut÷ª  ”√”⁄
+  10          #define CMD_GET_PARAM         0x0003    //ªÒ »° …Ë ±∏ ≤Œ  ˝ (Device ID, Security Level, Baudrate,Duplication Ch
+             -eck,
+  11                                                  //AutoLearn£¨TimeOut)◊¢£∫TimeOut÷ª  ”√”⁄ª¨∂Ø≤…ºØ∆˜
+  12          #define CMD_GET_DEVICE_INFO   0x0004    //ªÒ»°…Ë±∏–≈œ¢
+  13          #define CMD_ENTER_IAP_MODE    0x0005    //Ω´…Ë±∏…Ë÷√Œ™ IAP◊¥Ã¨
+  14          #define CMD_GET_IMAGE         0x0020    //¥”≤…ºØ∆˜≤…ºØ÷∏Œ∆ÕºœÒ≤¢±£¥Ê”⁄ ImageBuffer ÷–
+  15          #define CMD_FINGER_DETECT     0x0021    //ºÏ≤‚÷∏Œ∆ ‰»Î◊¥Ã¨
+  16          #define CMD_UP_IMAGE          0x0022    //Ω´±£¥Ê”⁄ ImageBuffer ÷–µƒ÷∏Œ∆ÕºœÒ…œ¥´÷¡ HOST
+  17          #define CMD_DOWN_IMAGE        0x0023    //HOSTœ¬‘ÿ÷∏Œ∆ÕºœÒµΩƒ£øÈµƒ ImageBuffer ÷–
+  18          #define CMD_SLED_CTRL         0x0024    //øÿ÷∆≤…ºØ∆˜±≥π‚µ∆µƒø™/πÿ£®◊¢£∫∞ÎµºÃÂ¥´∏–∆˜≤ª”√¥Àπ¶ƒ‹£©
+  19          #define CMD_STORE_CHAR        0x0040    //Ω´÷∏∂®±‡∫≈ Ram Buffer÷–µƒ Template£¨◊¢≤·µΩ÷∏∂®±‡∫≈µƒø‚÷–
+  20          #define CMD_LOAD_CHAR         0x0041    //∂¡»°ø‚÷–÷∏∂®±‡∫≈÷–µƒ TemplateµΩ÷∏∂®±‡∫≈µƒ Ram Buffer
+  21          #define CMD_UP_CHAR           0x0042    //Ω´±£¥Ê”⁄÷∏∂®±‡∫≈µƒ Ram Buffer ÷–µƒ Template …œ¥´÷¡ HOST
+  22          #define CMD_DOWN_CHAR         0x0043    //¥” HOSTœ¬‘ÿ TemplateµΩƒ£øÈ÷∏∂®±‡∫≈µƒ Ram Buffer ÷–
+  23          #define CMD_DEL_CHAR          0x0044    //…æ≥˝÷∏∂®±‡∫≈∑∂Œßƒ⁄µƒ Template °£
+  24          #define CMD_GET_EMPTY_ID      0x0045    //ªÒ»°÷∏∂®∑∂Œßƒ⁄ø…◊¢≤·µƒ£®√ª”–◊¢≤·µƒ£©µ⁄“ª∏ˆƒ£∞Â±‡∫≈°£
+  25          #define CMD_GET_STATUS        0x0046    //ªÒ»°÷∏∂®±‡∫≈µƒƒ£∞Â◊¢≤·◊¥Ã¨°£
+  26          #define CMD_GET_BROKEN_ID     0x0047    //ºÏ≤È÷∏∂®±‡∫≈∑∂Œßƒ⁄µƒÀ˘”–÷∏Œ∆ƒ£∞Â «∑Ò¥Ê‘⁄ªµÀµƒ«Èøˆ
+  27          #define CMD_GET_ENROLL_COUNT  0x0048    //ªÒ»°÷∏∂®±‡∫≈∑∂Œßƒ⁄“—◊¢≤·µƒƒ£∞Â∏ˆ ˝°£
+  28          #define CMD_GENERATE          0x0060    //Ω´ ImageBuffer ÷–µƒ÷∏Œ∆ÕºœÒ…˙≥…ƒ£∞Â ˝æ›£±£¥Ê”⁄÷∏∂®±‡∫≈µ? Ram Buffer ÷
+             -–°£
+  29          #define CMD_MERGE             0x0061    //Ω´±£¥Ê”⁄ Ram Buffer ÷–µƒ¡ΩªÚ»˝∏ˆƒ£∞Â ˝æ›»⁄∫œ≥…“ª∏ˆƒ£∞Â ˝æ›
+  30          
+  31          #define CMD_MATCH             0x0062    //÷∏∂® Ram Buffer ÷–µƒ¡Ω∏ˆ÷∏Œ∆ƒ£∞Â÷Æº‰Ω¯–– 1:1 ±»∂‘
+  32          #define CMD_SEARCH            0x0063    //÷∏∂® Ram Buffer ÷–µƒƒ£∞Â”Î÷∏Œ∆ø‚÷–÷∏∂®
+  33                                                  //∂®±‡∫≈∑∂Œßƒ⁄µƒÀ˘”–ƒ£∞Â÷Æº‰Ω¯–– 1:N ±»∂‘
+  34          #define CMD_VERIFY            0x0064    //÷∏∂® Ram Buffer ÷–µƒ÷Œ∆ƒ£∞Â”Î÷∏Œ∆ø‚÷–÷∏∂®±‡∫≈µƒ÷∏Œ∆ƒ£∞Â÷Æº‰Ω¯–? 1:1±»∂
+             -‘
+  35          #define CMD_SET_MODULE_SN     0x0008    //‘⁄…Ë±∏÷–…Ë÷√ƒ£øÈ–Ú¡–∫≈–≈œ¢£®Module SN£©
+  36          #define CMD_GET_MODULE_SN     0x0009    //ªÒ»°±æ…Ë±∏µƒƒ£øÈ–Ú¡–∫£ Module SN£©
+  37          #define CMD_FP_CANCEL         0x0025    //»°œ˚÷∏Œ∆≤…ºØ≤Ÿ◊˜£®÷ª  ”√”⁄¥¯ TimeOut ≤Œ ˝µƒª¨∂Ø¥´∏–∆˜£©
+  38          #define CMD_GET_ENROLLED_ID_LIST  0x0049 //ªÒ»°“—◊¢≤· User ID ¡–±Ì
+  39          #define CMD_ENTER_STANDY_STATE    0x000C // πƒ£øÈΩ¯»Î–›√ﬂ◊¥Ã°◊¢£∫”––©ƒ£øÈ≤ª÷ß≥÷›√ﬂπ¶ƒ‹£¨À‰»ªƒ£øÈœÏ”¶∏√÷∏¡Ó∑
+             -µªÿ≥…π?
+  40          
+  41          
+  42          #define FPM_SID 0x01
+  43          #define FPM_DID 0x02
+  44          //extern uint8_t system_IC_busy_Flag;
+  45          
+  46          void FPcmd_Init(void)
+  47          {
+C51 COMPILER V9.60.0.0   FINGERPRINT                                                       04/25/2023 17:24:16 PAGE 2   
+
+  48   1        UART2_Mgr.TxPoint = 0;
+  49   1        UART2_Mgr.TxLength = 0;
+  50   1      }
+  51          
+  52          
+  53          void FPM_ResetRX(void)
+  54          {
+  55   1        UART2_Mgr.RX_DataPoint = 0x00;
+  56   1        UART2_Mgr.Status = Idle;
+  57   1        //system_IC_busy_Flag = 1;
+  58   1      }
+  59          
+  60          
+  61          void FPMcmd_Excute(void)
+  62          {
+  63   1        uint16_t i;
+  64   1        uint16_t CmdLenth,CKS,TempCKS;
+  65   1        
+  66   1        if ( UART2_Mgr.Status != GotNewCmd ){
+  67   2          return;
+  68   2        }
+  69   1        CmdLenth = (UART2_Mgr.RX_Buffer[7]*256) + UART2_Mgr.RX_Buffer[8] + 9;   
+  70   1        
+  71   1        if (CmdLenth >= 50) {
+  72   2              UART2_Mgr.RX_DataPoint = 0x00;
+  73   2              UART2_Mgr.Status = Idle; //¥¶¿Ìƒ£ Ω
+  74   2              return;
+  75   2          }
+  76   1        
+  77   1        for (i=0;i<CmdLenth;i++)
+  78   1        {
+  79   2          FpmAckMgr.Buff[i] = UART2_Mgr.RX_Buffer[i];   
+  80   2        }
+  81   1        
+  82   1        UART2_Mgr.RX_DataPoint = 0x00;
+  83   1        UART2_Mgr.Status = Idle;
+  84   1        
+  85   1        CKS=0x0000;
+  86   1        for ( i=6;i<(CmdLenth-2);i++ )
+  87   1        {
+  88   2          CKS = CKS+FpmAckMgr.Buff[i];  
+  89   2        }
+  90   1      
+  91   1        TempCKS = (FpmAckMgr.Buff[CmdLenth-2]*256)+FpmAckMgr.Buff[CmdLenth-1];
+  92   1      
+  93   1        DEBUG_MARK;
+  94   1        
+  95   1        if ( CKS!=TempCKS )
+  96   1        {
+  97   2          DEBUG_MARK;
+  98   2          FpmAckMgr.Status = GotACK;  
+  99   2          FpmAckMgr.ErrorCode = Error_CheckSum;
+ 100   2          return;   //if check sum is failed, ignore this data strin
+ 101   2        }
+ 102   1        
+ 103   1        if (FpmAckMgr.Buff[6]==0x07)
+ 104   1        {
+ 105   2          FpmAckMgr.Status = GotACK;
+ 106   2          //if(system_IC_busy_Flag == 1)system_IC_busy_Flag =0;   
+ 107   2          //FpmAckMgr.Status = GotACK;
+ 108   2        //  FpmAckMgr.Status = 0x01;
+ 109   2          FpmAckMgr.ErrorCode = FpmAckMgr.Buff[9];
+C51 COMPILER V9.60.0.0   FINGERPRINT                                                       04/25/2023 17:24:16 PAGE 3   
+
+ 110   2          FpmAckMgr.Para1 = FpmAckMgr.Buff[10]*256 + FpmAckMgr.Buff[11];
+ 111   2          FpmAckMgr.Para2 = FpmAckMgr.Buff[12]*256 + FpmAckMgr.Buff[13];
+ 112   2        }
+ 113   1        else
+ 114   1        {
+ 115   2          FpmAckMgr.Status = GotACK;  
+ 116   2          FpmAckMgr.ErrorCode = Error_Fail;   //data package fail
+ 117   2          DEBUG_MARK;
+ 118   2        }
+ 119   1      }
+ 120          
+ 121          void FPM_SendGetImageCmd(void)
+ 122          {
+ 123   1        uint8_t buff[12]={0xEF,0x01,0xFF,0xFF,0xFF,0xFF,0x01,0x00,0x03,0x01,0x00,0x05};
+ 124   1      
+ 125   1        //UART2_Write_TxBUFFER(&buff[0],12);
+ 126   1        Uart2SendStr(buff,12);
+ 127   1      
+ 128   1        FPM_ResetRX();
+ 129   1      }
+ 130          
+ 131          
+ 132          void FPM_SendGetEnrollImageCmd(void)
+ 133          {
+ 134   1        uint8_t buff[12]={0xEF,0x01,0xFF,0xFF,0xFF,0xFF,0x01,0x00,0x03,0x29,0x00,0x2D};
+ 135   1      
+ 136   1        //UART2_Write_TxBUFFER(&buff[0],12);
+ 137   1        Uart2SendStr(buff,12);
+ 138   1        
+ 139   1        FPM_ResetRX();
+ 140   1      }
+ 141          
+ 142          
+ 143          void FPM_SendGenCharCmd(uint8_t BufferID)
+ 144          {
+ 145   1        uint8_t i;
+ 146   1        uint16_t CKS;
+ 147   1      
+ 148   1        uint8_t buff[13]={0xEF,0x01,0xFF,0xFF,0xFF,0xFF,0x01,0x00,0x04,0x02,0x00,0x00,0x05};
+ 149   1      
+ 150   1        buff[10]=BufferID;
+ 151   1      
+ 152   1        CKS=0x0000;
+ 153   1        for (i=6;i<11;i++)
+ 154   1        {
+ 155   2          CKS+=buff[i];
+ 156   2        }
+ 157   1        buff[11]=CKS>>8;
+ 158   1        buff[12]=CKS;
+ 159   1      
+ 160   1        //UART2_Write_TxBUFFER(&buff[0],13);
+ 161   1        Uart2SendStr(buff,13);
+ 162   1      
+ 163   1        FPM_ResetRX();
+ 164   1      }
+ 165          
+ 166          void FPM_SendRegModelCmd(void)
+ 167          {
+ 168   1      
+ 169   1      
+ 170   1        uint8_t buff[12]={0xEF,0x01,0xFF,0xFF,0xFF,0xFF,0x01,0x00,0x03,0x05,0x00,0x09};
+ 171   1      
+C51 COMPILER V9.60.0.0   FINGERPRINT                                                       04/25/2023 17:24:16 PAGE 4   
+
+ 172   1      
+ 173   1        //UART2_Write_TxBUFFER(&buff[0],12);
+ 174   1        Uart2SendStr(buff,12);
+ 175   1        
+ 176   1        FPM_ResetRX();
+ 177   1      
+ 178   1      }
+ 179          
+ 180          void FPM_SendStoreCharCmd(uint8_t BufferID,uint16_t UserID)
+ 181          {
+ 182   1        uint8_t i;
+ 183   1        uint16_t CKS;
+ 184   1      
+ 185   1        uint8_t buff[15]={0xEF,0x01,0xFF,0xFF,0xFF,0xFF,0x01,0x00,0x06,0x06,0x00,0x00,0x00,0x00,0x00};
+ 186   1      
+ 187   1        buff[10]=BufferID;
+ 188   1        
+ 189   1        buff[11] = UserID >> 8;
+ 190   1        buff[12] = UserID;
+ 191   1        
+ 192   1      
+ 193   1        CKS=0x0000;
+ 194   1        for (i=6;i<13;i++)
+ 195   1        {
+ 196   2          CKS+=buff[i];
+ 197   2        }
+ 198   1        buff[13]=CKS>>8;
+ 199   1        buff[14]=CKS;
+ 200   1      
+ 201   1      
+ 202   1        //UART2_Write_TxBUFFER(&buff[0],15);
+ 203   1        Uart2SendStr(buff,15);
+ 204   1      
+ 205   1        FPM_ResetRX();
+ 206   1      
+ 207   1      }
+ 208          
+ 209          void FPM_SendSearchCmd(uint8_t BufferID,uint16_t StartPage,uint16_t PageNum)
+ 210          {
+ 211   1        uint8_t i;
+ 212   1        uint16_t CKS;
+ 213   1      
+ 214   1        uint8_t buff[17]={0xEF,0x01,0xFF,0xFF,0xFF,0xFF,0x01,0x00,0x08,0x04,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+ 215   1      
+ 216   1        buff[10]=BufferID;
+ 217   1        
+ 218   1        buff[11] = StartPage >> 8;
+ 219   1        buff[12] = StartPage;
+ 220   1        
+ 221   1        buff[13] = PageNum >> 8;
+ 222   1        buff[14] = PageNum;
+ 223   1      
+ 224   1        CKS=0x0000;
+ 225   1        for (i=6;i<15;i++)
+ 226   1        {
+ 227   2          CKS+=buff[i];
+ 228   2        }
+ 229   1        buff[15]=CKS>>8;
+ 230   1        buff[16]=CKS;
+ 231   1      
+ 232   1        //UART2_Write_TxBUFFER(&buff[0],17);
+ 233   1        Uart2SendStr(buff,17);
+C51 COMPILER V9.60.0.0   FINGERPRINT                                                       04/25/2023 17:24:16 PAGE 5   
+
+ 234   1      
+ 235   1        FPM_ResetRX();
+ 236   1      }
+ 237          
+ 238          void FPM_DeleteCharCmd(uint16_t StartPageID,uint16_t CharNum)
+ 239          {
+ 240   1        uint8_t i;
+ 241   1        uint16_t CKS;
+ 242   1      
+ 243   1        uint8_t buff[16]={0xEF,0x01,0xFF,0xFF,0xFF,0xFF,0x01,0x00,0x07,0x0C,0x00,0x00,0x00,0x00,0x00,0x00};
+ 244   1      
+ 245   1        buff[10] = StartPageID >> 8;
+ 246   1        buff[11] = StartPageID;
+ 247   1        
+ 248   1        buff[12] = CharNum >> 8;
+ 249   1        buff[13] = CharNum;
+ 250   1      
+ 251   1        CKS=0x0000;
+ 252   1        for (i=6;i<14;i++)
+ 253   1        {
+ 254   2          CKS+=buff[i];
+ 255   2        }
+ 256   1        buff[14]=CKS>>8;
+ 257   1        buff[15]=CKS;
+ 258   1      
+ 259   1        //UART2_Write_TxBUFFER(&buff[0],16);
+ 260   1        Uart2SendStr(buff,16);
+ 261   1      
+ 262   1        FPM_ResetRX();
+ 263   1      
+ 264   1      }
+ 265          void FPM_DeleteAllCharCmd(void)
+ 266          {
+ 267   1      
+ 268   1        uint8_t buff[12]={0xEF,0x01,0xFF,0xFF,0xFF,0xFF,0x01,0x00,0x03,0x0D,0x00,0x11};
+ 269   1      
+ 270   1        //UART2_Write_TxBUFFER(&buff[0],12);
+ 271   1        Uart2SendStr(buff,12);
+ 272   1      
+ 273   1        FPM_ResetRX();
+ 274   1      
+ 275   1      }
+ 276          
+ 277          
+ 278          void FPM_SendGetSerialNumberCmd(void)
+ 279          {
+ 280   1      
+ 281   1        uint8_t buff[13]={0xEF,0x01,0xFF,0xFF,0xFF,0xFF,0x01,0x00,0x04,0x34,0x00,0x00,0x39};
+ 282   1      
+ 283   1        //UART2_Write_TxBUFFER(&buff[0],13);
+ 284   1        Uart2SendStr(buff,13);
+ 285   1      
+ 286   1        FPM_ResetRX();
+ 287   1      
+ 288   1      }
+ 289          
+ 290          void FPM_GetValidTempleteNumCmd(void)
+ 291          {
+ 292   1      
+ 293   1        uint8_t buff[12]={0xEF,0x01,0xFF,0xFF,0xFF,0xFF,0x01,0x00,0x03,0x1D,0x00,0x21};
+ 294   1      
+ 295   1        //UART2_Write_TxBUFFER(&buff[0],12);
+C51 COMPILER V9.60.0.0   FINGERPRINT                                                       04/25/2023 17:24:16 PAGE 6   
+
+ 296   1        Uart2SendStr(buff,12);
+ 297   1      
+ 298   1        FPM_ResetRX();
+ 299   1      
+ 300   1      }
+ 301          
+ 302          void FPM_SendReadIndexTableCmd(void)
+ 303          {
+ 304   1        uint8_t i;
+ 305   1        uint16_t CKS;
+ 306   1      
+ 307   1      
+ 308   1        uint8_t buff[13]={0xEF,0x01,0xFF,0xFF,0xFF,0xFF,0x01,0x00,0x04,0x1F,0x00,0x00,0x39};
+ 309   1        CKS=0x0000;
+ 310   1        for (i=6;i<11;i++)
+ 311   1        {
+ 312   2          CKS+=buff[i];
+ 313   2        }
+ 314   1        buff[11]=CKS>>8;
+ 315   1        buff[12]=CKS;
+ 316   1      
+ 317   1        //UART2_Write_TxBUFFER(&buff[0],13);
+ 318   1        Uart2SendStr(buff,13);
+ 319   1      
+ 320   1        FPM_ResetRX();
+ 321   1      
+ 322   1      }
+ 323          
+ 324          void FPM_SendAutoRegisterCmd(uint16_t UserID)
+ 325          {
+ 326   1        uint8_t i;
+ 327   1        uint16_t CKS;
+ 328   1      
+ 329   1        uint8_t buff[17]={0xEF,0x01,0xFF,0xFF,0xFF,0xFF,0x01,0x00,0x08,0x31,0x00,0x01,0x02,0x00,0xCF,0x00,0x39};
+ 330   1      
+ 331   1        buff[10]=UserID>>8;
+ 332   1        
+ 333   1        buff[11]=UserID;
+ 334   1      
+ 335   1        CKS=0x0000;
+ 336   1        for (i=6;i<15;i++)
+ 337   1        {
+ 338   2          CKS+=buff[i];
+ 339   2        }
+ 340   1        buff[15]=CKS>>8;
+ 341   1        buff[16]=CKS;
+ 342   1        //UART2_Write_TxBUFFER(&buff[0],17);
+ 343   1        Uart2SendStr(buff,17);
+ 344   1      
+ 345   1        FPM_ResetRX();
+ 346   1      }
+ 347          
+ 348          void FPM_SetBreathingLED(uint8_t mode,uint8_t startcolor,uint8_t endcolor,uint8_t looptimes)
+ 349          {
+ 350   1        uint8_t i;
+ 351   1        uint16_t CKS;
+ 352   1      
+ 353   1        uint8_t buff[16]={0xEF,0x01,0xFF,0xFF,0xFF,0xFF,0x01,0x00,0x07,0x3C,0x00,0x00,0x00,0x00,0x00,0x39};
+ 354   1      
+ 355   1        buff[10]=mode;
+ 356   1        buff[11]=startcolor;
+ 357   1        buff[12]=endcolor;
+C51 COMPILER V9.60.0.0   FINGERPRINT                                                       04/25/2023 17:24:16 PAGE 7   
+
+ 358   1        buff[13]=looptimes;
+ 359   1      
+ 360   1        CKS=0x0000;
+ 361   1        for (i=6;i<14;i++)
+ 362   1        {
+ 363   2          CKS+=buff[i];
+ 364   2        }
+ 365   1        buff[14]=CKS>>8;
+ 366   1        buff[15]=CKS;
+ 367   1        //UART2_Write_TxBUFFER(&buff[0],16);
+ 368   1        Uart2SendStr(buff,16);
+ 369   1      
+ 370   1        FPM_ResetRX();
+ 371   1      }
+ 372          
+ 373          void FPM_SetSecurityLevel(uint8_t Level)      //from 1 ~5
+ 374          {
+ 375   1        uint8_t i;
+ 376   1        uint16_t CKS;
+ 377   1      
+ 378   1        uint8_t buff[14]={0xEF,0x01,0xFF,0xFF,0xFF,0xFF,0x01,0x00,0x05,0x0E,0x05,0x00,0x00,0x39};
+ 379   1      
+ 380   1        buff[11]=Level;
+ 381   1      
+ 382   1        CKS=0x0000;
+ 383   1        for (i=6;i<12;i++)
+ 384   1        {
+ 385   2          CKS+=buff[i];
+ 386   2        }
+ 387   1        buff[12]=CKS>>8;
+ 388   1        buff[13]=CKS;
+ 389   1      
+ 390   1        //UART2_Write_TxBUFFER(&buff[0],14);
+ 391   1        Uart2SendStr(buff,14);
+ 392   1      
+ 393   1        FPM_ResetRX();
+ 394   1      }
+ 395          
+ 396          void FPM_TurnOffAntiFakeFp(void)      //from 1 ~5
+ 397          {
+ 398   1        uint8_t i;
+ 399   1        uint16_t CKS;
+ 400   1      
+ 401   1        uint8_t buff[14]={0xEF,0x01,0xFF,0xFF,0xFF,0xFF,0x01,0x00,0x05,0x0E,0x08,0x00,0x00,0x39};
+ 402   1      
+ 403   1        buff[11]=0x05;
+ 404   1        //Bit0Ôº? 0-ÂÖ≥Èó≠ÊäóÊÆãÁïôÂäüËÉΩÔºå1-ÊâìÂºÄÊäóÊÆãÁïôÂäüËÉΩÔºàÈªòËÆ§Áä∂Ê?ÅÔºâ„Ä?
+ 405   1        //Bit1Ôº? 0-ÂÖ≥Èó≠ÊåáÁ∫πËÜúËÆ§ÂÅáÁÆóÊ≥ïÔºå1-ÊâìÂºÄÊåáÁ∫πËÜúËÆ§ÂÅáÁÆóÊ≥ïÔºàÈªòËÆ§Áä∂Ê?ÅÔºâ„Ä?
+ 406   1        //Bit2Ôº? 0-ÂÖ≥Èó≠Â≠¶‰π†ÂäüËÉΩÔº?1-ÊâìÂºÄÂ≠¶‰π†ÂäüËÉΩÔºàÈªòËÆ§Áä∂ÊÄÅÔºâ„Ä?
+ 407   1        //Bit3~ Bit7Ôºö‰øùÁïôÔºàÈªòËÆ§‰∏? 0Ôºâ„??
+ 408   1      
+ 409   1        CKS=0x0000;
+ 410   1        for (i=6;i<12;i++)
+ 411   1        {
+ 412   2          CKS+=buff[i];
+ 413   2        }
+ 414   1        buff[12]=CKS>>8;
+ 415   1        buff[13]=CKS;
+ 416   1      
+ 417   1        //UART2_Write_TxBUFFER(&buff[0],14);
+ 418   1        Uart2SendStr(buff,14);
+ 419   1      
+C51 COMPILER V9.60.0.0   FINGERPRINT                                                       04/25/2023 17:24:16 PAGE 8   
+
+ 420   1        FPM_ResetRX();
+ 421   1      }
+ 422          
+ 423          
+ 424          void FPM_SendSleepCmd(void)
+ 425          {
+ 426   1      
+ 427   1            uint8_t buff[12]={0xEF,0x01,0xFF,0xFF,0xFF,0xFF,0x01,0x00,0x03,0x33,0x00,0x37};
+ 428   1      
+ 429   1            Uart2SendStr(buff,12);
+ 430   1            //UART2_Write_TxBUFFER(&buff[0],12);
+ 431   1      
+ 432   1          FPM_ResetRX();
+ 433   1      
+ 434   1      }
+ 435          
+ 436          void FPM_SendGetChipSerialNumberCmd(void)
+ 437          {
+ 438   1      
+ 439   1            uint8_t buff[13]={0xEF,0x01,0xFF,0xFF,0xFF,0xFF,0x01,0x00,0x04,0x34,0x00,0x00,0x39};
+ 440   1      
+ 441   1            Uart2SendStr(buff,13);
+ 442   1            //UART2_Write_TxBUFFER(&buff[0],13);
+ 443   1      
+ 444   1          FPM_ResetRX();
+ 445   1      }
+ 446          
+ 447          
+ 448          
+ 449          
+ 450          void FPM_Mgr_Task(void)
+ 451          {
+ 452   1        FPMcmd_Excute();
+ 453   1      }
+ 454          
+ 455          
+ 456          
+ 457          
+ 458          
+ 459          
+ 460          
+ 461          
+ 462          
+ 463          
+ 464          
+ 465          
+ 466          
+ 467          
+ 468          
+ 469          
+ 470          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1343    ----
+   CONSTANT SIZE    =    233    ----
+   XDATA SIZE       =   ----     255
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+C51 COMPILER V9.60.0.0   FINGERPRINT                                                       04/25/2023 17:24:16 PAGE 9   
+
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,223 @@
+C51 COMPILER V9.60.0.0   FONT_MENU                                                         04/25/2023 17:24:19 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE FONT_MENU
+OBJECT MODULE PLACED IN .\Objects\Font_Menu.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Softwares\Basic\Font_Menu.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE INCDIR(.
+                    -\Drivers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Protocol;.\
+                    -Softwares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic) DEBUG PRINT(.\Listings\Font_Menu.lst) TABS(2) OBJECT(.\
+                    -Objects\Font_Menu.obj)
+
+line level    source
+
+   1          #include "Font_Menu.h"
+   2          #include "Project.h"
+   3          #include "Font.h"
+   4          
+   5          #ifdef Function_ScreenDisplay
+   6          code uint8_t FpUserStr[]={HZ_zhi,HZ_wen,HZ_yong,HZ_hu,HZ_end};
+   7          //code uint8_t FpUserStrEn[]={"FP user"};
+   8          
+   9          code uint8_t CardUserStr[]={HZ_ka,HZ_pian,HZ_yong,HZ_hu,HZ_end};
+  10          //code uint8_t CardUserStrEn[]={"CD user"};
+  11          
+  12          code uint8_t PasscodeUserStr[]={HZ_mi,HZ_ma,HZ_yong,HZ_hu,HZ_end};
+  13          //code uint8_t PasscodeUserStrEn[]={"PW user"};
+  14          
+  15          code uint8_t IdentifyFailStr[]={HZ_yan,HZ_zheng,HZ_shibai,HZ_bai,HZ_end};
+  16          //code uint8_t IdentifyFailStrEn[]={"Identify Fail"};
+  17          
+  18          //code uint8_t RemoteUnlockStr[]={HZ_yuanchu,HZ_chengxu,HZ_kai,HZ_suomen,HZ_end};
+  19          //code uint8_t RemoteUnlockStrEn[]={"Remote"};
+  20          
+  21          code  uint8_t FPHardwareMismatchStr[]={HZ_zhi,HZ_wen,HZ_ying,HZ_jianshu,HZ_bu,HZ_pi,HZ_pei,HZ_end};
+  22          code  uint8_t PLSRestoreFactoryStr[]={HZ_qing,HZ_hui,HZ_fu,HZ_chu,HZ_chang,HZ_end};
+  23          
+  24          //code uint8_t TemporaryPasswordStr[]={HZ_lin,HZ_shi,HZ_mi,HZ_ma,HZ_end};
+  25          //code uint8_t TemporaryPasswordStrEn[]={"Temp PW"};
+  26          
+  27          code uint8_t UserIDStr[]={HZ_bian,HZ_hao,ZF_maohao,HZ_end};
+  28          //code uint8_t UserIDStrEn[]={"ID:"};
+  29          
+  30          //code uint8_t Yes[]={HZ_kongge,HZ_shifou,HZ_kongge,HZ_end};
+  31          //code uint8_t YesEn[]={"YES"};
+  32          
+  33          //code uint8_t No[]={HZ_kongge,HZ_fou,HZ_kongge,HZ_end};
+  34          //code uint8_t NoEn[]={"NO"};
+  35          
+  36          code uint8_t PutFingerStr[]={HZ_kongge,HZ_qing,HZ_fang,HZ_zhiwei,HZ_shou,HZ_zhi,HZ_end}; 
+  37          //  code uint8_t PutFingerStrEn[]={"<Put Finger>"};
+  38          
+  39          code uint8_t InputPasscodeStr[]={HZ_qing,HZ_shu,HZ_ru,HZ_mi,HZ_ma,HZ_end};
+  40          //code uint8_t InputPasscodeStrEn[]={"PLS input PW"};
+  41          code uint8_t ConfirmPasscode[]={HZ_qing,HZ_que,HZ_ding,HZ_mi,HZ_ma,HZ_end};
+  42          //code uint8_t ConfirmPasscodeEn[]={"Confirm PW"};
+  43          
+  44          code uint8_t OperationSuccessStr[]={HZ_cao,HZ_zuo,HZ_cheng,HZ_gong,HZ_end}; 
+  45          //code uint8_t OperationSuccessStrEn[]={"Operation Success"};
+  46          code uint8_t OperationFailStr[]={HZ_cao,HZ_zuo,HZ_shibai,HZ_bai,HZ_end}; 
+  47          //code uint8_t OperationFailStrEn[]={"Operation Fail"};
+  48          code uint8_t PasscodeisBeUsedStr[]={HZ_chong,HZ_fu,HZ_mi,HZ_ma,HZ_end}; 
+  49          
+  50          code uint8_t InputUserIDStr[]={HZ_qing,HZ_shu,HZ_ru,HZ_bian,HZ_hao,HZ_end};
+  51          //code uint8_t InputUserIDStrEn[]={"PLS input ID"};
+  52          
+C51 COMPILER V9.60.0.0   FONT_MENU                                                         04/25/2023 17:24:19 PAGE 2   
+
+  53          code  uint8_t PleaseSwingCardStr[]={HZ_qing,HZ_shua,HZ_ka,HZ_end};//«ÎÀ¢ø®
+  54          //code  uint8_t PleaseSwingCardStrEn[]={"PLS swing card"};
+  55           
+  56          code uint8_t CardCIDisBeUsedStr[]={HZ_chong,HZ_fu,HZ_ka,HZ_hao,HZ_end};
+  57          //code uint8_t CardCIDisBeUsedStrEn[]={"Repeated card"}; 
+  58           
+  59          code uint8_t AddMasterStr[]={HZ_kongge,HZ_qing,HZ_tian,HZ_jia,HZ_guan,HZ_li,HZ_yuan,HZ_end}; 
+  60          //code uint8_t AddMasterStrEn[]={"Add Master First"}; 
+  61          
+  62          code uint8_t UsersFullStr[]={HZ_yong,HZ_hu,HZ_yi,HZ_man,HZ_end}; 
+  63          //code uint8_t UsersFullStrEn[]={"Users Are Full"};
+  64          
+  65          code uint8_t ConfirmRestoreFactoryDefaultStr1[]={HZ_anya,ZF_jinghao,HZ_que,HZ_ding,HZ_hui,HZ_fu,HZ_chu,HZ_
+             -chang,HZ_end};
+  66          code uint8_t ConfirmRestoreFactoryDefaultStr2[]={HZ_anya,ZF_xinghao,HZ_fan,HZ_huijia,HZ_end};
+  67          //code uint8_t PressConfirm[]={"Press # to cfm"}; //»∑»œ…æ≥˝
+  68          //code uint8_t PressReturn[]={"Press * to RTN"};  //∞¥*∑µªÿ
+  69          code uint8_t ConfirmDEL[]={HZ_anya,ZF_jinghao,HZ_que,HZ_ding,HZ_shan,HZ_chufa,HZ_end};
+  70          code uint8_t CancelDEL[]={HZ_anya,ZF_xinghao,HZ_fan,HZ_huijia,HZ_end};
+  71          
+  72          
+  73          
+  74          code uint8_t UnlockLogStr[]={HZ_kai,HZ_suomen,HZ_ji,HZ_lu,ZF_hengan,HZ_end};
+  75          //const uint8_t UnlockLogStrEn[]={"Unlock-"}; 
+  76          code uint8_t AddUserStr[]={HZ_tian,HZ_jia,HZ_yong,HZ_hu,ZF_hengan,HZ_end};
+  77          //const uint8_t AddUserStrEn[]={"Add User-"};
+  78          code uint8_t DeleteUserStr[]={HZ_shan,HZ_chufa,HZ_yong,HZ_hu,ZF_hengan,HZ_end};
+  79          //const uint8_t DeleteUserStrEn[]={"Del. User-"};
+  80          code uint8_t LotStr[]={HZ_piliang,HZ_liang,HZ_end};
+  81          //const uint8_t LotStrEn[]={"Lot"};
+  82          code uint8_t TemporaryPasswordStr[]={HZ_lin,HZ_shi,HZ_mi,HZ_ma,HZ_end};
+  83          
+  84          code uint8_t MainMenuStr[][10]= 
+  85          { 
+  86            {ZF_1,ZF_xiaoshudian,HZ_zhi,HZ_wen,HZ_yong,HZ_hu,HZ_guan,HZ_li,HZ_end},           //÷∏Œ∆”√ªßπ‹¿Ì    
+  87            {ZF_2,ZF_xiaoshudian,HZ_mi,HZ_ma,HZ_yong,HZ_hu,HZ_guan,HZ_li,HZ_end},           //√‹¬Î”√ªßπ‹¿Ì    
+  88            {ZF_3,ZF_xiaoshudian,HZ_ka,HZ_pian,HZ_yong,HZ_hu,HZ_guan,HZ_li,HZ_end},           //ø®∆¨”√ªßπ‹¿Ì 
+  89            {ZF_4,ZF_xiaoshudian,HZ_xi,HZ_tong,HZ_she,HZ_zhiwei,HZ_end},      //œµÕ≥…Ë∂®  
+  90            {ZF_5,ZF_xiaoshudian,HZ_ji,HZ_lu,HZ_cha,HZ_xun,HZ_end},       //º«¬º≤È—Ø
+  91            //{HZ_kongge,HZ_kongge,HZ_kongge,HZ_lian,HZ_wang,HZ_kongge,HZ_kongge,HZ_kongge,HZ_end}    //¡™Õ¯        
+  92          };  
+  93          //code uint8_t MainMenuStrEn[][16]= 
+  94          //{ 
+  95          //  {"1.FP user"},        //÷∏Œ∆”√ªßπ‹¿Ì    
+  96          //  {"2.PW user"},        //√‹¬Î”√ªßπ‹¿Ì    
+  97          //  {"3.Card user"},        //ø®∆¨”√ªßπ‹¿Ì 
+  98          //  {"4.System CFG"},       //œµÕ≥…Ë∂®  
+  99          //  //{"   Event log   "},        //ø™À¯º«¬º  
+ 100          //  //{"    NetWork"}         //¡™Õ¯≈‰÷√
+ 101          //  
+ 102          //};
+ 103          
+ 104          
+ 105          code uint8_t FpMenuStr[][11]= 
+ 106          { 
+ 107            {ZF_1,ZF_xiaoshudian,HZ_tian,HZ_jia,HZ_guan,HZ_li,HZ_yuan,HZ_zhi,HZ_wen,HZ_end},    //ÃÌº”π‹¿Ì‘±÷∏Œ∆
+ 108            {ZF_2,ZF_xiaoshudian,HZ_tian,HZ_jia,HZ_yong,HZ_hu,HZ_zhi,HZ_wen,HZ_end},      //ÃÌº””√ªß÷∏Œ∆      
+ 109            //{HZ_kongge,HZ_xie,HZ_po,HZ_yong,HZ_hu,HZ_zhi,HZ_wen,HZ_kongge,HZ_end}       //–≤∆»”√ªß÷∏Œ∆π‹¿Ì
+ 110            {ZF_3,ZF_xiaoshudian,HZ_shan,HZ_chufa,HZ_suo,HZ_you,HZ_yong,HZ_hu,HZ_zhi,HZ_wen,HZ_end}         //…æ≥˝À˘”–÷∏Œ
+             -∆
+ 111          };  
+ 112          //code uint8_t FpMenuStrEn[][12]= 
+C51 COMPILER V9.60.0.0   FONT_MENU                                                         04/25/2023 17:24:19 PAGE 3   
+
+ 113          //{ 
+ 114          //  {"1.FP Admin."},          //π‹¿Ì‘±÷∏Œ∆π‹¿Ì
+ 115          //  {"2.FP User"},        //∆’Õ®”√ªß÷∏Œ∆π‹¿Ì      
+ 116          //  //{" FP Special"}         //–≤∆»”√ªß÷∏Œ∆π‹¿Ì  
+ 117          //  {"3.Del all FP"}        //…æ≥˝À˘”–÷∏Œ∆    
+ 118          //};
+ 119          
+ 120          
+ 121          code uint8_t CardUserMenuStr[][10]= 
+ 122          { 
+ 123            {ZF_1,ZF_xiaoshudian,HZ_tian,HZ_jia,HZ_ka,HZ_pian,HZ_yong,HZ_hu,HZ_end},        //ÃÌº”ø®∆¨”√ªß
+ 124            //{HZ_kongge,HZ_shan,HZ_chufa,HZ_dan,HZ_yier,HZ_yong,HZ_hu,HZ_kongge,HZ_end},         //…æ≥˝“—”–”√ªß           
+ 125            {ZF_2,ZF_xiaoshudian,HZ_shan,HZ_chufa,HZ_suo,HZ_you,HZ_ka,HZ_pian,HZ_end},          //…æ≥˝À˘”–ø®∆¨”√ªß           
+ 126          };  
+ 127          //code uint8_t CardUserMenuStrEn[][16]= 
+ 128          //{ 
+ 129          //  {"1.Add user"},         //ÃÌº”–¬”√ªß
+ 130          //  //{"Delete user  "},          //…æ≥˝“—”–”√ªß           
+ 131          //  {"2.Del all user"},         //…æ≥˝À˘”–”√ªß           
+ 132          //};  
+ 133          
+ 134          code uint8_t PassCodeMenuStr[][11]= 
+ 135          { 
+ 136            {ZF_1,ZF_xiaoshudian,HZ_tian,HZ_jia,HZ_guan,HZ_li,HZ_yuan,HZ_mi,HZ_ma,HZ_end},  //π‹¿Ì‘±√‹¬Î
+ 137            {ZF_2,ZF_xiaoshudian,HZ_tian,HZ_jia,HZ_yong,HZ_hu,HZ_mi,HZ_ma,HZ_end},        //∆’Õ®”√ªß√‹¬Î
+ 138            {ZF_3,ZF_xiaoshudian,HZ_shan,HZ_chufa,HZ_suo,HZ_you,HZ_yong,HZ_hu,HZ_mi,HZ_ma,HZ_end},    //…æ≥˝À˘”–”√ªß    
+ 139          };  
+ 140          //code uint8_t PassCodeMenuStrEn[][16]= 
+ 141          //{ 
+ 142          //  {"1.PW admin."},      //π‹¿Ì‘±√‹¬Î
+ 143          //  {"2.PW user  "},      //∆’Õ®”√ªß√‹¬Î  
+ 144          //  {"3.Del all user"},     //…æ≥˝À˘”–”√ªß    
+ 145          //};  
+ 146          
+ 147          code uint8_t EventLogMenuStr[][9]= 
+ 148          { 
+ 149              {ZF_1,ZF_xiaoshudian,HZ_ji,HZ_lu,HZ_cha,HZ_xun,HZ_end},     //∞¥À≥–Ú≤È—Ø
+ 150              //{ZF_2,ZF_xiaoshudian,HZ_anya,HZ_ri,HZ_qi,HZ_cha,HZ_xun,HZ_end},     //∞¥»’∆⁄≤È—Ø
+ 151              {ZF_2,ZF_xiaoshudian,HZ_shan,HZ_chufa,HZ_ji,HZ_lu,HZ_end}       //…æ≥˝º«¬º
+ 152          };  
+ 153          //code uint8_t EventLogMenuStrEn[][16]= 
+ 154          //{ 
+ 155          //    {"1.Sequence check"},     //∞¥À≥–Ú≤È—Ø
+ 156          //    {"2.Check by date"},      //∞¥»’∆⁄≤È—Ø
+ 157          //    {"3.Delete all log"}        //…æ≥˝º«¬º
+ 158          //};    
+ 159          
+ 160          
+ 161          code uint8_t SytemConfigMenuStr[][9]= 
+ 162          { 
+ 163              {ZF_1,ZF_xiaoshudian,HZ_shi,HZ_jian,HZ_she,HZ_zhiwei,HZ_end},     // ±º‰…Ë÷√
+ 164          //    {ZF_2,ZF_xiaoshudian,HZ_yuyan,HZ_yanyu,HZ_she,HZ_zhiwei,HZ_end},    //”Ô—‘…Ë∂®
+ 165              {ZF_2,ZF_xiaoshudian,HZ_yuyan,HZ_yin,HZ_she,HZ_zhiwei,HZ_end},    //”Ô“Ù…Ë÷√
+ 166              //{HZ_kongge,HZ_nei,HZ_cun,HZ_guan,HZ_li,HZ_kongge,HZ_kongge,HZ_kongge,HZ_end},     //ƒ⁄¥Êπ‹¿Ì
+ 167              {ZF_3,ZF_xiaoshudian,HZ_changchang,HZ_kai,HZ_mo,HZ_si,HZ_she,HZ_zhiwei,HZ_end}, //≥£ø™…Ë÷√
+ 168              {ZF_4,ZF_xiaoshudian,HZ_kai,HZ_suomen,HZ_mo,HZ_si,HZ_she,HZ_zhiwei,HZ_end},     //ø™À¯ƒ£ Ω
+ 169              {ZF_5,ZF_xiaoshudian,HZ_fangzi,HZ_qiao,HZ_bao,HZ_jing,HZ_she,HZ_zhiwei,HZ_end},     //∑¿«À±®æØ…Ë÷√
+ 170              //{HZ_kongge,HZ_xi,HZ_tong,HZ_ban,HZ_ben,HZ_kongge,HZ_kongge,HZ_kongge,HZ_end},     //œµÕ≥∞Ê±æ
+ 171              {ZF_6,ZF_xiaoshudian,HZ_hui,HZ_fu,HZ_chu,HZ_chang,HZ_she,HZ_zhiwei,HZ_end}        //ª÷∏¥≥ˆ≥ß…Ë÷√
+ 172          };  
+ 173          //code uint8_t SytemConfigMenuStrEn[][17]= 
+ 174          //{ 
+C51 COMPILER V9.60.0.0   FONT_MENU                                                         04/25/2023 17:24:19 PAGE 4   
+
+ 175          //    //{"Time setting   "},      // ±º‰…Ë∂®
+ 176          //    {"1.Language"},     //”Ô—‘
+ 177          //    {"2.Volume"},     //“Ù¡øµ˜Ω⁄
+ 178          //    //{"Memory Check   "},      //ƒ⁄¥Êπ‹¿Ì
+ 179          //    {"3.Often open"},     //≥£ø™…Ë÷√
+ 180          //    {"4.Unlock mode"},      //ø™À¯ƒ£ Ω
+ 181          //    {"5.Anti prying"},      //∑¿«À±®æØø™πÿ
+ 182          //    //{"System version "},      //œµÕ≥∞Ê±æ
+ 183          //    {"6.Factory default"}       //ª÷∏¥≥ˆ≥ß…Ë÷√
+ 184          //};  
+ 185          #endif
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =    360    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

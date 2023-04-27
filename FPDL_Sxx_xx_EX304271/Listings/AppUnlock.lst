@@ -1,0 +1,1103 @@
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE APPUNLOCK
+OBJECT MODULE PLACED IN .\Objects\AppUnlock.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Softwares\ModuleLogic\AppUnlock.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE IN
+                    -CDIR(.\Drivers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Proto
+                    -col;.\Softwares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic) DEBUG PRINT(.\Listings\AppUnlock.lst) TABS(2) OBJ
+                    -ECT(.\Objects\AppUnlock.obj)
+
+line level    source
+
+   1          
+   2          #include <string.h>
+   3          #ifdef PLAT_GCC 
+              #include <stdio.h>  
+              #include <stdlib.h>
+              #include <time.h>
+              #include <stdarg.h>
+              #else
+   9          #include "global_variable.h"
+  10          #include "IO.h"
+  11          #include "Motor.h"
+  12          #include "ISR.h"
+  13          #endif
+  14          
+  15          #define C2D(x) (x-0x30)
+  16          #define D2C(x) (x+0x30)
+  17          
+  18          #define true 1
+  19          #define false 0
+  20          //#define NULL 0
+  21          #define s_int  signed int
+  22          #define u_int  unsigned int
+  23          #define s_char signed char
+  24          #define u_char unsigned char
+  25          #define bool   unsigned char
+  26          u_char version[]="sl_generic_v1.0.0.003";
+  27          
+  28          //void MyPrintf(char *format, ...);
+  29          #ifdef PLAT_GCC
+              #define DEBUG_GCC
+              #define DEBUG_MARK usleep(1)
+              #define FIFO_PATH "/lxk/tj/backup/lockpipe"
+              bool  debug_singleline=false;
+              u_int debug_minutes_test = 0;
+              #endif
+  36          
+  37          typedef struct _itime
+  38          {
+  39            u_int  year;
+  40            u_int  month;
+  41            u_int  day;
+  42            u_int  hour;
+  43            u_int  minute;
+  44            
+  45            u_int  yday;  //一年中的第几天[0-365] 
+  46            u_int  dmin;    //一天中的第几分钟[0-1440]
+  47            u_int  aday;    //从2019.1.1算起的第几天
+  48          
+  49            u_int  aday_h;  // aday/6  密码中时间的高4位
+  50            u_int  aday_l;  // aday%6 密码中时间的低3位
+  51            u_int  dminute_l; // aday%6  
+  52          
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 2   
+
+  53            u_int  yday_max;  //该年最多几天[365|366]
+  54          #ifdef DEBUG_GCC
+                /*测试用，模拟不同时间*/
+                u_int  year_test;
+                u_int  month_test;
+                u_int  day_test;
+                u_int  hour_test;
+                u_int  minute_test;  
+              #endif
+  62          }itime;
+  63          
+  64          #define mode_forever (u_char)0      //永久有效
+  65          #define mode_count (u_char)1    //计数模式(999)
+  66          #define mode_temporary (u_char)2    //15分钟有效
+  67          #define mode_period (u_char)3       //时间段(h-h)
+  68          #define mode_limit (u_char)4        //限时到某年月日
+  69          typedef struct _ipwd
+  70          {
+  71            u_char  lockpwd[13];  //开锁密码
+  72            u_int   lockpwd_len;  //开锁密码的长度
+  73            u_int   iscorrect;    //密码是否正确
+  74            u_char  mode;     //mode_count、mode_temporary、  mode_period、mode_limit
+  75            u_int   rand;     //随机数
+  76            u_int   count;      //计数模式的次数
+  77            itime   limit_day;    //限时模式的期限(从2019.1.1开始的天数)
+  78            u_int   period_start;   //时间段模式的开始时间(0-23小时)
+  79            u_int   period_end;   //时间段模式的结束时间(0-23小时)
+  80          
+  81            u_char  userpwd[13];    //用户密码
+  82            u_int   userpwd_len;    //用户密码的长度
+  83            u_int   userpwd_hash[13];  //用户密码hash结果
+  84            u_int   userpwd_hash_len;  //用户密码hash的长度
+  85            u_int   userpwd_iscorrect; //开锁密码中包含的用户密码是否正确
+  86            u_char  isencrypt;
+  87          #ifdef DEBUG_GCC
+                u_char  userpwd_debug[14]; //调试打印使用
+                u_char  lockpwd_debug[13]; //调试打印使用
+                u_char  process_debug[6][14]; //调试打印使用
+              #endif
+  92          }ipwd;
+  93          
+  94          u_int const hash_user[5][100]={ //使用多个数组哈希用户密码，如果使用1个数组对应6-12�
+             -��所有的用户密码，哈希重复的概率会高很多
+  95              //6位用户密码
+  96               {315,420,254,105,513,410,450,425,415,350,
+  97                523,125,210,143,134,201,314,250,102,214,
+  98                451,135,130,435,104,153,401,304,452,234,
+  99                204,421,301,140,132,405,325,520,305,430,
+ 100                352,241,413,253,302,145,120,240,412,532,
+ 101                501,251,324,402,321,345,310,503,231,213,
+ 102                502,351,543,142,354,524,235,534,312,510,
+ 103                203,340,154,514,215,243,542,530,150,512,
+ 104                540,453,230,541,124,504,403,341,521,342,
+ 105                432,431,103,205,423,531,123,245,320,152
+ 106                },
+ 107                //7位用户密码
+ 108                {206,564,653,416,632,140,521,640,520,245,
+ 109                634,164,126,420,603,230,124,102,506,501,
+ 110                512,610,136,530,106,463,513,235,523,154,
+ 111                326,130,320,605,145,426,310,315,461,341,
+ 112                264,524,641,504,150,403,526,405,563,502,
+ 113                253,432,406,421,650,364,561,436,265,134,
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 3   
+
+ 114                430,104,301,435,431,243,625,542,142,156,
+ 115                615,261,160,240,306,624,162,614,654,205,
+ 116                143,630,623,214,541,643,510,165,324,560,
+ 117                152,412,532,213,356,210,645,503,602,251
+ 118                },
+ 119                //8位用户密码
+ 120                {523,547,510,356,175,264,316,214,642,704,
+ 121                207,140,452,352,253,526,453,514,603,367,
+ 122                752,731,307,673,471,326,165,764,106,713,
+ 123                760,450,413,105,243,527,631,475,632,634,
+ 124                732,605,401,423,741,576,126,306,350,162,
+ 125                617,725,160,503,246,257,163,231,201,650,
+ 126                467,645,412,532,342,345,513,156,210,765,
+ 127                107,256,407,403,520,357,670,437,271,312,
+ 128                247,561,235,564,157,754,674,463,723,320,
+ 129                170,215,472,364,740,402,371,567,365,274
+ 130                },
+ 131                //9位用户密码
+ 132                {743,503,631,628,416,286,783,247,672,364,
+ 133                380,612,468,712,162,346,680,857,675,807,
+ 134                237,316,361,142,613,736,158,837,648,351,
+ 135                430,352,734,128,356,543,270,815,420,825,
+ 136                817,718,702,415,841,678,428,624,603,170,
+ 137                521,106,405,873,308,601,701,526,716,750,
+ 138                154,516,846,164,263,617,368,487,413,568,
+ 139                146,876,432,561,786,472,560,417,431,510,
+ 140                745,507,125,806,482,378,847,637,765,706,
+ 141                256,845,476,570,321,326,513,238,746,763
+ 142                },
+ 143                //10-12位用户密码，10位密码时，遇到0则对应的是10； 11位密码时，遇到0则对应
+             -的是10，遇到1则对应的是11； 12位密码时，遇到0则对应的是10，遇到1则对应的是11，遇到2则
+             -对应的是12
+ 144                {174,192,210,957,720,859,178,758,958,105,
+ 145                346,563,419,594,892,581,208,274,791,348,
+ 146                520,371,735,601,951,158,752,207,825,815,
+ 147                860,398,980,703,840,361,628,214,436,248,
+ 148                218,843,571,412,906,159,962,713,201,647,
+ 149                970,230,841,831,894,478,902,385,580,167,
+ 150                190,591,874,659,189,675,764,186,359,365,
+ 151                148,420,940,482,590,384,736,754,871,968,
+ 152                370,945,435,932,410,519,870,392,469,310,
+ 153                694,391,386,314,983,908,376,802,297,913
+ 154                },
+ 155            };
+ 156          
+ 157          u_int const hash_6bit[100]={47915,13054,41259,18369,40178,38207,25638,46817,46083,30419,
+ 158                           50986,10896,36704,10563,18506,28065,50342,21086,19537,30698,
+ 159                           53109,37046,30852,27564,51967,47385,50612,48059,40981,31760,
+ 160                           50162,56901,46805,42069,42970,59167,52317,27980,14682,31780,
+ 161                           52183,53819,56328,14976,19547,57182,16280,37081,32197,36125,
+ 162                           13540,21659,12468,48951,40278,10829,14907,54921,29630,17634,
+ 163                           10298,37018,43259,24157,32765,20453,28015,31684,28345,35018,
+ 164                           48176,52041,47921,40917,54819,14208,25789,34708,42817,14563,
+ 165                           39746,20874,58164,19734,32401,10495,48375,48175,37602,21854,
+ 166                           48397,27564,58192,41362,56024,23704,14650,26048,47309,28619
+ 167          };
+ 168          
+ 169          u_int system_time(u_int *pyear,u_int *pmonth, u_int *pday,u_int *phour,u_int *pminute);
+ 170          
+ 171          bool time_dyear(itime *it);
+ 172          u_int time_yday_max(u_int year);
+ 173          void time_print(itime it,u_char label[]);
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 4   
+
+ 174          u_int time_findyear(u_int year/*2019*/,u_int days/*1-366*/,u_int *pmonth,u_int *pday);
+ 175          bool time_cur(itime *it);
+ 176          bool time_set(itime *it,u_int days,u_int minute);
+ 177          u_int time_adays(itime *it);
+ 178          s_int  time_diff_minute(itime t1,itime t2);
+ 179          s_int  time_diff_day(itime t1,itime t2);
+ 180          void time_format_cur(u_char lockpwd[],u_int len);
+ 181          
+ 182          
+ 183          bool pwd_prepare(ipwd *pwd,u_char userpwd[],u_int userpwdlen,u_char lockpwd[],u_int lockpwd_len);
+ 184          bool pwd_shiftr_d(ipwd *pwd);
+ 185          bool pwd_shiftl_d(ipwd *pwd);
+ 186          bool pwd_userpwd_select_d(ipwd *pwd,u_char userpwd[],u_int userpwdlen);
+ 187          bool pwd_confuse_d(ipwd *pwd);
+ 188          bool pwd_hash_d(ipwd *pwd);
+ 189          bool pwd_cross_d(ipwd *pwd);
+ 190          bool pwd_unpack_rd(ipwd *pwd);
+ 191          bool pwd_unpack(ipwd *pwd,u_char userpwd[],u_int userpwdlen);
+ 192          ipwd *pwd_decrypt(u_char userpwd[],u_int userpwdlen,u_char lockpwd[],u_int lockpwd_len);
+ 193          unsigned int pwd_decrypt_checkmode(u_char userpwd[],u_int userpwdlen,u_char lockpwd[],u_int lockpwd_len);
+ 194          
+ 195          #ifdef PLAT_GCC
+              u_char  getrand();
+              bool pwd_init(ipwd *pwd,u_char mode,u_char userpwd[],u_int userpwdlen);
+              bool pwd_rand(ipwd *pwd);
+              void pwd_snap(ipwd *pwd,u_int index);
+              bool pwd_pack(ipwd *pwd);
+              void pwd_print(ipwd pwd);
+              void pwd_shiftr(ipwd *pwd);
+              void pwd_shiftl(ipwd *pwd);
+              void pwd_confuse(ipwd *pwd);
+              u_int pwd_hash(ipwd *pwd);
+              bool pwd_cross(ipwd *pwd);
+              u_char *pwd_encrypt(ipwd *pwd,u_char lockpwd[]);
+              bool pwd_userpwd_select(ipwd *pwd,u_char userpwd[],u_int userpwdlen);
+              u_char *pwd_make_count(u_char userpwd[],u_int userpwdlen,u_int count,u_char lockpwd[],u_int lockpwd_len);
+              u_char *pwd_make_temporary(u_char userpwd[],u_int userpwdlen,u_char lockpwd[],u_int lockpwd_len);
+              u_char *pwd_make_period(u_char userpwd[],u_int userpwdlen,u_int hour_start,u_int hour_end,u_char lockpwd[]
+             -,u_int lockpwd_len);
+              u_char *pwd_make_limit(u_char userpwd[],u_int userpwdlen,u_int year,u_int month,u_int day,u_int hour,u_cha
+             -r lockpwd[],u_int lockpwd_len);
+              #endif
+ 214          
+ 215          #ifdef DEBUG_GCC
+              void debug_start(u_char *str)
+              {
+                printf( " %s ：",str);
+                debug_singleline = true;
+              }
+              
+              void debug_print(u_char *str,...)
+              {
+                   char buff[512]={0};
+                 char cmd[550]={0};
+                 u_int y=0,m=0,d=0,h=0,s=0;
+                 
+                   va_list args;
+                   va_start(args, str);
+              
+                   vsnprintf(buff,1024 ,str, args);
+                   va_end(args);
+              
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 5   
+
+                 printf(buff);
+              
+                 u_int len = strlen(buff);
+                 if( buff[len-1]==0x0A )
+                  buff[len-1] = 0;
+                 system_time(&y,&m,&d,&h,&s);
+                 sprintf(cmd,"echo '%04d-%02d-%02d %02d:%02d  %s' >> /lxk/tj/backup/elog",y,m,d,h,s,buff);
+                 system(cmd);
+              }
+              #endif
+ 244          
+ 245          #ifdef DEBUG_GCC
+              void debug_print_array(u_char buf[])
+              {
+                debug_print("buf=0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x\n",buf[0],buf[1],buf[2],buf[
+             -3],buf[4],buf[5],buf[6],buf[7],buf[8],buf[9],buf[10],buf[11]);
+              }
+              #endif
+ 251          
+ 252          
+ 253          void debug_end()
+ 254          {
+ 255   1      #ifdef DEBUG_GCC
+                printf( "\n");
+                debug_singleline = false;
+              #endif
+ 259   1      }
+ 260          
+ 261          
+ 262          #ifdef PLAT_GCC
+              u_int system_time(u_int *pyear,u_int *pmonth, u_int *pday,u_int *phour,u_int *pminute)
+              {
+                u_int minutes = 0;
+                time_t ct;
+                struct tm *lt;
+                time(&ct);
+                lt=localtime(&ct); 
+                if( pyear!=NULL )
+                  *pyear = lt->tm_year+1900;
+                if( pmonth!=NULL )
+                  *pmonth = lt->tm_mon+1;
+                if( pday!=NULL )
+                  *pday = lt->tm_mday;
+                if( phour!=NULL )
+                  *phour = lt->tm_hour;
+                if( pminute!=NULL )
+                  *pminute = lt->tm_min;
+                
+                if( debug_minutes_test>0 )
+                {
+                  //*pyear += debug_minutes_test;
+                  minutes = *phour*60+*pminute+debug_minutes_test;
+                  *phour = minutes/60;
+                  *pminute = minutes%60;
+                }
+                
+                return lt->tm_hour*60+ lt->tm_min+lt->tm_sec;
+              }
+              #else
+ 292          u_int system_time(u_int *pyear,u_int *pmonth, u_int *pday,u_int *phour,u_int *pminute)
+ 293          {
+ 294   1              uint16_t y,m,d,hour,min;
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 6   
+
+ 295   1              /*
+ 296   1        *pyear = 2019;
+ 297   1        *pmonth = 3;
+ 298   1        *pday = 29;
+ 299   1        *phour = 9;
+ 300   1        *pminute = 53;
+ 301   1              */
+ 302   1              
+ 303   1              y = ((SystemTime.year/16)*10) + (SystemTime.year%16) + 2000;
+ 304   1              m = ((SystemTime.month/16)*10) + (SystemTime.month%16);
+ 305   1              d = ((SystemTime.date/16)*10) + (SystemTime.date%16);
+ 306   1              hour = ((SystemTime.hour/16)*10) + (SystemTime.hour%16);
+ 307   1              min = ((SystemTime.minute/16)*10) + (SystemTime.minute%16);
+ 308   1              
+ 309   1              *pyear = y;
+ 310   1        *pmonth = m;
+ 311   1        *pday = d;
+ 312   1        *phour = hour;
+ 313   1        *pminute = min;
+ 314   1          return *phour*60+ *pminute;
+ 315   1      }
+ 316          
+ 317          //void memset(u_char src[],u_char ch,u_int len)
+ 318          //{
+ 319          //  u_int i;
+ 320          //  for(i=0;i<len;i++)
+ 321          //    src[i] = ch;
+ 322          //}
+ 323          
+ 324          //void memcpy(u_char dst[],u_char src[],u_int len)
+ 325          //{
+ 326          //  u_int i;
+ 327          //  for(i=0;i<len;i++)
+ 328          //    dst[i] = src[i];
+ 329          //}
+ 330          
+ 331          #endif
+ 332          
+ 333          //年月日->偏移天数         偏移天数->年月日时分
+ 334          //获取当前时间       该年中第几天       偏移天数
+ 335          bool time_cur(itime *it)
+ 336          {
+ 337   1        if( it==NULL )
+ 338   1          return false;
+ 339   1        system_time(&(it->year),&(it->month),&(it->day),&(it->hour),&(it->minute));
+ 340   1        it->year = 2019+(it->year-2019)%15;
+ 341   1        it->dmin=it->hour*60+ it->minute;
+ 342   1        time_adays(it);
+ 343   1      
+ 344   1        it->aday_h = it->aday/6;
+ 345   1        it->aday_l = it->aday%6;
+ 346   1        it->dminute_l = it->aday_l*1440+it->hour*60+it->minute;
+ 347   1      
+ 348   1        //time_print(*it,"time_cur");
+ 349   1        return true;
+ 350   1      }
+ 351          
+ 352          bool time_cur2(itime *it)
+ 353          {
+ 354   1        if( it==NULL )
+ 355   1          return false;
+ 356   1        system_time(&(it->year),&(it->month),&(it->day),&(it->hour),&(it->minute));
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 7   
+
+ 357   1        it->dmin=it->hour*60+ it->minute;
+ 358   1        time_adays(it);
+ 359   1      
+ 360   1        it->aday_h = it->aday/6;
+ 361   1        it->aday_l = it->aday%6;
+ 362   1        it->dminute_l = it->aday_l*1440+it->hour*60+it->minute;
+ 363   1      
+ 364   1        //time_print(*it,"time_cur");
+ 365   1        return true;
+ 366   1      }
+ 367          
+ 368          //根据密码中偏移天数(从2019.1.1起)获取时间
+ 369          bool time_set(itime *it,u_int days,u_int minute)
+ 370          {
+ 371   1      //  u_int i=0;
+ 372   1        u_int days_left = 0;
+ 373   1        u_int yday = 0;
+ 374   1        u_int year = 2019,month = 0,day = 0;
+ 375   1        
+ 376   1        if( it==NULL )
+ 377   1          return false;
+ 378   1      #ifdef PLAT_GCC
+                memset(it,0,sizeof(itime));
+              #endif
+ 381   1        if( minute>=1440 )
+ 382   1        {
+ 383   2          days += minute/1440;
+ 384   2          minute = minute%1440;
+ 385   2        }
+ 386   1        it->aday = days;
+ 387   1        it->hour = (minute%1440)/60;
+ 388   1        it->minute = minute%60;//+minutes_test%60;
+ 389   1        it->dmin=it->hour*60+ it->minute;
+ 390   1      
+ 391   1        days_left = days;
+ 392   1        while(true)
+ 393   1        {
+ 394   2          yday = time_findyear(year,days_left,&month,&day);
+ 395   2          days_left -= yday;
+ 396   2          if( days_left<=0 )
+ 397   2            break;
+ 398   2          year++;
+ 399   2        }
+ 400   1        it->year = 2019+(year-2019)%15;
+ 401   1        it->month = month;
+ 402   1        it->day = day;
+ 403   1        it->yday = yday;
+ 404   1        it->yday_max = time_yday_max(year);
+ 405   1        it->aday_h = it->aday/6;
+ 406   1        it->aday_l = it->aday%6;
+ 407   1        it->dminute_l = it->aday_l*1440+it->hour*60+it->minute;
+ 408   1      
+ 409   1        //time_print(*it,"time_set ");
+ 410   1          return true;
+ 411   1      }
+ 412          
+ 413          bool time_set_ymd(itime *it,u_int year,u_int month,u_int day,u_int hour)
+ 414          {
+ 415   1        if( it==NULL )
+ 416   1          return false;
+ 417   1        it->year = year;
+ 418   1        it->month = month;
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 8   
+
+ 419   1        it->day = day;
+ 420   1        it->hour= hour;
+ 421   1        it->minute=0;
+ 422   1        it->dmin=it->hour*60+ it->minute;
+ 423   1        time_adays(it);
+ 424   1      
+ 425   1        it->aday_h = it->aday/6;
+ 426   1        it->aday_l = it->aday%6;
+ 427   1        it->dminute_l = it->aday_l*1440+it->hour*60+it->minute;
+ 428   1        
+ 429   1        //time_print(*it,"time_set_ymd");
+ 430   1          return true;
+ 431   1      }
+ 432          
+ 433          #ifdef DEBUG_GCC
+              void time_print(itime it,u_char label[])
+              {
+                debug_print("time(%s) %04d-%02d-%02d %02d:%02d dyear=%d/%d dmin=%d adays=%d [%03d-%04d.%d]\n",\
+                  label,it.year,it.month,it.day,it.hour,it.minute,it.yday,it.yday_max,it.dmin,it.aday,\
+                  it.aday_h,it.dminute_l,it.aday_l);
+              }
+              #endif
+ 441          
+ 442          //查询某日是在该年中的第几天
+ 443          bool time_dyear(itime *it)
+ 444          {
+ 445   1        u_int days=0,i;
+ 446   1          u_int daysofmonth[]={31,28,31,30,31,30,31,31,30,31,30,31}; //非闰年
+ 447   1      
+ 448   1        if( it==NULL )
+ 449   1          return false;
+ 450   1        
+ 451   1          if (it->year%400==0 || (it->year%4==0 && it->year%100!=0))
+ 452   1          {
+ 453   2            daysofmonth[1] = 29;
+ 454   2          it->yday_max = 366;
+ 455   2          }
+ 456   1        else
+ 457   1        {
+ 458   2          it->yday_max = 365;
+ 459   2        }
+ 460   1      
+ 461   1        it->yday = 0;
+ 462   1        for(i=0;i<it->month-1;i++)
+ 463   1          {
+ 464   2             it->yday+=daysofmonth[i];
+ 465   2          }
+ 466   1          
+ 467   1          it->yday+=it->day;
+ 468   1          return true;
+ 469   1      }
+ 470          
+ 471          u_int time_yday_max(u_int year)
+ 472          {
+ 473   1        if (year%400==0 || (year%4==0 && year%100!=0))
+ 474   1          return 366;
+ 475   1        return 365;
+ 476   1      }
+ 477          
+ 478          //从年第几天得出是哪个年月日
+ 479          //入参year是准备查询的年份，比如偏移天数是700，要按2019、2020...顺序找700天是�
+             -�在哪年哪月哪日
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 9   
+
+ 480          u_int time_findyear(u_int year/*2019*/,u_int days/*1-366*/,u_int *pmonth,u_int *pday)
+ 481          {
+ 482   1        u_int sum=0,i=0,maxdays=0;
+ 483   1          u_int daysofmonth[]={31,28,31,30,31,30,31,31,30,31,30,31}; //非闰年
+ 484   1          if (year%400==0 || (year%4==0 && year%100!=0))
+ 485   1          {
+ 486   2            daysofmonth[1] = 29;
+ 487   2          maxdays = 366;
+ 488   2          }
+ 489   1        else
+ 490   1          maxdays = 365;
+ 491   1      
+ 492   1        if( days>maxdays )
+ 493   1        {
+ 494   2          return maxdays;
+ 495   2        }
+ 496   1        for(i=0;i<12;i++)
+ 497   1          {
+ 498   2             sum+=daysofmonth[i];
+ 499   2           if( sum>=days )
+ 500   2           {
+ 501   3             *pmonth = i+1;
+ 502   3           *pday = days-(sum-daysofmonth[i]);
+ 503   3           break;
+ 504   3           }
+ 505   2          }
+ 506   1          
+ 507   1          return days;
+ 508   1      }
+ 509          
+ 510          
+ 511          
+ 512          /*从2019.1.1开始的偏移数,itime需要已赋予年月日字段的值*/
+ 513          u_int time_adays(itime *it)
+ 514          {
+ 515   1        u_int year=2019;
+ 516   1        u_int days = 0;
+ 517   1      
+ 518   1        if( it==NULL )
+ 519   1          return 0;
+ 520   1        
+ 521   1        for(year=2019;year<it->year;year++){
+ 522   2          days += time_yday_max(year);
+ 523   2        }
+ 524   1        time_dyear(it);
+ 525   1        it->aday = days + it->yday;
+ 526   1          return days;
+ 527   1      }
+ 528          
+ 529          s_int  time_diff_day(itime t1,itime t2)
+ 530          {
+ 531   1        s_int diff = t1.aday-t2.aday;
+ 532   1        return diff;
+ 533   1      }
+ 534          
+ 535          s_int  time_diff_minute(itime t1,itime t2)
+ 536          {
+ 537   1        s_int diff_day,diff_minute;
+ 538   1      
+ 539   1        diff_day = (t1.aday-t2.aday);
+ 540   1        if (diff_day > 10 )
+ 541   1          diff_day = 10;
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 10  
+
+ 542   1        else if (diff_day < -10 )
+ 543   1          diff_day = -10;
+ 544   1        diff_minute = diff_day*1440+(t1.hour-t2.hour)*60+t1.minute-t2.minute;
+ 545   1        return diff_minute;
+ 546   1      }
+ 547          
+ 548          u_char dad(u_char c1,u_char c2)
+ 549          {
+ 550   1        return (u_char)((c1+c2)%10);
+ 551   1      }
+ 552          
+ 553          u_char dsd(u_char c1,u_char c2)
+ 554          {
+ 555   1        if( c1>=c2 )
+ 556   1          return (u_char)(c1-c2);
+ 557   1        return (u_char)(c1+10-c2);
+ 558   1      }
+ 559          
+ 560          void c2ds(u_char *src,u_int len)
+ 561          {
+ 562   1        u_int i=0;
+ 563   1        for(i=0;i<len;i++)
+ 564   1        {
+ 565   2          src[i] = C2D(src[i]);
+ 566   2        }
+ 567   1      }
+ 568          
+ 569          void d2cs(u_char *src,u_int len)
+ 570          {
+ 571   1        u_int i=0;
+ 572   1        for(i=0;i<len;i++)
+ 573   1        {
+ 574   2          src[i] = D2C(src[i]);
+ 575   2        }
+ 576   1      }
+ 577          
+ 578          u_char *d2cs6(u_char *src)
+ 579          {
+ 580   1        u_char buf[20]={0};
+ 581   1      //  u_int len = strlen(src);
+ 582   1        u_int i=0;
+ 583   1        for(i=0;i<6;i++)
+ 584   1        {
+ 585   2          buf[i] = D2C(src[i]);
+ 586   2        }
+ 587   1        return buf;
+ 588   1      }
+ 589          
+ 590          void d2cs2(u_char *src,u_char *dst,u_int len)
+ 591          {
+ 592   1        u_int i=0;
+ 593   1        for(i=0;i<len;i++)
+ 594   1        {
+ 595   2          dst[i] = D2C(src[i]);
+ 596   2        }
+ 597   1        dst[len] = 0;
+ 598   1      }
+ 599          
+ 600          bool pwd_prepare(ipwd *pwd,u_char userpwd[],u_int userpwdlen,u_char lockpwd[],u_int lockpwd_len)
+ 601          {
+ 602   1        if( pwd==NULL )
+ 603   1          return false;
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 11  
+
+ 604   1        if( userpwdlen<6 || userpwdlen>12 || lockpwd_len!=12 )
+ 605   1          return false;
+ 606   1      #ifdef PLAT_GCC
+                memset(pwd,0,sizeof(ipwd));
+              #endif
+ 609   1        pwd->lockpwd_len = lockpwd_len;
+ 610   1        memcpy(pwd->lockpwd,lockpwd,pwd->lockpwd_len);
+ 611   1        pwd->userpwd_len = userpwdlen;
+ 612   1        memcpy(pwd->userpwd,userpwd,pwd->userpwd_len);
+ 613   1      #ifdef DEBUG_GCC
+                memcpy(pwd->lockpwd_debug,lockpwd,pwd->lockpwd_len);
+              #endif
+ 616   1        return true;
+ 617   1      }
+ 618          
+ 619          bool pwd_shiftr_d(ipwd *pwd)
+ 620          {
+ 621   1        s_int i=0;
+ 622   1        s_int j=0;
+ 623   1        u_int start,end,offset;
+ 624   1      
+ 625   1        if( pwd==NULL )
+ 626   1          return false;
+ 627   1        start = 1;
+ 628   1        end = pwd->lockpwd_len-1;
+ 629   1        offset = pwd->lockpwd[0];
+ 630   1        offset = (offset%10)%(end-start+1);
+ 631   1        
+ 632   1        if( offset==0 )
+ 633   1          return false;
+ 634   1        
+ 635   1        for(i=0;i<offset;i++)
+ 636   1        {
+ 637   2          u_char tmp = pwd->lockpwd[end];
+ 638   2          for(j=(end-1);j>=0;j--)
+ 639   2          {
+ 640   3            pwd->lockpwd[j+1] = pwd->lockpwd[j];
+ 641   3          }
+ 642   2          pwd->lockpwd[start] = tmp;
+ 643   2        }
+ 644   1        return true;
+ 645   1      }
+ 646          
+ 647          
+ 648          bool pwd_shiftl_d(ipwd *pwd)
+ 649          {
+ 650   1        s_int i=0;
+ 651   1        s_int j=0;
+ 652   1        u_int start,end,offset;
+ 653   1      
+ 654   1        if( pwd==NULL )
+ 655   1          return false;
+ 656   1        start = 0;
+ 657   1        end = pwd->lockpwd_len-2;
+ 658   1        offset = pwd->lockpwd[pwd->lockpwd_len-1];
+ 659   1        offset = (offset%10)%(end-start+1);
+ 660   1      
+ 661   1        if( offset==0 )
+ 662   1          return false;
+ 663   1        
+ 664   1        for(i=0;i<offset;i++)
+ 665   1        {
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 12  
+
+ 666   2          u_char tmp = pwd->lockpwd[start];
+ 667   2          for(j=(start+1);j<=end;j++)
+ 668   2          {
+ 669   3            pwd->lockpwd[j-1] = pwd->lockpwd[j];
+ 670   3          }
+ 671   2          pwd->lockpwd[end] = tmp;
+ 672   2        }
+ 673   1      
+ 674   1        return true;
+ 675   1      }
+ 676          
+ 677          
+ 678          bool pwd_userpwd_select_d(ipwd *pwd,u_char userpwd[],u_int userpwdlen)
+ 679          {
+ 680   1        u_int checksum = 0,i=0;
+ 681   1        u_int pwdlen,_data,d1,d2,d3,d4,dc,bten;
+ 682   1        pwdlen = userpwdlen; 
+ 683   1        _data = hash_user[(userpwdlen-6)%5][pwd->rand]; ////?????? 
+ 684   1        d1 = _data/100; 
+ 685   1        d2 = (_data%100)/10;
+ 686   1        d3 = _data%10; 
+ 687   1        d4 = 0;
+ 688   1        dc = 0;
+ 689   1        bten = userpwdlen-11;
+ 690   1        
+ 691   1        if( pwd==NULL )
+ 692   1          return false;
+ 693   1      
+ 694   1        if( pwd->rand<=0 || pwd->rand>=100 )
+ 695   1          return false;
+ 696   1      
+ 697   1        if( pwdlen<6 || pwdlen>12 )
+ 698   1          return false;
+ 699   1      #ifdef DEBUG_GCC
+                memset(pwd->userpwd_debug,0x5f,14);
+                pwd->userpwd_debug[13] = 0;
+              #endif
+ 703   1        if( bten>=0 && bten<=2 )
+ 704   1        {
+ 705   2            if( d1<=bten )
+ 706   2              d1 += 10;
+ 707   2            if( d2<=bten )
+ 708   2              d2 += 10;
+ 709   2            if( d3<=bten )
+ 710   2              d3 += 10;
+ 711   2        }
+ 712   1        for(i=1;i<=userpwdlen;i++){
+ 713   2          if( i!=d1 && i!=d2 && i!=d3 )
+ 714   2            {
+ 715   3              d4 = i;
+ 716   3              break;
+ 717   3            }
+ 718   2        }
+ 719   1        
+ 720   1        for(i=0;i<userpwdlen;i++)
+ 721   1          checksum += userpwd[i];
+ 722   1      
+ 723   1        if(pwd->mode==mode_count || pwd->mode==mode_period)
+ 724   1        {
+ 725   2          pwd->userpwd_hash[0] = pwd->lockpwd[1];
+ 726   2          pwd->userpwd_hash[1] = pwd->lockpwd[2];
+ 727   2          pwd->userpwd_hash[2] = pwd->lockpwd[3];
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 13  
+
+ 728   2          pwd->userpwd_hash[3] = pwd->lockpwd[4];
+ 729   2          dc = pwd->lockpwd[5];
+ 730   2          pwd->userpwd_hash_len = 5;
+ 731   2          
+ 732   2          if( userpwd[d1]==pwd->userpwd_hash[0] && userpwd[d2]==pwd->userpwd_hash[1] && userpwd[d3]==pwd->userpwd_
+             -hash[2] && userpwd[d4]==pwd->userpwd_hash[3] && (checksum%10)==dc )
+ 733   2            pwd->userpwd_iscorrect = 1;
+ 734   2      #ifdef DEBUG_GCC  
+                  pwd->userpwd_debug[d1] = pwd->userpwd_hash[0]+0x30;
+                  pwd->userpwd_debug[d2] = pwd->userpwd_hash[1]+0x30;
+                  pwd->userpwd_debug[d3] = pwd->userpwd_hash[2]+0x30;
+                  pwd->userpwd_debug[d4] = pwd->userpwd_hash[3]+0x30;
+                  pwd->userpwd_debug[12] = dc+0x30;
+              #endif
+ 741   2        }
+ 742   1        else if(pwd->mode==mode_temporary || pwd->mode==mode_limit)
+ 743   1        {
+ 744   2          pwd->userpwd_hash[0] = pwd->lockpwd[1];
+ 745   2          pwd->userpwd_hash[1] = pwd->lockpwd[2];
+ 746   2          dc = pwd->lockpwd[3];
+ 747   2          pwd->userpwd_hash_len = 3;
+ 748   2      
+ 749   2          if( userpwd[d1]==pwd->userpwd_hash[0] && userpwd[d2]==pwd->userpwd_hash[1] && (checksum%10)==dc )
+ 750   2            pwd->userpwd_iscorrect = 1;
+ 751   2      #ifdef DEBUG_GCC
+                  pwd->userpwd_debug[d1] = pwd->userpwd_hash[0]+0x30;
+                  pwd->userpwd_debug[d2] = pwd->userpwd_hash[1]+0x30;
+                  pwd->userpwd_debug[12] = dc+0x30;
+              #endif
+ 756   2        }
+ 757   1        else
+ 758   1        {
+ 759   2          pwd->userpwd_hash_len = 0;
+ 760   2          pwd->userpwd_iscorrect = 0;
+ 761   2        }
+ 762   1        if( pwd->userpwd_iscorrect==1 )
+ 763   1          return true;
+ 764   1        return false;
+ 765   1      }
+ 766          
+ 767          bool pwd_confuse_d(ipwd *pwd)
+ 768          {
+ 769   1        s_int i=0,j=0,sum=0;
+ 770   1      
+ 771   1        if( pwd==NULL )
+ 772   1          return false;
+ 773   1        for(i=0;i<pwd->lockpwd_len-1;i++)
+ 774   1          sum += pwd->lockpwd[i];
+ 775   1        pwd->lockpwd[pwd->lockpwd_len-1] = dsd(pwd->lockpwd[pwd->lockpwd_len-1],sum%10);
+ 776   1        for(i=0;i<pwd->lockpwd_len;i++)
+ 777   1        {
+ 778   2          for(j=0;j<pwd->lockpwd_len;j++)
+ 779   2          {
+ 780   3            if( i!=j )
+ 781   3              pwd->lockpwd[j] = dad(pwd->lockpwd[i],pwd->lockpwd[j]);
+ 782   3            
+ 783   3          }
+ 784   2        }
+ 785   1      
+ 786   1        return true;
+ 787   1      }
+ 788          
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 14  
+
+ 789          bool pwd_hash_d(ipwd *pwd)
+ 790          {
+ 791   1        u_int _data = 0;
+ 792   1        u_char i=0;
+ 793   1        u_char d1,d2,d3,d4,d5,d6;
+ 794   1        d1 = (u_char)(_data/10000);
+ 795   1        d2 = (u_char)((_data%10000)/1000);
+ 796   1        d3 = (u_char)((_data%1000)/100); 
+ 797   1        d4 = (u_char)((_data%100)/10);
+ 798   1        d5 = (u_char)(_data%10);
+ 799   1        d6 = 0;
+ 800   1        
+ 801   1        if( pwd==NULL )
+ 802   1          return false;
+ 803   1        _data = hash_6bit[pwd->rand];
+ 804   1        
+ 805   1        for(i=1;i<=6;i++){
+ 806   2          if( i!=d1 && i!=d2 && i!=d3 && i!=d4 && i!=d5 )
+ 807   2            {
+ 808   3              d6 = i;
+ 809   3              break;
+ 810   3            }
+ 811   2        }
+ 812   1        
+ 813   1        pwd->lockpwd[1] = dsd(pwd->lockpwd[1],d1);
+ 814   1        pwd->lockpwd[2] = dsd(pwd->lockpwd[2],d2);
+ 815   1        pwd->lockpwd[3] = dsd(pwd->lockpwd[3],d3);
+ 816   1        pwd->lockpwd[4] = dsd(pwd->lockpwd[4],d4);
+ 817   1        pwd->lockpwd[5] = dsd(pwd->lockpwd[5],d5);
+ 818   1        pwd->lockpwd[6] = dsd(pwd->lockpwd[6],d6);
+ 819   1        pwd->lockpwd[7] = dad(pwd->lockpwd[7],d5);
+ 820   1        pwd->lockpwd[8] = dad(pwd->lockpwd[8],d4);
+ 821   1        pwd->lockpwd[9] = dad(pwd->lockpwd[9],d3);
+ 822   1        if( pwd->mode==mode_temporary )
+ 823   1          pwd->lockpwd[10] = dad(pwd->lockpwd[10],d2);
+ 824   1      
+ 825   1        return true;
+ 826   1      }
+ 827          
+ 828          bool pwd_cross_d(ipwd *pwd)
+ 829          {
+ 830   1        u_char chx=0;
+ 831   1        
+ 832   1        if( pwd==NULL )
+ 833   1          return false;
+ 834   1        
+ 835   1        chx = dad(pwd->lockpwd[0],pwd->lockpwd[1]);
+ 836   1        pwd->lockpwd[2] = dsd(pwd->lockpwd[2],chx);
+ 837   1        chx = dad(pwd->lockpwd[3],pwd->lockpwd[4]);
+ 838   1        pwd->lockpwd[5] = dsd(pwd->lockpwd[5],chx);
+ 839   1        chx = dad(pwd->lockpwd[6],pwd->lockpwd[7]);
+ 840   1        pwd->lockpwd[8] = dsd(pwd->lockpwd[8],chx);
+ 841   1        chx = dad(pwd->lockpwd[9],pwd->lockpwd[10]);
+ 842   1        pwd->lockpwd[11] = dsd(pwd->lockpwd[11],chx);
+ 843   1        return true;
+ 844   1      }
+ 845          
+ 846          
+ 847          bool pwd_unpack_rd(ipwd *pwd)
+ 848          {
+ 849   1        if( pwd==NULL )
+ 850   1          return false;
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 15  
+
+ 851   1        pwd->mode = pwd->lockpwd[0];
+ 852   1        switch(pwd->mode)
+ 853   1        {
+ 854   2          case mode_count:
+ 855   2          case mode_period:
+ 856   2          case mode_limit:
+ 857   2            pwd->rand = pwd->lockpwd[10]*10+pwd->lockpwd[11];
+ 858   2            break;
+ 859   2          case mode_temporary:
+ 860   2            pwd->rand = pwd->lockpwd[0]*10+pwd->lockpwd[11];
+ 861   2            break;
+ 862   2          default:
+ 863   2            return false;
+ 864   2            break;
+ 865   2            
+ 866   2        }
+ 867   1        return  true;
+ 868   1      }
+ 869          
+ 870          bool pwd_unpack(ipwd *pwd,u_char userpwd[],u_int userpwdlen)
+ 871          {
+ 872   1        u_int daysonsix = 0;
+ 873   1        u_int year=0,days=0,month=0,day=0,hour=0,minutes=0,i=0,checksum=0;
+ 874   1        s_int td = 0;
+ 875   1        itime ct;
+ 876   1      
+ 877   1        if( pwd==NULL )
+ 878   1          return false;
+ 879   1        pwd->iscorrect = 0;
+ 880   1        if( pwd_userpwd_select_d(pwd,userpwd,userpwdlen)==false )
+ 881   1          return false;
+ 882   1        
+ 883   1        switch(pwd->mode)
+ 884   1        {
+ 885   2          case mode_count:
+ 886   2            for(i=0;i<pwd->lockpwd_len;i++)
+ 887   2              checksum += pwd->lockpwd[i];
+ 888   2            checksum -= pwd->lockpwd[9];
+ 889   2            if( pwd->lockpwd[9] == checksum%10 )
+ 890   2            {
+ 891   3              pwd->count = pwd->lockpwd[6]*100+pwd->lockpwd[7]*10+pwd->lockpwd[8];
+ 892   3              if( pwd->userpwd_iscorrect==1 )
+ 893   3                pwd->iscorrect = 1;
+ 894   3            }
+ 895   2            break;
+ 896   2          case mode_temporary:
+ 897   2              time_cur(&ct);
+ 898   2              daysonsix = pwd->lockpwd[4]*100+pwd->lockpwd[5]*10+pwd->lockpwd[6];
+ 899   2              minutes = pwd->lockpwd[7]*1000+pwd->lockpwd[8]*100+pwd->lockpwd[9]*10+pwd->lockpwd[10];
+ 900   2              days = daysonsix*6+minutes/1440;
+ 901   2              time_set(&(pwd->limit_day),days,minutes%1440);
+ 902   2              td = time_diff_minute(ct,pwd->limit_day);
+ 903   2              if( pwd->userpwd_iscorrect==1 && td>=(-3) && td<=15 )
+ 904   2                pwd->iscorrect = 1;
+ 905   2            break;
+ 906   2          case mode_period:
+ 907   2            time_cur(&ct);
+ 908   2            for(i=0;i<pwd->lockpwd_len;i++)
+ 909   2            {
+ 910   3              checksum += pwd->lockpwd[i];
+ 911   3            }
+ 912   2            checksum -= pwd->lockpwd[9];
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 16  
+
+ 913   2            if( pwd->lockpwd[9] == checksum%10 )
+ 914   2            {
+ 915   3              pwd->period_start = (pwd->lockpwd[7]/3)*10+pwd->lockpwd[6];
+ 916   3              pwd->period_end = (pwd->lockpwd[7]%3)*10+pwd->lockpwd[8];
+ 917   3              if( (pwd->period_start>=0) && (pwd->period_start<=23) &&  (pwd->period_end>pwd->period_start) && (pwd-
+             ->period_end<=24) )
+ 918   3              {
+ 919   4                if( (pwd->userpwd_iscorrect == 1) && (ct.hour >= pwd->period_start) && (ct.hour < pwd->period_end) ){
+ 920   5                  pwd->iscorrect = 1;
+ 921   5                }
+ 922   4              }
+ 923   3            }
+ 924   2            break;
+ 925   2          case mode_limit:
+ 926   2            time_cur2(&ct);
+ 927   2            year = 2019+pwd->lockpwd[4]*10+pwd->lockpwd[5];
+ 928   2            if( year>=ct.year && (year-ct.year)<3 )
+ 929   2            {
+ 930   3              i = pwd->lockpwd[6]*1000+pwd->lockpwd[7]*100+pwd->lockpwd[8]*10+pwd->lockpwd[9];
+ 931   3              if( i<8785 )
+ 932   3              {
+ 933   4                days = i/24;
+ 934   4                hour = i%24;
+ 935   4                time_findyear(year,days,&month,&day);
+ 936   4                time_set_ymd(&(pwd->limit_day),year,month,day,hour);
+ 937   4                td = time_diff_minute(pwd->limit_day,ct);
+ 938   4                if( pwd->userpwd_iscorrect==1 && td>0 && (pwd->limit_day.aday-ct.aday)<999 )
+ 939   4                  pwd->iscorrect = 1;
+ 940   4              }
+ 941   3            }
+ 942   2            break;
+ 943   2          default:
+ 944   2            pwd->iscorrect = 0;
+ 945   2            break;
+ 946   2        }
+ 947   1      
+ 948   1        if( pwd->iscorrect==1 )
+ 949   1          return true;
+ 950   1        return false;
+ 951   1      }
+ 952          
+ 953          ipwd *pwd_decrypt(u_char userpwd[],u_int userpwdlen,u_char lockpwd[],u_int lockpwd_len)
+ 954          {
+ 955   1        ipwd pwd={0};
+ 956   1      #ifndef PLAT_GCC
+ 957   1        if( pwd_prepare(&pwd,userpwd,userpwdlen,lockpwd,lockpwd_len)==false ){
+ 958   2          return NULL;
+ 959   2        }
+ 960   1        pwd_confuse_d(&pwd);
+ 961   1        pwd_cross_d(&pwd);
+ 962   1        pwd_shiftr_d(&pwd);
+ 963   1        pwd_shiftl_d(&pwd);
+ 964   1        if( pwd_unpack_rd(&pwd)==false)
+ 965   1          return NULL;
+ 966   1        pwd_hash_d(&pwd);
+ 967   1        pwd_unpack(&pwd,userpwd,userpwdlen);
+ 968   1      #else
+                if( pwd_prepare(&pwd,userpwd,userpwdlen,lockpwd,lockpwd_len)==false )
+                  return NULL;
+                  pwd_snap(&pwd,0);
+                pwd_confuse_d(&pwd);
+                  pwd_snap(&pwd,1);
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 17  
+
+                pwd_cross_d(&pwd);
+                  pwd_snap(&pwd,2);
+                pwd_shiftr_d(&pwd);
+                  pwd_snap(&pwd,3);
+                pwd_shiftl_d(&pwd);
+                  pwd_snap(&pwd,4);
+                if( pwd_unpack_rd(&pwd)==false)
+                  return NULL;
+                pwd_hash_d(&pwd);
+                  pwd_snap(&pwd,5);
+                pwd_unpack(&pwd,userpwd,userpwdlen);
+                //if( pwd.iscorrect==1 )
+                  pwd_print(pwd);
+              #endif
+ 988   1        return &pwd;
+ 989   1      }
+ 990          unsigned int pwd_decrypt_checkmode(u_char userpwd[],u_int userpwdlen,u_char lockpwd[],u_int lockpwd_len)
+ 991          {
+ 992   1        ipwd *pwdtmp;
+ 993   1        pwdtmp=pwd_decrypt(userpwd,userpwdlen,lockpwd,lockpwd_len);
+ 994   1        if( pwdtmp!=NULL )
+ 995   1        {
+ 996   2          if( pwdtmp->iscorrect==1 && pwdtmp->mode==mode_count )
+ 997   2          {
+ 998   3            return pwdtmp->count;
+ 999   3          }
+1000   2          return pwdtmp->iscorrect;
+1001   2        }
+1002   1        //MyPrintf("return 0;\n");
+1003   1        return 0;
+1004   1      }
+1005          
+1006          #ifndef PLAT_GCC
+1007          void AppUnlockTest(void)
+1008          {
+1009   1        unsigned int i=0,j=0;
+1010   1        //static ipwd *pwd;
+1011   1        s_int test_result;
+1012   1          //unsigned char lockpwd[12]={1,6,7,3,7,9,9,3,7,6,3,1};
+1013   1          //unsigned char userpwd[12]={3,4,5,6,4,5,3,5};  //mode =1
+1014   1          //unsigned char lockpwd[12]={9,0,5,0,4,3,7,4,1,1,1,1};
+1015   1          //unsigned char userpwd[12]={3,4,5,6,4,5,3,5};  //mode =1
+1016   1          
+1017   1          //unsigned char lockpwd[12]={8,3,5,0,9,9,3,6,0,9,6,2};
+1018   1          //unsigned char userpwd[12]={3,4,5,6,4,5,3,5};  //mode =2, 4-13,10:37 
+1019   1      
+1020   1          unsigned char lockpwd[12]={2,0,2,2,9,3,6,9,0,9,5,4};
+1021   1          unsigned char userpwd[12]={2,2,2,2,2,2};  //mode =3, 00:00~11:00 
+1022   1        
+1023   1              //userpwd是门锁上设定的管理员密码；
+1024   1        test_result = pwd_decrypt_checkmode(userpwd,6,lockpwd,12);   //解码开锁密码lockpwd，传入整形�
+             -�组的用户密码、用户密码长度、整形数组的开锁密码
+1025   1      
+1026   1      
+1027   1          DEBUG_MARK;
+1028   1      }
+1029          #endif
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   6843    ----
+   CONSTANT SIZE    =    188    ----
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         04/25/2023 17:24:16 PAGE 18  
+
+   XDATA SIZE       =   1222     566
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
