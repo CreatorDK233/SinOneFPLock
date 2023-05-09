@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   RTC_PCF8563                                                       05/09/2023 14:53:13 PAGE 1   
+C51 COMPILER V9.60.0.0   RTC_PCF8563                                                       05/09/2023 16:27:42 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE RTC_PCF8563
@@ -62,7 +62,7 @@ line level    source
   50   1      
   51   1        I2C_WriteSequential(I2CADDR_RTC,0x02,&BUFF[0],7);
   52   1        #endif
-C51 COMPILER V9.60.0.0   RTC_PCF8563                                                       05/09/2023 14:53:13 PAGE 2   
+C51 COMPILER V9.60.0.0   RTC_PCF8563                                                       05/09/2023 16:27:42 PAGE 2   
 
   53   1      }
   54          
@@ -126,7 +126,7 @@ line level    source
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =    368    ----
-C51 COMPILER V9.60.0.0   RTC_PCF8563                                                       05/09/2023 14:53:13 PAGE 3   
+C51 COMPILER V9.60.0.0   RTC_PCF8563                                                       05/09/2023 16:27:42 PAGE 3   
 
    CONSTANT SIZE    =     21    ----
    XDATA SIZE       =   ----      21

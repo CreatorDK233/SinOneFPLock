@@ -143,8 +143,8 @@ void  TKSleepMode(void);
 
 #include <intrins.h>
 
-#define      WakeUpKeyNum                      12                    //低功耗模式下扫描按键个数     
-#define      WakeUpKeyChannel         SOCAPI_SET_TOUCHKEY_CHANNEL    //低功耗下扫描按键的对应通道 
+#define      WakeUpKeyNum             SOCAPI_SET_TOUCHKEY_TOTAL     //低功耗模式下扫描按键个数     
+#define      WakeUpKeyChannel         SOCAPI_SET_TOUCHKEY_CHANNEL   //低功耗下扫描按键的对应通道 
 #define      TK_SeepTimervSetting              BTM_TIMEBASE_125MS   //低功耗下按键之间的扫描间隔
 #define      TK_WakeUpConfirmTouchCnt          5 					//低功耗下确认按键次数
 

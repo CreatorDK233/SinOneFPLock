@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   GLOBAL_VARIABLE                                                   05/09/2023 14:43:40 PAGE 1   
+C51 COMPILER V9.60.0.0   GLOBAL_VARIABLE                                                   05/09/2023 17:03:20 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE GLOBAL_VARIABLE
@@ -62,7 +62,7 @@ line level    source
   50          CheckMemoryMgr_t CheckMemoryMgr;
   51          ManagerIdentifyMgr_t ManagerIdentifyMgr;
   52          DisplayMemoryUsageMgr_t DisplayMemoryUsageMgr;
-C51 COMPILER V9.60.0.0   GLOBAL_VARIABLE                                                   05/09/2023 14:43:40 PAGE 2   
+C51 COMPILER V9.60.0.0   GLOBAL_VARIABLE                                                   05/09/2023 17:03:20 PAGE 2   
 
   53          InitializationMgr_t InitializationMgr;
   54          ManagerPasscodeModifyMgr_t  ManagerPasscodeModifyMgr;
@@ -107,14 +107,14 @@ line level    source
   93          
   94          WifiMgr_t WifiMgr;
   95          
-  96          
+  96          AwakeSystemKeyMgr_t AwakeSystemKeyMgr;
   97          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =   ----    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =   2053    ----
+   XDATA SIZE       =   2056    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

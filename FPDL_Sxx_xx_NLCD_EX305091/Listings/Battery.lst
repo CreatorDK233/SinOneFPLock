@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   BATTERY                                                           05/09/2023 14:43:39 PAGE 1   
+C51 COMPILER V9.60.0.0   BATTERY                                                           05/09/2023 17:03:18 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BATTERY
@@ -62,7 +62,7 @@ line level    source
   50   2          BatteryMgr.BatteryLevel = LEVEL_4;  
   51   2        }
   52   1       #ifdef ProjectIs_BarLock_S8705
-C51 COMPILER V9.60.0.0   BATTERY                                                           05/09/2023 14:43:39 PAGE 2   
+C51 COMPILER V9.60.0.0   BATTERY                                                           05/09/2023 17:03:18 PAGE 2   
 
                 else if ( BatteryMgr.BatteryVoltage > 50 ){   
                   BatteryMgr.BatteryLevel = LEVEL_3;  
@@ -126,7 +126,7 @@ line level    source
  111          *               and controls acquisition of the five channels of A/D 
  112          *               data.
  113          *               Touch screen are acquired fifteen times followed by
-C51 COMPILER V9.60.0.0   BATTERY                                                           05/09/2023 14:43:39 PAGE 3   
+C51 COMPILER V9.60.0.0   BATTERY                                                           05/09/2023 17:03:18 PAGE 3   
 
  114          *               one acquisition of temp and humidity.  So temp and
  115          *               humidity acquire twice per second, and touch acquires

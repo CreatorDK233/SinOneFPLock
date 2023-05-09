@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/09/2023 14:43:38 PAGE 1   
+C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/09/2023 17:03:17 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE KEY_SINONE
@@ -62,7 +62,7 @@ line level    source
   42   1        uint8_t i;
   43   1        
   44   1        if( SOCAPI_TouchKeyStatus & 0x40 )  // bit6-半轮扫描完成标志  1:完成  0：未完成
-C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/09/2023 14:43:38 PAGE 2   
+C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/09/2023 17:03:17 PAGE 2   
 
   45   1        {
   46   2          SOCAPI_TouchKeyStatus &= 0xBF;  //清半轮扫描标志位
@@ -126,7 +126,7 @@ line level    source
  104   4              }
  105   3              break;
  106   3                
-C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/09/2023 14:43:38 PAGE 3   
+C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/09/2023 17:03:17 PAGE 3   
 
  107   3            case 2:
  108   3              if( TK_Flag )
@@ -190,7 +190,7 @@ line level    source
  166   4              }
  167   3              else
  168   3              {
-C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/09/2023 14:43:38 PAGE 4   
+C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/09/2023 17:03:17 PAGE 4   
 
  169   4                TouchKeyStatus.KEY_SEVEN_Pressed = bFALSE;
  170   4              }
@@ -254,7 +254,7 @@ line level    source
  228   3            default:
  229   3              break;
  230   3          }
-C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/09/2023 14:43:38 PAGE 5   
+C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/09/2023 17:03:17 PAGE 5   
 
  231   2        }
  232   1      }

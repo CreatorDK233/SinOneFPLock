@@ -1370,6 +1370,13 @@ typedef struct
 	uint16_t OFFPowerCnt;
 }WifiMgr_t;
 
+typedef struct
+{
+	bool_t IsDoorColseKeyAwake;
+	bool_t IsDoorBellKeyAwake;
+	bool_t IsPoundsignKeyAwake;
+}AwakeSystemKeyMgr_t;
+
 #ifdef MAIN_C
 #define GLOBAL /*********/
 #else

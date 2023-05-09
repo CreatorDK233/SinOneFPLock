@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   LCD                                                               05/09/2023 14:53:14 PAGE 1   
+C51 COMPILER V9.60.0.0   LCD                                                               05/09/2023 16:27:43 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE LCD
@@ -62,7 +62,7 @@ line level    source
   50   2          if ( *BUFF==HZ_end )
   51   2          {
   52   3            break;
-C51 COMPILER V9.60.0.0   LCD                                                               05/09/2023 14:53:14 PAGE 2   
+C51 COMPILER V9.60.0.0   LCD                                                               05/09/2023 16:27:43 PAGE 2   
 
   53   3          }
   54   2          if (((*BUFF<200)&&( Column >113 ))||((*BUFF>199)&&( Column >120 )))//it is not enough to display one HZ 
@@ -126,7 +126,7 @@ line level    source
  112          
  113          void DisEN16x8Str(uint8_t StartPage,uint8_t StartColumn, /*code */  uint8_t *BUFF,uint8_t Color)
  114          {
-C51 COMPILER V9.60.0.0   LCD                                                               05/09/2023 14:53:14 PAGE 3   
+C51 COMPILER V9.60.0.0   LCD                                                               05/09/2023 16:27:43 PAGE 3   
 
  115   1        uint8_t i,j,Page,Column;
  116   1        uint16_t StartByte;
@@ -190,7 +190,7 @@ line level    source
  174   1        //DigitalPosition =0x00;
  175   1        
  176   1        Page=  StartPage;
-C51 COMPILER V9.60.0.0   LCD                                                               05/09/2023 14:53:14 PAGE 4   
+C51 COMPILER V9.60.0.0   LCD                                                               05/09/2023 16:27:43 PAGE 4   
 
  177   1        Column = StartColumn;
  178   1      
@@ -254,7 +254,7 @@ line level    source
  236   1        for (j=0;j<8;j++)
  237   1        {
  238   2          if ( Color == NormalDisplay ) 
-C51 COMPILER V9.60.0.0   LCD                                                               05/09/2023 14:53:14 PAGE 5   
+C51 COMPILER V9.60.0.0   LCD                                                               05/09/2023 16:27:43 PAGE 5   
 
  239   2          { //normal display
  240   3            G_DisRAM[StartByte+j+128]=*Point;
@@ -318,7 +318,7 @@ line level    source
  298   1        Column = StartColumn;
  299   1        DataValue = Value;
  300   1      
-C51 COMPILER V9.60.0.0   LCD                                                               05/09/2023 14:53:14 PAGE 6   
+C51 COMPILER V9.60.0.0   LCD                                                               05/09/2023 16:27:43 PAGE 6   
 
  301   1        for (i=0;i<3;i++)
  302   1        {
@@ -382,7 +382,7 @@ line level    source
  359          
  360          void DisImage_RAM(uint8_t StartPage,uint8_t StartColumn,uint8_t Width,uint8_t Heigth,uint8_t *BUFF,uint8_t
              - Color)
-C51 COMPILER V9.60.0.0   LCD                                                               05/09/2023 14:53:14 PAGE 7   
+C51 COMPILER V9.60.0.0   LCD                                                               05/09/2023 16:27:43 PAGE 7   
 
  361          {
  362   1        uint8_t i,j,Page,Column;
@@ -446,7 +446,7 @@ line level    source
 MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =   2390    ----
    CONSTANT SIZE    =   ----    ----
-C51 COMPILER V9.60.0.0   LCD                                                               05/09/2023 14:53:14 PAGE 8   
+C51 COMPILER V9.60.0.0   LCD                                                               05/09/2023 16:27:43 PAGE 8   
 
    XDATA SIZE       =   ----     117
    PDATA SIZE       =   ----    ----

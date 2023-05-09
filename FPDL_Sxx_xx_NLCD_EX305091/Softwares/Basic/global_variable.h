@@ -127,4 +127,6 @@ GLOBAL DoorBellMgr_t DoorBellMgr;
 
 GLOBAL WifiMgr_t WifiMgr;
 
+GLOBAL AwakeSystemKeyMgr_t AwakeSystemKeyMgr;
+
 #endif

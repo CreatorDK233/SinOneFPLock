@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 1   
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE GUI
@@ -62,7 +62,7 @@ line level    source
   50          uint8_t GUI_ToggleFlag_05s;
   51          bool_t GUI_Flag_RefreshLCD;
   52          
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 2   
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 2   
 
   53          keycode_t gui_keycode = KEY_NONE;
   54          
@@ -126,7 +126,7 @@ line level    source
                   else if (UserIdentifyResultMgr.IdentifyType == FINGERPRINTandPASSCODE )
                   {
                     DisHZ16x14Str(0,0,FpUserStr,NormalDisplay);
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 3   
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 3   
 
                     DisHZ16x14Str(2,0,UserIDStr,NormalDisplay);
                     DisDigital16x8Str(2,40,UserIdentifyResultMgr.FPUserID,NormalDisplay);
@@ -190,7 +190,7 @@ line level    source
  174   3            {
  175   4              //EMAGNET_RelaseTrigger();
  176   4            }
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 4   
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 4   
 
  177   3          }
  178   2        }
@@ -254,7 +254,7 @@ line level    source
                 }
                 else if ( UserIdentifyResultMgr.IdentifyType == PASSCODE )
                 {
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 5   
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 5   
 
                   DisHZ16x14Str(5,36,IdentifyFailStr,NormalDisplay);
                 }
@@ -318,7 +318,7 @@ line level    source
                 code uint8_t Str3[]={HZ_qing,HZ_shu,HZ_ru,HZ_di,HZ_er,HZ_shen,HZ_fen,HZ_end};
               //  code uint8_t Str3En[]={"Input 2nd ID"};
                 code uint8_t Str4[]={HZ_anya,ZF_xiaoyuhao,ZF_jinghao,ZF_dayuhao,HZ_jinru,HZ_ru,HZ_guan,HZ_li,HZ_mo,HZ_si,
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 6   
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 6   
 
              -HZ_end};
               //  code uint8_t Str4En[]={"Press # to menu"};
@@ -382,7 +382,7 @@ line level    source
                         }
                     }
                     //DisHZ16x14Str(6,16,FPDLLog,NormalDisplay);
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 7   
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 7   
 
                     ShowLockBrand();
                   }
@@ -446,7 +446,7 @@ line level    source
  421   5              }
  422   4            }
  423   3          }
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 8   
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 8   
 
  424   2        }
  425   1        else if ( CardIdentifyMgr.Status == Fail)
@@ -510,7 +510,7 @@ line level    source
  483   2          if (UserIdentifyResultMgr.UnlockingMode == SingalMode )
  484   2          {
  485   3            UnlockSuccess(FINGERPRINT);
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 9   
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 9   
 
  486   3          }
  487   2          else if (UserIdentifyResultMgr.UnlockingMode == DoubleMode )
@@ -574,7 +574,7 @@ line level    source
  545   4            }
  546   3            else
  547   3            {
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 10  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 10  
 
  548   4              SafetyMonitorMgr.SystemLocked = bTRUE;
  549   4              SafetyMonitorMgr.SystemLockedTimeDelay = DEF_SystemLockedTime;
@@ -638,7 +638,7 @@ line level    source
  607   3            //Enable_KEYLED_IdentifyFail();
  608   3            CurrentScreen = SCREEN_IdentifyFail;
  609   3            UserIdentifyResultMgr.TimeCnt = Def_MessageBoxTimeDelay;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 11  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 11  
 
  610   3            PLAY_VOICE_ONESEGMENT(VOICE_IdentifyFail);  
  611   3            if ( SafetyMonitorMgr.PasscodeIdentifyFailedTimes < DEF_PasscodeIdentifyFailedTimesLimited )
@@ -702,7 +702,7 @@ line level    source
  669          void ShowDoorBell(void)
  670          {
  671   1        #ifdef Function_ScreenDisplay
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 12  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 12  
 
                 DisImage(1,33,61,40,Icon_DoorBell,NormalDisplay);
                 #endif
@@ -766,7 +766,7 @@ line level    source
                 {
                   DisHZ16x14Str(2*i,0,EventLogMenuStr[i],NormalDisplay);
                 }   
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 13  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 13  
 
                 GUI_Flag_RefreshLCD = bTRUE;
                 #endif
@@ -830,7 +830,7 @@ line level    source
  793          
  794          /*******************************************************/
  795          /*******************************************************/
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 14  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 14  
 
  796          /*******************************************************/
  797          void ShowCardUserMenu(void)//界面-磁卡菜单
@@ -894,7 +894,7 @@ line level    source
                 {
                   WifiMgr.Link.Status = LinkWait;
                   WifiMgr.Link.TimeCnt = 120*64;  //120S
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 15  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 15  
 
                   WifiMgr.PostMgr.Flag.Bits.StartNetwork = 1;
                   WifiMgr.OFFPowerCnt = 0;
@@ -958,7 +958,7 @@ line level    source
  917   3            FpUserRegisterMgr.Status = AddUserToFPM;
  918   3            FpRegisterMgr.Status = FPMcmdStart;
  919   3            DataInputMgr.Status = InputIdle;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 16  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 16  
 
  920   3          }
  921   2          else
@@ -1022,7 +1022,7 @@ line level    source
  979   3          }
  980   2        }
  981   1      
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 17  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 17  
 
  982   1        else if ( FpUserRegisterMgr.Status == RegisterUserSuccess )
  983   1        {
@@ -1086,7 +1086,7 @@ line level    source
 1041   2      
 1042   2          if (DataInputMgr.Status == InputEnd)
 1043   2          {
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 18  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 18  
 
 1044   3            FpUserDeleteMgr.UserID = DataInputMgr.Value;
 1045   3            if ((FpUserDeleteMgr.UserID==0)||( FpUserDeleteMgr.UserID > DEF_MAX_FPMASTER ))       
@@ -1150,7 +1150,7 @@ line level    source
 1103   2        }
 1104   1        else if ( FpUserDeleteMgr.Status == DeleteUserFromFPM)
 1105   1        {
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 19  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 19  
 
 1106   2          FPM_DeleteCharCmd(FpUserDeleteMgr.UserID-1,1);
 1107   2          FpUserDeleteMgr.Status = WaitForDeleteUserACKfromFPM;
@@ -1214,7 +1214,7 @@ line level    source
 1165   2            /*
 1166   2            else if ( FpUserDeleteMgr.ErrorType == TimeOut )
 1167   2            {
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 20  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 20  
 
 1168   2              //DisHZ16x14Str(4,48,TimeOutStr,NormalDisplay);
 1169   2            }
@@ -1278,7 +1278,7 @@ line level    source
 1227   4              FpUserRegisterMgr.ErrorType = MemoryIsFull;
 1228   4              FpUserRegisterMgr.TimeCnt = Def_MessageBoxTimeDelay;
 1229   4              PLAY_VOICE_ONESEGMENT(VOICE_UsersAreFull);
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 21  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 21  
 
 1230   4              Hardware_DelayMs(100);
 1231   4              #ifdef Function_ScreenDisplay
@@ -1342,7 +1342,7 @@ line level    source
 1289   2          if (--FpUserRegisterMgr.TimeCnt < 1 )   
 1290   2          {
 1291   3            //FpUserRegisterMgr.Status = StartFpUserRegister;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 22  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 22  
 
 1292   3            GoToFpMenu();
 1293   3            RefreshSystemSleepTime();
@@ -1406,7 +1406,7 @@ line level    source
 1350   3              {
 1351   4                FpUserDeleteMgr.Status = CheckIfFpUserIDisBeUsed;
 1352   4                CheckIfFpUserIDisRegistered.Status = StartCheckIfFpUserIDisRegistered;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 23  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 23  
 
 1353   4                DataInputMgr.Status = InputIdle;
 1354   4              }
@@ -1470,7 +1470,7 @@ line level    source
 1412   4                  FpUserDeleteMgr.TimeCnt = Def_MessageBoxTimeDelay;
 1413   4                  PLAY_VOICE_TWOSEGMENT(VOICE_Delete,VOICE_Success);
 1414   4                  if ( CheckMemoryMgr.FpUserNum > 0 )
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 24  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 24  
 
 1415   4                  {
 1416   5                    CheckMemoryMgr.FpUserNum-=1;
@@ -1534,7 +1534,7 @@ line level    source
 1474          /*******************************************************/
 1475          /*******************************************************/
 1476          /*******************************************************/
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 25  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 25  
 
 1477          void ShowDeleteAllUserFp(void)//界面-删除所有用户指纹
 1478          {
@@ -1598,7 +1598,7 @@ line level    source
 1536   2            else if (--FpUserDeleteMgr.TimeCnt < 1 )
 1537   2              {
 1538   3                AllUserFpDeleteMgr.Status = DeleteAllFpUserFail;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 26  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 26  
 
 1539   3                FpmAckMgr.ErrorCode = Error_TimeOut;
 1540   3                //GUI_Flag_RefreshLCD = bTRUE;
@@ -1662,7 +1662,7 @@ line level    source
 1598   2          
 1599   2          GUI_DataInputCreat(6,68,3,0x0000);
 1600   2      
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 27  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 27  
 
 1601   2          if (DataInputMgr.Status == InputEnd)
 1602   2          {
@@ -1726,7 +1726,7 @@ line level    source
 1660   2          {
 1661   3          
 1662   3      
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 28  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 28  
 
 1663   3          }
 1664   2          if ( CardUserDeleteMgr.TimeCnt-- < 1 )
@@ -1790,7 +1790,7 @@ line level    source
 1722          
 1723          /*******************************************************/
 1724          /*******************************************************/
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 29  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 29  
 
 1725          /*******************************************************/
 1726          void ShowRegisterPasscodeUser(void)//注册密码用户
@@ -1854,7 +1854,7 @@ line level    source
 1782   2          PasscodeInputMgr.Status = PasscodeInputStart;
 1783   2          for (i=0;i<12;i++)
 1784   2          {
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 30  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 30  
 
 1785   3            PasscodeInputMgr.InputBuff[i] = 0xFF;   //Initial passcode buffer
 1786   3          }
@@ -1918,7 +1918,7 @@ line level    source
 1844   5              }
 1845   4              PasscodeUserRegisterMgr.TimeCnt = Def_WaitUserInputPasscodeTimeDelay;
 1846   4              //GUI_Flag_RefreshLCD = bTRUE;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 31  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 31  
 
 1847   4            }
 1848   3          }
@@ -1982,7 +1982,7 @@ line level    source
 1906   3            PLAY_VOICE_TWOSEGMENT(VOICE_Operation, VOICE_Fail);
 1907   3            #ifdef Function_ScreenDisplay
                     Clear_Screen();
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 32  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 32  
 
                     DisHZ16x14Str(3,36,OperationFailStr,NormalDisplay);
                     #endif
@@ -2046,7 +2046,7 @@ line level    source
 1968   2          {
 1969   3            #ifdef DirectIntoMainMenuInFactoryDefaultStatus
                     PasscodeUserRegisterMgr.Status = StartPasscodeUserRegister;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 33  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 33  
 
                     #else
 1972   3            
@@ -2110,7 +2110,7 @@ line level    source
 2030   3                &&(CheckMemoryMgr.FpMasterNum == 0x00 )
 2031   3                &&(CheckMemoryMgr.PasscodeMasterNum == 0x00)
 2032   3              )
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 34  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 34  
 
 2033   3            {
 2034   4              CurrentScreen = SCREEN_Main;
@@ -2174,7 +2174,7 @@ line level    source
 2092   3      //        DisOneDigital16x8(6,24,(DEF_MAX_PASSCODEUSER+DEF_MAX_PASSCODEMASTER)/10,NormalDisplay);
 2093   3      //        DisOneDigital16x8(6,32,(DEF_MAX_PASSCODEUSER+DEF_MAX_PASSCODEMASTER)%10,NormalDisplay);
 2094   3            }
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 35  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 35  
 
 2095   2            
 2096   2            GUI_DataInputCreat(6,56,2,0x0000);
@@ -2238,7 +2238,7 @@ line level    source
 2152   4                PasscodeUserDeleteMgr.TimeCnt = Def_MessageBoxTimeDelay;  
 2153   4                //GUI_Flag_RefreshLCD = bTRUE;
 2154   4                PLAY_VOICE_TWOSEGMENT(VOICE_Delete,VOICE_Success);
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 36  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 36  
 
 2155   4                if ( CheckMemoryMgr.PasscodeUserNum > 0 )
 2156   4                {
@@ -2302,7 +2302,7 @@ line level    source
 2214   4                PasscodeUserDeleteMgr.Status = StartPasscodeUserDelete;
 2215   4                //GUI_Flag_RefreshLCD = bTRUE;
 2216   4              }
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 37  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 37  
 
 2217   3            }
 2218   2          }
@@ -2366,7 +2366,7 @@ line level    source
 2276          /*******************************************************/
 2277          void ShowTimeSetting(void)//界面-时间设定
 2278          {
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 38  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 38  
 
 2279   1        #ifdef Function_ScreenDisplay
                 code uint8_t TitleStr[]={HZ_shi,HZ_jian,HZ_she,HZ_ding,HZ_end};             //时间设定
@@ -2430,7 +2430,7 @@ line level    source
                 }
                 else if ( (TimeSettingMgr.Status == SetSecondMajor)&&(GUI_ToggleFlag_05s==0x01) )
                 {
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 39  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 39  
 
                   DisOneDigital16x8(6,72,TempSystemTime.second>>4,InverseDisplay);    
                 }
@@ -2494,7 +2494,7 @@ line level    source
 2400   3            {
 2401   4              PLAY_VOICE_MULTISEGMENTS_FIXED(VolumeSetLanguageBuff[VoiceMenuMgr.MenuPoint]);
 2402   4            }
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 40  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 40  
 
 2403   3            else
 2404   3            {
@@ -2558,7 +2558,7 @@ line level    source
 2462   2          if ((CheckMemoryMgr.FpMasterNum == 0x00 )
 2463   2            &&(CheckMemoryMgr.PasscodeMasterNum == 0x00)
 2464   2            )
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 41  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 41  
 
 2465   2          {
 2466   3            #ifdef DirectIntoMainMenuInFactoryDefaultStatus
@@ -2622,7 +2622,7 @@ line level    source
 2524   3              &&(ManagerIdentifyMgr.PasscodeUserID < (DEF_MAX_PASSCODEMASTER+1) )
 2525   3               )
 2526   3            {
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 42  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 42  
 
 2527   4              ManagerIdentifyMgr.Status = ManagerIdentifySuccess;
 2528   4            }
@@ -2686,7 +2686,7 @@ line level    source
 2585   3            else{
 2586   4              ManagerIdentifyMgr.ErrorType = MasterMismatched;
 2587   4            }
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 43  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 43  
 
 2588   3            FpIdentifyMgr.Status = FPMcmdStart;
 2589   3            ManagerIdentifyMgr.Status = ManagerIdentifyFail;
@@ -2750,7 +2750,7 @@ line level    source
 2645          void ShowUnlockingModeSetting(void)//界面-解锁模式设置
 2646          {
 2647   1        #ifdef Function_ScreenDisplay
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 44  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 44  
 
                 code uint8_t SingalModeStr[]={ZF_1,ZF_xiaoshudian,HZ_dan,HZ_yier,HZ_kai,HZ_suomen,HZ_end};
               //  code uint8_t SingalModeStrEn[]={"1.Single"}; 
@@ -2814,7 +2814,7 @@ line level    source
 2707          /*******************************************************/
 2708          void ShowContinuedOpenModeSetting(void)//界面-组合开锁模式设置
 2709          {
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 45  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 45  
 
 2710   1        #ifdef Function_ScreenDisplay
                 //code uint8_t TitleStr[]={HZ_changchang,HZ_kai,HZ_mo,HZ_si,HZ_end};              //常开模式
@@ -2878,7 +2878,7 @@ line level    source
 2766   2          }
 2767   1        else if ( PickAlarmEnableMgr.Status == WaitForPickAlarmEnableSettingUserConfirm )
 2768   1          {
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 46  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 46  
 
 2769   2            
 2770   2          }
@@ -2942,7 +2942,7 @@ line level    source
 2827   2          PLAY_VOICE_ONESEGMENT(VOICE_RestoreFactoryDefault);
 2828   2      
 2829   2        }
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 47  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 47  
 
 2830   1        else if ( RestoreFactoryDefaultMgr.Status == SaveFPMserialNumber )
 2831   1        {
@@ -3006,7 +3006,7 @@ line level    source
 2889   3              RestoreFactoryDefaultMgr.Status = ResetPasscodeUser;
 2890   3              RestoreFactoryDefaultMgr.TimeCnt = Def_GuiTimeDelayCnt1s;
 2891   3              CheckMemoryMgr.CardUserNum = 0x00;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 48  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 48  
 
 2892   3            } 
 2893   2          }
@@ -3070,7 +3070,7 @@ line level    source
 2951          /*******************************************************/
 2952          /*******************************************************/
 2953          /*******************************************************/
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 49  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 49  
 
 2954          void ShowInitialization(void)//界面-初始化
 2955          {
@@ -3134,7 +3134,7 @@ line level    source
 3013   3            #ifdef Function_ScreenDisplay
                     Clear_Screen_Page(4);
                     Clear_Screen_Page(5);
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 50  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 50  
 
                     DisHZ16x14Str(4,36,FingprintStr,NormalDisplay); //display "FPM TEST"
                     #endif
@@ -3198,7 +3198,7 @@ line level    source
                     DisHZ16x14Str(4,36,CardReaderStr,NormalDisplay); 
                     #endif
 3077   3          }
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 51  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 51  
 
 3078   2        }
 3079   1        else if ( InitializationMgr.Status == CardReaderCheck )
@@ -3262,7 +3262,7 @@ line level    source
                       if( (InitializationMgr.FingerPrintCheckPass == bTRUE )
                         &&(InitializationMgr.MemoryCheckPass == bTRUE )
                         &&(InitializationMgr.CardReaderCheckPass == bTRUE )
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 52  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 52  
 
                         &&(InitializationMgr.TouchCheckPass == bTRUE ) )
                       {
@@ -3326,7 +3326,7 @@ line level    source
 3199   4              if(VoiceMgr.Enable == bFALSE)
 3200   4              {
 3201   5                VoiceMgr.Enable = bTRUE;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 53  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 53  
 
 3202   5                PLAY_VOICE_THREESEGMENT(VOICE_Alarm,VOICE_Alarm,VOICE_Alarm);
 3203   5                VoiceMgr.Enable = bFALSE;
@@ -3390,7 +3390,7 @@ line level    source
                 #endif  
 3260   1        
 3261   1        Flag_ExitPickLockAlarm = bFALSE;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 54  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 54  
 
 3262   1        if (( UART2_Mgr.TxLength == 0x00 )&& ( CardIdentifyMgr.CardDetectIntervalTimeCnt ==0 ) )  //FPM Cmd is sen
              -t out
@@ -3454,7 +3454,7 @@ line level    source
 3320   1        if ( AntiPryingMgr.TimeCnt > 0 )
 3321   1        {
 3322   2          #ifdef Function_TuyaWifi
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 55  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 55  
 
                   if( AntiPryingMgr.TimeCnt == DEF_AntiPryingTime )
                   {
@@ -3518,7 +3518,7 @@ line level    source
                 DisEN16x8Str(6,0,Str3,NormalDisplay); 
                 DisOneDigital16x8(6,54,BatteryMgr.BatteryVoltage%100/10,NormalDisplay);
                 DisOneDigital16x8(6,70,BatteryMgr.BatteryVoltage%10,NormalDisplay);
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 56  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 56  
 
                 #endif
 3386   1      }
@@ -3582,7 +3582,7 @@ line level    source
                         PLAY_VOICE_MULTISEGMENTS(VoiceReportLogBuff[VoiceMenuMgr.MenuPoint]);
                         VoiceMenuMgr.MenuPoint++;
                       }
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 57  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 57  
 
                       SystemPowerMgr.SleepDelayTimerCnt = Def_GuiTimeDelayCnt45s;
                     }
@@ -3646,7 +3646,7 @@ line level    source
                     Clear_Screen();
                     DisHZ16x14Str(3,36,OperationSuccessStr,NormalDisplay);
                     #endif
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 58  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 58  
 
                   }
                 }
@@ -3710,7 +3710,7 @@ line level    source
                       #endif
 3569   3            }
 3570   2            else if ( gui_keycode == KEY_INSIDEBUTTON_HOLD_LONG )
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 59  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 59  
 
 3571   2            {
 3572   3              CurrentScreen = SCREEN_RestoreFactoryDefault;
@@ -3774,7 +3774,7 @@ line level    source
                           PLAY_VOICE_DOORBELL();  //DOORBELL
                           DoorBellMgr.TimeCnt = 150;
                           CurrentScreen = SCREEN_DoorBell;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 60  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 60  
 
                           #else
 3634   5                  DEF_ButtonPress_Voice;
@@ -3838,7 +3838,7 @@ line level    source
 3692   2      //          DEF_ButtonPress_Voice;
 3693   2      //          Hardware_DelayMs(100);
 3694   2      //          GotoLogMenu();
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 61  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 61  
 
 3695   2      //        }
 3696   2              else if ( gui_keycode == KEY_ASTERISK )
@@ -3902,7 +3902,7 @@ line level    source
 3754   3                Hardware_DelayMs(100);
 3755   3                FpUserRegisterMgr.Status = StartFpUserRegister;
 3756   3                CurrentScreen = SCREEN_RegisterMasterFp;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 62  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 62  
 
 3757   3                
 3758   3              }
@@ -3966,7 +3966,7 @@ line level    source
 3816   2              else if ( gui_keycode == KEY_TWO )
 3817   2              {
 3818   3                DEF_ButtonPress_Voice;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 63  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 63  
 
 3819   3                Hardware_DelayMs(100);
 3820   3                CurrentScreen = SCREEN_RegisterPasscodeUser;
@@ -4030,7 +4030,7 @@ line level    source
 3878   3                  CurrentScreen = SCREEN_ContinueOpenSetting;
 3879   3                  VoiceMenuMgr.MenuPoint=0;
 3880   3                  VoiceMenuMgr.TotalMenuNum = 3;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 64  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 64  
 
 3881   3                }
 3882   2                else if ( gui_keycode == KEY_THREE+Offset )
@@ -4094,7 +4094,7 @@ line level    source
 3940   3                DEF_ButtonPress_Voice;
 3941   3                Hardware_DelayMs(100);
 3942   3                GoToFpMenu(); 
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 65  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 65  
 
 3943   3              }
 3944   2              
@@ -4158,7 +4158,7 @@ line level    source
 4002   2                {
 4003   2                  DEF_ButtonPress_Voice;
 4004   2                  AllUserFpDeleteMgr.Selection = YES;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 66  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 66  
 
 4005   2                }
 4006   2                else if ( gui_keycode == KEY_SIX )
@@ -4222,7 +4222,7 @@ line level    source
 4064   2            break;  
 4065   2      
 4066   2      
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 67  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 67  
 
 4067   2          case SCREEN_RegisterPasscodeUser:
 4068   2      
@@ -4286,7 +4286,7 @@ line level    source
 4126   2              {
 4127   2                if ( (gui_keycode < KEY_NINE )||(gui_keycode == KEY_NINE) )
 4128   2                {
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 68  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 68  
 
 4129   2                  DEF_ButtonPress_Voice;
 4130   2                  TempSystemTime.year = (TempSystemTime.year&0x0F)+(gui_keycode<<4);
@@ -4350,7 +4350,7 @@ line level    source
 4188   2                  DEF_ButtonPress_Voice;
 4189   2                  TempSystemTime.date= (TempSystemTime.date&0x0F)+(gui_keycode<<4);
 4190   2                  TimeSettingMgr.Status = SetDateMinor;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 69  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 69  
 
 4191   2                }
 4192   2              }
@@ -4414,7 +4414,7 @@ line level    source
 4250   2                else if ( gui_keycode < KEY_SIX)
 4251   2                {
 4252   2                  DEF_ButtonPress_Voice;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 70  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 70  
 
 4253   2                  TempSystemTime.minute= (TempSystemTime.minute&0x0F)+(gui_keycode<<4);
 4254   2                  TimeSettingMgr.Status = SetMinuteMinor;
@@ -4478,7 +4478,7 @@ line level    source
 4312   2                  Hardware_DelayMs(100);
 4313   2                  PLAY_VOICE_THREESEGMENT(VOICE_Time,VOICE_Setting,VOICE_Fail);
 4314   2                }
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 71  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 71  
 
 4315   2                  
 4316   2                GoToSystemConfigMenu();         
@@ -4542,7 +4542,7 @@ line level    source
                         SystemConfigSave();
                         GoToSystemConfigMenu();
                       }
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 72  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 72  
 
                       else if ( gui_keycode == KEY_ASTERISK)
                       {
@@ -4606,7 +4606,7 @@ line level    source
 4436   3                }
 4437   2            break;
 4438   2              
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 73  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 73  
 
 4439   2          case SCREEN_UnlockingModeSetting:
 4440   2              
@@ -4670,7 +4670,7 @@ line level    source
 4498   4                    MotorMgr.CCWSoftStart = bTRUE;
 4499   4                  }
 4500   3                  PLAY_VOICE_MULTISEGMENTS(VoiceStr_NormallyOpenModeClosed);
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 74  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 74  
 
 4501   3                  Hardware_DelayMs(100);
 4502   3                  GoToSystemConfigMenu();
@@ -4734,7 +4734,7 @@ line level    source
 4560   4                if ( PasscodeUserIdentifyMgr.Status == PasscodeIdentifyIdle )
 4561   4                {
 4562   5                  
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 75  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 75  
 
 4563   5                  PasscodeInputMgr.Point = 0x01;
 4564   5                  PasscodeInputMgr.PasscodeLen = 16;
@@ -4798,7 +4798,7 @@ line level    source
                             DEF_Fail_Beep;
                           }
                         }
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 76  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 76  
 
                         else if ( gui_keycode == KEY_EIGHT )
                         { 
@@ -4862,7 +4862,7 @@ line level    source
 4683   2            
 4684   2        }
 4685   1        
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 77  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 77  
 
 4686   1      }
 4687          
@@ -4926,7 +4926,7 @@ line level    source
 4745   2          
 4746   2          case SCREEN_DoorBell:
 4747   2            
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 78  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 78  
 
 4748   2            ShowDoorBell();
 4749   2            break;
@@ -4990,7 +4990,7 @@ line level    source
 4807   2          
 4808   2          case SCREEN_DeleteAllUserFp:
 4809   2            
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 79  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 79  
 
 4810   2            //SET_AP_LED_ON();
 4811   2            ShowDeleteAllUserFp();
@@ -5054,7 +5054,7 @@ line level    source
 4869   2          case SCREEN_TimeSetting:
 4870   2      
 4871   2            //ShowTimeSetting();
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 80  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 80  
 
 4872   2      
 4873   2            break;
@@ -5118,7 +5118,7 @@ line level    source
 4931   2            //SET_AP_LED_ON();
 4932   2            GUI_Update_Version();
 4933   2            break;
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 81  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 81  
 
 4934   2      
 4935   2      //    case SCREEN_SelfTest:
@@ -5182,7 +5182,7 @@ line level    source
 4993   1        init_Managerdata();
 4994   1      
 4995   1        ReadCardUserMemoryFromEEPROM();
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 82  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 82  
 
 4996   1      
 4997   1        ReadPasscodeUserMemoryFromEEPROM();
@@ -5246,7 +5246,7 @@ line level    source
 5055   4              SetFPMbreathingLed(FPMbreathingLed_Bule);
 5056   4            }
 5057   3          }
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 83  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 83  
 
 5058   2          #endif
 5059   2        }
@@ -5310,7 +5310,7 @@ line level    source
 5117   2          FpIdentifyMgr.Status = FPMcmdStart;
 5118   2          CardIdentifyMgr.Status = ReadingCardID;
 5119   2          Hardware_DelayMs(20);   //wait for voice data transfer completed
-C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 14:43:39 PAGE 84  
+C51 COMPILER V9.60.0.0   GUI                                                               05/09/2023 17:03:19 PAGE 84  
 
 5120   2          #ifdef Function_FPMbreathingLed
 5121   2          SetFPMbreathingLed(FPMbreathingLed_Off);

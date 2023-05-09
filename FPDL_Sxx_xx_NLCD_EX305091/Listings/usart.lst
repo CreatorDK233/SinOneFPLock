@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   USART                                                             05/09/2023 14:43:37 PAGE 1   
+C51 COMPILER V9.60.0.0   USART                                                             05/09/2023 17:03:17 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE USART
@@ -62,7 +62,7 @@ line level    source
   48          {
   49   1        Choose_SSI2;
   50   1        UARTX_Init(32, 57600);
-C51 COMPILER V9.60.0.0   USART                                                             05/09/2023 14:43:37 PAGE 2   
+C51 COMPILER V9.60.0.0   USART                                                             05/09/2023 17:03:17 PAGE 2   
 
   51   1        //IP2 |= 0x02;
   52   1        USXINX_Clear;
@@ -126,7 +126,7 @@ line level    source
  110          /******************************串口1读取单字节*/
  111          void Uart1ReadByte(uint8_t *dat)
  112          {
-C51 COMPILER V9.60.0.0   USART                                                             05/09/2023 14:43:37 PAGE 3   
+C51 COMPILER V9.60.0.0   USART                                                             05/09/2023 17:03:17 PAGE 3   
 
  113   1         *dat = US1CON3;
  114   1      }
@@ -190,7 +190,7 @@ line level    source
  172          {
  173   1        Choose_SSI3;
  174   1        *dat = USXCON3;
-C51 COMPILER V9.60.0.0   USART                                                             05/09/2023 14:43:37 PAGE 4   
+C51 COMPILER V9.60.0.0   USART                                                             05/09/2023 17:03:17 PAGE 4   
 
  175   1        USXINX_Clear;
  176   1      }
@@ -254,7 +254,7 @@ line level    source
  234   1        USXINX_Clear;
  235   1      }
  236          
-C51 COMPILER V9.60.0.0   USART                                                             05/09/2023 14:43:37 PAGE 5   
+C51 COMPILER V9.60.0.0   USART                                                             05/09/2023 17:03:17 PAGE 5   
 
  237          void UART3_Int() interrupt 17   //Uart3中断函数
  238          {

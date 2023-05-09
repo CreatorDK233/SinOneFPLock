@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              05/09/2023 14:53:15 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              05/09/2023 16:27:45 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   50   1        VOICE_Init();
   51   1        MFC_Init();
   52   1        Hardware_DelayMs(10);
-C51 COMPILER V9.60.0.0   MAIN                                                              05/09/2023 14:53:15 PAGE 2   
+C51 COMPILER V9.60.0.0   MAIN                                                              05/09/2023 16:27:45 PAGE 2   
 
   53   1        Touch_Init();
   54   1        Hardware_DelayMs(10);
@@ -126,7 +126,7 @@ line level    source
  112   1        
  113   1        
  114   1        while (1)
-C51 COMPILER V9.60.0.0   MAIN                                                              05/09/2023 14:53:15 PAGE 3   
+C51 COMPILER V9.60.0.0   MAIN                                                              05/09/2023 16:27:45 PAGE 3   
 
  115   1        {
  116   2          if ( G_tflagbits.T1024Hz == 1 )
@@ -190,7 +190,7 @@ line level    source
  174   2          
  175   2          if ( G_tflagbits.T8Hz == 1 )
  176   2          {
-C51 COMPILER V9.60.0.0   MAIN                                                              05/09/2023 14:53:15 PAGE 4   
+C51 COMPILER V9.60.0.0   MAIN                                                              05/09/2023 16:27:45 PAGE 4   
 
  177   3            G_tflagbits.T8Hz =0;
  178   3            CLRWDT();
@@ -254,7 +254,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    HDATA SIZE       =   ----    ----
    XDATA CONST SIZE =   ----    ----
    FAR CONST SIZE   =   ----    ----
-C51 COMPILER V9.60.0.0   MAIN                                                              05/09/2023 14:53:15 PAGE 5   
+C51 COMPILER V9.60.0.0   MAIN                                                              05/09/2023 16:27:45 PAGE 5   
 
 END OF MODULE INFORMATION.
 

@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   VOICE_MENU                                                        05/09/2023 14:43:40 PAGE 1   
+C51 COMPILER V9.60.0.0   VOICE_MENU                                                        05/09/2023 17:03:20 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE VOICE_MENU
@@ -62,7 +62,7 @@ line level    source
                 {VOICE_Press,VOICE_Three,VOICE_NormallyOpen,VOICE_Setting,DEF_VoiceSegmentEndFlag},
                 {VOICE_Press,VOICE_Four,VOICE_UnlockingMode,VOICE_Setting,DEF_VoiceSegmentEndFlag},
                 {VOICE_Press,VOICE_Five,VOICE_AntiSkidAlarm,VOICE_Setting,DEF_VoiceSegmentEndFlag},
-C51 COMPILER V9.60.0.0   VOICE_MENU                                                        05/09/2023 14:43:40 PAGE 2   
+C51 COMPILER V9.60.0.0   VOICE_MENU                                                        05/09/2023 17:03:20 PAGE 2   
 
                 {VOICE_Press,VOICE_Six,VOICE_RestoreFactoryDefault,VOICE_Setting,DEF_VoiceSegmentEndFlag},
                 {VOICE_PressAsteriskKey,VOICE_ReturnPreviousMenu,DEF_VoiceSegmentEndFlag}
@@ -126,7 +126,7 @@ line level    source
  108            {VOICE_PressAsteriskKey,VOICE_ReturnPreviousMenu,DEF_VoiceSegmentEndFlag}
  109          };
  110            
-C51 COMPILER V9.60.0.0   VOICE_MENU                                                        05/09/2023 14:43:40 PAGE 3   
+C51 COMPILER V9.60.0.0   VOICE_MENU                                                        05/09/2023 17:03:20 PAGE 3   
 
  111          
  112          code uint8_t ConfirmDeleteVoiceBuff[]={VOICE_PressPoundKey,VOICE_ConfirmToDelete,VOICE_PressAsteriskKey,VO

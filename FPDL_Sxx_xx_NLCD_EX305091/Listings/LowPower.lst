@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 14:43:40 PAGE 1   
+C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 17:03:20 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE LOWPOWER
@@ -62,7 +62,7 @@ line level    source
   50          void IntoLowPowerMode_Init(void)
   51          {
   52   1          /*进入低功耗前设置*/
-C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 14:43:40 PAGE 2   
+C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 17:03:20 PAGE 2   
 
   53   1        KeyWakeUpKeyWaitTime = 8;//8*125ms = 1s
   54   1        #ifdef Function_HallSlide
@@ -97,168 +97,182 @@ line level    source
   83   2          if(LastWakeUpKeyValue==KeyValue)
   84   2          {
   85   3            #ifdef Function_HallSlide
-                    if( PINMACRO_HALLSENSOR_STATUS == 0 )
-                    {
-                      MX_QuitLowPowerMode();
-                      KeyJustWakeUp = 1;
-                    }
-                    LastWakeUpKeyValue = 0xff;
+                      if( PINMACRO_HALLSENSOR_STATUS == 0 )
+                      {
+                        AwakeSystemKeyMgr.IsDoorBellKeyAwake = bFALSE;
+                        AwakeSystemKeyMgr.IsPoundsignKeyAwake = bFALSE;
+                        MX_QuitLowPowerMode();
+                        KeyJustWakeUp = 1;
+                      }
+                      LastWakeUpKeyValue = 0xff;
                     #else
-  93   3            MX_QuitLowPowerMode();
-  94   3            KeyJustWakeUp = 1;
-  95   3            LastWakeUpKeyValue = 0xff;
-  96   3            #endif
-  97   3          }
-  98   2          else{
-  99   3            LastWakeUpKeyValue = KeyValue;
- 100   3          }
- 101   2        }
- 102   1        else{
- 103   2          LastWakeUpKeyValue = 0xff;
- 104   2        }
- 105   1      }
- 106          
- 107          /**************************************************
- 108          *函数名称：void LowPowerAwakeupDispose(void)
- 109          *函数功能低功耗唤醒检测（不带触摸按键检测）
- 110          *入口参数：void
- 111          *出口参数：void  
- 112          **************************************************/
- 113          void LowPowerAwakeupDispose(void)
- 114          {
-C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 14:43:40 PAGE 3   
+  95   3              AwakeSystemKeyMgr.IsDoorBellKeyAwake = bFALSE;
+  96   3              AwakeSystemKeyMgr.IsPoundsignKeyAwake = bFALSE;
+  97   3              MX_QuitLowPowerMode();
+  98   3              #if defined ProjectIs_BarLock_S4914
+  99   3                if( KeyValue == 0x00 )
+ 100   3                {
+ 101   4                  AwakeSystemKeyMgr.IsDoorBellKeyAwake = bTRUE;
+ 102   4                }
+ 103   3      //          else if( KeyValue == 0x0C )
+ 104   3      //          {
+ 105   3      //            AwakeSystemKeyMgr.IsPoundsignKeyAwake = bTRUE;
+ 106   3      //          }
+ 107   3              #endif
+ 108   3              KeyJustWakeUp = 1;
+ 109   3              LastWakeUpKeyValue = 0xff;
+ 110   3            #endif
+ 111   3          }
+ 112   2          else{
+ 113   3            LastWakeUpKeyValue = KeyValue;
+ 114   3          }
+C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 17:03:20 PAGE 3   
 
- 115   1        if( PickAlarmEnableMgr.Enable == bTRUE )
- 116   1        {
- 117   2          if(( PINMACRO_PICKLOCK_STATUS == 1 )&&( AntiPryingMgr.AntiPryingSignalRelease == bTRUE ))
- 118   2          {
- 119   3            MX_QuitLowPowerMode();
- 120   3          }
- 121   2        }
- 122   1        if(( PINMACRO_FPM_TOUCH_STATUS == 1 )||( PINMACRO_ONBOARD_BUTTON_STATUS == 0 ))
- 123   1        {
- 124   2          MX_QuitLowPowerMode();
- 125   2        }
- 126   1        #ifdef Function_HallSlide
+ 115   2        }
+ 116   1        else{
+ 117   2          LastWakeUpKeyValue = 0xff;
+ 118   2        }
+ 119   1      }
+ 120          
+ 121          /**************************************************
+ 122          *函数名称：void LowPowerAwakeupDispose(void)
+ 123          *函数功能低功耗唤醒检测（不带触摸按键检测）
+ 124          *入口参数：void
+ 125          *出口参数：void  
+ 126          **************************************************/
+ 127          void LowPowerAwakeupDispose(void)
+ 128          {
+ 129   1        if( PickAlarmEnableMgr.Enable == bTRUE )
+ 130   1        {
+ 131   2          if(( PINMACRO_PICKLOCK_STATUS == 1 )&&( AntiPryingMgr.AntiPryingSignalRelease == bTRUE ))
+ 132   2          {
+ 133   3            MX_QuitLowPowerMode();
+ 134   3          }
+ 135   2        }
+ 136   1        if(( PINMACRO_FPM_TOUCH_STATUS == 1 )||( PINMACRO_ONBOARD_BUTTON_STATUS == 0 ))
+ 137   1        {
+ 138   2          MX_QuitLowPowerMode();
+ 139   2        }
+ 140   1        #ifdef Function_HallSlide
                 HallAwakeupDispose();
                 #endif
- 129   1        if( INT1flag != 0 )
- 130   1        {
- 131   2          MX_QuitLowPowerMode();
- 132   2        }
- 133   1      }
- 134          
- 135          /**************************************************
- 136          *函数名称：void System_PowerDown(void)
- 137          *函数功能系统休眠开始
- 138          *入口参数：void
- 139          *出口参数：void  
- 140          **************************************************/
- 141          void System_PowerDown(void)
- 142          {
- 143   1        uint16_t i;
- 144   1        //uint8_t j=0,k=0;
- 145   1        //uint32_t Awake_key=0;
- 146   1        
- 147   1        static uint16_t FPtimeout_times,FP_SleepFailedTimes;
- 148   1        
- 149   1        CLRWDT();
- 150   1        DEBUG_MARK;
- 151   1        
- 152   1        #ifdef Function_ScreenDisplay
+ 143   1        if( INT1flag != 0 )
+ 144   1        {
+ 145   2          MX_QuitLowPowerMode();
+ 146   2        }
+ 147   1      }
+ 148          
+ 149          /**************************************************
+ 150          *函数名称：void System_PowerDown(void)
+ 151          *函数功能系统休眠开始
+ 152          *入口参数：void
+ 153          *出口参数：void  
+ 154          **************************************************/
+ 155          void System_PowerDown(void)
+ 156          {
+ 157   1        uint16_t i;
+ 158   1        //uint8_t j=0,k=0;
+ 159   1        //uint32_t Awake_key=0;
+ 160   1        
+ 161   1        static uint16_t FPtimeout_times,FP_SleepFailedTimes;
+ 162   1        
+ 163   1        CLRWDT();
+ 164   1        DEBUG_MARK;
+ 165   1        
+ 166   1        #ifdef Function_ScreenDisplay
                 Clear_Screen();
                 #endif
- 155   1        
- 156   1        #ifndef DEBUG_MODE
- 157   1        SET_LOGLED_OFF;
- 158   1        #endif
- 159   1        
- 160   1        ADC_DeInit();
- 161   1        
- 162   1        MX_TIM_DeInit();
- 163   1      
- 164   1        SPI0_DeInit();
- 165   1      
- 166   1        MFC_POWERDOWN();
- 167   1      
- 168   1        VoicePlayerPowerDown();
- 169   1      
- 170   1        CLRWDT();
- 171   1      
- 172   1        FPtimeout_times=0;
- 173   1        FP_SleepFailedTimes=0;
- 174   1        while(1)
- 175   1        {
- 176   2          FpmAckMgr.Status = WaitACK;
-C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 14:43:40 PAGE 4   
+ 169   1        
+ 170   1        #ifndef DEBUG_MODE
+ 171   1        SET_LOGLED_OFF;
+ 172   1        #endif
+ 173   1        
+ 174   1        ADC_DeInit();
+ 175   1        
+ 176   1        MX_TIM_DeInit();
+C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 17:03:20 PAGE 4   
 
- 177   2          FPM_SendSleepCmd();
- 178   2          for (i=0;i<25;i++)
- 179   2          {
- 180   3            CLRWDT();
- 181   3            Hardware_DelayMs(20);
- 182   3            FPM_Mgr_Task();
- 183   3            if ( FpmAckMgr.Status == GotACK )
- 184   3            {
- 185   4              if (  ( FpmAckMgr.ErrorCode == Error_NONE)
- 186   4                &&(PINMACRO_FPM_TOUCH_STATUS == 0 )
- 187   4                )
- 188   4              {
- 189   5                FPMpowerMgr.Status = FPMpowerDown;  
- 190   5                DEBUG_MARK;
- 191   5                break;
- 192   5              }
- 193   4              else
- 194   4              {
- 195   5                FP_SleepFailedTimes++;
- 196   5                DEBUG_MARK;
- 197   5                
- 198   5                if (FP_SleepFailedTimes>350)    //FP not released more than 10s
- 199   5                {
- 200   6                  FPMpowerMgr.Status = FPMpowerDown;  
- 201   6                }
- 202   5                break;
- 203   5              }
- 204   4              
- 205   4            }
- 206   3            else
- 207   3            {
- 208   4              if (i>23)   //time out,FP failed
- 209   4              {
- 210   5                FPtimeout_times++;
- 211   5                if (FPtimeout_times>2)
- 212   5                {
- 213   6                  FPMpowerMgr.Status = FPMpowerDown;  
- 214   6                  break;
+ 177   1      
+ 178   1        SPI0_DeInit();
+ 179   1      
+ 180   1        MFC_POWERDOWN();
+ 181   1      
+ 182   1        VoicePlayerPowerDown();
+ 183   1      
+ 184   1        CLRWDT();
+ 185   1      
+ 186   1        FPtimeout_times=0;
+ 187   1        FP_SleepFailedTimes=0;
+ 188   1        while(1)
+ 189   1        {
+ 190   2          FpmAckMgr.Status = WaitACK;
+ 191   2          FPM_SendSleepCmd();
+ 192   2          for (i=0;i<25;i++)
+ 193   2          {
+ 194   3            CLRWDT();
+ 195   3            Hardware_DelayMs(20);
+ 196   3            FPM_Mgr_Task();
+ 197   3            if ( FpmAckMgr.Status == GotACK )
+ 198   3            {
+ 199   4              if (  ( FpmAckMgr.ErrorCode == Error_NONE)
+ 200   4                &&(PINMACRO_FPM_TOUCH_STATUS == 0 )
+ 201   4                )
+ 202   4              {
+ 203   5                FPMpowerMgr.Status = FPMpowerDown;  
+ 204   5                DEBUG_MARK;
+ 205   5                break;
+ 206   5              }
+ 207   4              else
+ 208   4              {
+ 209   5                FP_SleepFailedTimes++;
+ 210   5                DEBUG_MARK;
+ 211   5                
+ 212   5                if (FP_SleepFailedTimes>350)    //FP not released more than 10s
+ 213   5                {
+ 214   6                  FPMpowerMgr.Status = FPMpowerDown;  
  215   6                }
- 216   5              }
- 217   4            }
- 218   3          }
- 219   2          CLRWDT();
- 220   2          if ( FPMpowerMgr.Status == FPMpowerDown)
- 221   2          {
- 222   3            DEBUG_MARK;
- 223   3            MX_UART2_DeInit();
- 224   3            SET_FPMPOWER_OFF; 
- 225   3            Hardware_DelayMs(3);//Wait for Power line lost power
- 226   3            break;
- 227   3          }
- 228   2        }
- 229   1        #if (defined ProjectIs_BarLock_S7702) || (defined ProjectIs_BarLock_S4914)
- 230   1          LEDsCtrlSwitch = 0;
- 231   1        #endif
- 232   1          //wait for user release touch button
- 233   1        if ( SystemPowerMgr.SleepSource == UserForced )
- 234   1        {
- 235   2          for (i=0;i<10;i++)
- 236   2          {
- 237   3            CLRWDT();
- 238   3            Hardware_DelayMs(1);
-C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 14:43:40 PAGE 5   
+ 216   5                break;
+ 217   5              }
+ 218   4              
+ 219   4            }
+ 220   3            else
+ 221   3            {
+ 222   4              if (i>23)   //time out,FP failed
+ 223   4              {
+ 224   5                FPtimeout_times++;
+ 225   5                if (FPtimeout_times>2)
+ 226   5                {
+ 227   6                  FPMpowerMgr.Status = FPMpowerDown;  
+ 228   6                  break;
+ 229   6                }
+ 230   5              }
+ 231   4            }
+ 232   3          }
+ 233   2          CLRWDT();
+ 234   2          if ( FPMpowerMgr.Status == FPMpowerDown)
+ 235   2          {
+ 236   3            DEBUG_MARK;
+ 237   3            MX_UART2_DeInit();
+ 238   3            SET_FPMPOWER_OFF; 
+C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 17:03:20 PAGE 5   
 
- 239   3          }
- 240   2        }
- 241   1        #ifdef Function_TuyaWifi
+ 239   3            Hardware_DelayMs(3);//Wait for Power line lost power
+ 240   3            break;
+ 241   3          }
+ 242   2        }
+ 243   1        #if (defined ProjectIs_BarLock_S7702) || (defined ProjectIs_BarLock_S4914)
+ 244   1          LEDsCtrlSwitch = 0;
+ 245   1        #endif
+ 246   1          //wait for user release touch button
+ 247   1        if ( SystemPowerMgr.SleepSource == UserForced )
+ 248   1        {
+ 249   2          for (i=0;i<10;i++)
+ 250   2          {
+ 251   3            CLRWDT();
+ 252   3            Hardware_DelayMs(1);
+ 253   3          }
+ 254   2        }
+ 255   1        #ifdef Function_TuyaWifi
                 if( WifiMgr.PostMgr.RemoteUnlockCountdown > 0 )
                 {
                   WifiRemoteUnlockStop();
@@ -271,103 +285,105 @@ line level    source
                 }
                 //MX_UART1_DeInit();
                 #endif
- 254   1      
- 255   1        MX_GPIO_DeInit();
- 256   1        
- 257   1        Enable_EX_Interrupt();
- 258   1        
- 259   1        IntoLowPowerMode_Init();
- 260   1      
- 261   1        TouchKey_IntoLowPowerMode();
- 262   1        i=0;
- 263   1        while(i!=1)
- 264   1        {
- 265   2          if(GetLowPowerScanFlag() == 0)  //正常运行模式 
- 266   2          {
- 267   3            i=1;
- 268   3          }
- 269   2          else            //低功耗运行模式
- 270   2          {
- 271   3            LowPower_Touchkey_Scan();
- 272   3          } 
- 273   2        }
- 274   1      }
- 275          
- 276          /**************************************************
- 277          *函数名称：void System_Awake(void)
- 278          *函数功能系统唤醒开始
- 279          *入口参数：void
- 280          *出口参数：void  
- 281          **************************************************/
- 282          void System_Awake(void)
- 283          {
- 284   1        uint8_t i;
- 285   1        
- 286   1        CLRWDT();
- 287   1      
- 288   1        Hardware_DelayMs(1);    //wait for system clock stable//
- 289   1        
- 290   1        MX_GPIO_Init();
- 291   1        
- 292   1        SET_MFC_RST_H;
- 293   1        
- 294   1        MX_ADC1_Init();
- 295   1        
- 296   1        MX_TIM_Init();
- 297   1        
- 298   1        MX_SPI0_Init();
+ 268   1      
+ 269   1        MX_GPIO_DeInit();
+ 270   1        
+ 271   1        Enable_EX_Interrupt();
+ 272   1        
+ 273   1        IntoLowPowerMode_Init();
+ 274   1      
+ 275   1        TouchKey_IntoLowPowerMode();
+ 276   1        i=0;
+ 277   1        while(i!=1)
+ 278   1        {
+ 279   2          if(GetLowPowerScanFlag() == 0)  //正常运行模式 
+ 280   2          {
+ 281   3            i=1;
+ 282   3          }
+ 283   2          else            //低功耗运行模式
+ 284   2          {
+ 285   3            LowPower_Touchkey_Scan();
+ 286   3          } 
+ 287   2        }
+ 288   1      }
+ 289          
+ 290          /**************************************************
+ 291          *函数名称：void System_Awake(void)
+ 292          *函数功能系统唤醒开始
+ 293          *入口参数：void
+ 294          *出口参数：void  
+ 295          **************************************************/
+ 296          void System_Awake(void)
+ 297          {
+ 298   1        uint8_t i;
  299   1        
- 300   1        MX_I2C_Init();
-C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 14:43:40 PAGE 6   
+ 300   1        CLRWDT();
+C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 17:03:20 PAGE 6   
 
- 301   1        
- 302   1        #ifndef DEBUG_MODE
- 303   1        SET_LOGLED_ON;
- 304   1        #endif
+ 301   1      
+ 302   1        Hardware_DelayMs(1);    //wait for system clock stable//
+ 303   1        
+ 304   1        MX_GPIO_Init();
  305   1        
- 306   1        #if (defined ProjectIs_BarLock_S7702) || (defined ProjectIs_BarLock_S4914)
- 307   1        SET_LEDKEYs_OFF;
- 308   1        #endif
+ 306   1        SET_MFC_RST_H;
+ 307   1        
+ 308   1        MX_ADC1_Init();
  309   1        
- 310   1      //  #ifdef Function_TuyaWifi
- 311   1      //  MX_UART1_Init();
- 312   1      //  //Wifi_Init();
- 313   1      //  Wifi_Rst();
- 314   1      //  #endif
+ 310   1        MX_TIM_Init();
+ 311   1        
+ 312   1        MX_SPI0_Init();
+ 313   1        
+ 314   1        MX_I2C_Init();
  315   1        
- 316   1        MX_UART2_Init();
- 317   1        
- 318   1        SYSPOWER_ON;        
- 319   1        FPMpowerMgr.Status = FPMpowerOn;
- 320   1        Hardware_DelayMs(5);    //wait for OLED Driver power on reset
- 321   1        
- 322   1        MFC_Init();
- 323   1        Hardware_DelayMs(5);  
- 324   1        
- 325   1        TouchKeyRestart();
- 326   1        Key_Init();
- 327   1        
- 328   1        GUI_Init(); 
- 329   1      
- 330   1        SET_VOLUME(VoiceMgr.volume);
- 331   1      
- 332   1        Hardware_DelayMs(1);
- 333   1        
- 334   1        for (i=0;i<100;i++)
- 335   1        {
- 336   2          if( i%10 == 0 )CLRWDT();
- 337   2          Hardware_Task_Analog();
- 338   2          HardwareBatteryMgr_Task();
- 339   2        }
- 340   1        
- 341   1        if (( BatteryMgr.BatteryLevel == LEVEL_1 )||( BatteryMgr.BatteryLevel == LEVEL_0 ))
- 342   1        {
- 343   2          PLAY_VOICE_ONESEGMENT(VOICE_PleaseReplaceTheBattery);
- 344   2          BatteryMgr.TimeCnt = Def_MessageBoxTimeDelay;
- 345   2          CurrentScreen = SCREEN_LowBattery;    
- 346   2        }
- 347   1        #ifdef INSIDEBUTTONINTOMAINMENU
+ 316   1        #ifndef DEBUG_MODE
+ 317   1        SET_LOGLED_ON;
+ 318   1        #endif
+ 319   1        
+ 320   1        #if (defined ProjectIs_BarLock_S7702) || (defined ProjectIs_BarLock_S4914)
+ 321   1        SET_LEDKEYs_OFF;
+ 322   1        #endif
+ 323   1        
+ 324   1      //  #ifdef Function_TuyaWifi
+ 325   1      //  MX_UART1_Init();
+ 326   1      //  //Wifi_Init();
+ 327   1      //  Wifi_Rst();
+ 328   1      //  #endif
+ 329   1        
+ 330   1        MX_UART2_Init();
+ 331   1        
+ 332   1        SYSPOWER_ON;        
+ 333   1        FPMpowerMgr.Status = FPMpowerOn;
+ 334   1        Hardware_DelayMs(5);    //wait for OLED Driver power on reset
+ 335   1        
+ 336   1        MFC_Init();
+ 337   1        Hardware_DelayMs(5);  
+ 338   1        
+ 339   1        TouchKeyRestart();
+ 340   1        Key_Init();
+ 341   1        
+ 342   1        GUI_Init(); 
+ 343   1      
+ 344   1        SET_VOLUME(VoiceMgr.volume);
+ 345   1      
+ 346   1        Hardware_DelayMs(1);
+ 347   1        
+ 348   1        for (i=0;i<100;i++)
+ 349   1        {
+ 350   2          if( i%10 == 0 )CLRWDT();
+ 351   2          Hardware_Task_Analog();
+ 352   2          HardwareBatteryMgr_Task();
+ 353   2        }
+ 354   1        
+ 355   1        if (( BatteryMgr.BatteryLevel == LEVEL_1 )||( BatteryMgr.BatteryLevel == LEVEL_0 ))
+ 356   1        {
+ 357   2          PLAY_VOICE_ONESEGMENT(VOICE_PleaseReplaceTheBattery);
+ 358   2          BatteryMgr.TimeCnt = Def_MessageBoxTimeDelay;
+ 359   2          CurrentScreen = SCREEN_LowBattery;    
+ 360   2        }
+ 361   1        #ifdef INSIDEBUTTONINTOMAINMENU
                 else if (SystemPowerMgr.AwakeSource == SystemResetKey)    
+C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 17:03:20 PAGE 7   
+
                 {
                   if ( PINMACRO_ONBOARD_BUTTON_STATUS != 0 )
                   {
@@ -379,78 +395,76 @@ line level    source
               
                 } 
                 #endif
- 360   1        else
- 361   1        {
- 362   2          CurrentScreen = SCREEN_Main;
-C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 14:43:40 PAGE 7   
-
- 363   2          PasscodeUserIdentifyMgr.Status = PasscodeIdentifyIdle;
- 364   2          FpIdentifyMgr.Status = FPMcmdStart;
- 365   2          CardIdentifyMgr.Status = ReadingCardID;
- 366   2          if ( IfSystemIsInFactoryDefaultStatus()==bTRUE )
- 367   2          {
- 368   3            PLAY_VOICE_ONESEGMENT(VOICE_PleaseAddMasterFirst);
- 369   3          }
- 370   2          else
- 371   2          {
- 372   3            if (  (SystemPowerMgr.AwakeSource == CasingOpen)
- 373   3              ||(SystemPowerMgr.AwakeSource == KeyBoardTouch)
- 374   3              )
- 375   3            {
- 376   4              PLAY_VOICE_ONESEGMENT_FIXED(VOICE_POWERON); 
- 377   4            }
- 378   3          }
- 379   2        }
- 380   1        
- 381   1        SystemPowerMgr.SleepSource = SleepTimer;
- 382   1      
- 383   1      #ifdef Function_FPMbreathingLed
- 384   1        for(i=0;i<25;i++)
- 385   1        {
- 386   2          CLRWDT();
- 387   2          FpmAckMgr.Status = WaitACK;
- 388   2          FPM_SetBreathingLED(1,1,1,255);   //Blue LED breathing
- 389   2          Hardware_DelayMs(20);
- 390   2          FPM_Mgr_Task();
- 391   2          if ( FpmAckMgr.Status == GotACK )
- 392   2          {
- 393   3            break;
- 394   3          }
- 395   2        }
- 396   1      #endif
- 397   1        
- 398   1      }
- 399          
- 400          /**************************************************
- 401          *函数名称：void LowPowerTimer_ISR(void)
- 402          *函数功能低功耗模式下定时器中断服务函数（125ms调用一次）
- 403          *入口参数：void
- 404          *出口参数：void  
- 405          **************************************************/
- 406          void LowPowerTimer_ISR(void) 
- 407          {
- 408   1        #ifdef Function_USE_Internal_RTC
+ 374   1        else
+ 375   1        {
+ 376   2          CurrentScreen = SCREEN_Main;
+ 377   2          PasscodeUserIdentifyMgr.Status = PasscodeIdentifyIdle;
+ 378   2          FpIdentifyMgr.Status = FPMcmdStart;
+ 379   2          CardIdentifyMgr.Status = ReadingCardID;
+ 380   2          if ( IfSystemIsInFactoryDefaultStatus()==bTRUE )
+ 381   2          {
+ 382   3            PLAY_VOICE_ONESEGMENT(VOICE_PleaseAddMasterFirst);
+ 383   3          }
+ 384   2          else
+ 385   2          {
+ 386   3            if (  (SystemPowerMgr.AwakeSource == CasingOpen)
+ 387   3              ||(SystemPowerMgr.AwakeSource == KeyBoardTouch)
+ 388   3              )
+ 389   3            {
+ 390   4              PLAY_VOICE_ONESEGMENT_FIXED(VOICE_POWERON); 
+ 391   4            }
+ 392   3          }
+ 393   2        }
+ 394   1        
+ 395   1        SystemPowerMgr.SleepSource = SleepTimer;
+ 396   1      
+ 397   1      #ifdef Function_FPMbreathingLed
+ 398   1        for(i=0;i<25;i++)
+ 399   1        {
+ 400   2          CLRWDT();
+ 401   2          FpmAckMgr.Status = WaitACK;
+ 402   2          FPM_SetBreathingLED(1,1,1,255);   //Blue LED breathing
+ 403   2          Hardware_DelayMs(20);
+ 404   2          FPM_Mgr_Task();
+ 405   2          if ( FpmAckMgr.Status == GotACK )
+ 406   2          {
+ 407   3            break;
+ 408   3          }
+ 409   2        }
+ 410   1      #endif
+ 411   1        
+ 412   1      }
+ 413          
+ 414          /**************************************************
+ 415          *函数名称：void LowPowerTimer_ISR(void)
+ 416          *函数功能低功耗模式下定时器中断服务函数（125ms调用一次）
+ 417          *入口参数：void
+ 418          *出口参数：void  
+ 419          **************************************************/
+ 420          void LowPowerTimer_ISR(void) 
+ 421          {
+ 422   1        #ifdef Function_USE_Internal_RTC
                 SecondCount += 1;
                 if( SecondCount >= 8 )
+C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 17:03:20 PAGE 8   
+
                 {
                   SecondCount = 0;
                   G_SystemUTCTime += 1;
                 }
                 #endif
- 416   1        if ( KeyWakeUpKeyWaitTime > 0 )
- 417   1        {
- 418   2          KeyWakeUpKeyWaitTime--;
- 419   2        }
- 420   1      }
- 421          
- 422          
- 423          
-
-C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 14:43:40 PAGE 8   
+ 430   1        if ( KeyWakeUpKeyWaitTime > 0 )
+ 431   1        {
+ 432   2          KeyWakeUpKeyWaitTime--;
+ 433   2        }
+ 434   1      }
+ 435          
+ 436          
+ 437          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    764    ----
+   CODE SIZE        =    782    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =      6       4
    PDATA SIZE       =   ----    ----

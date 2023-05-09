@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   LCD_HFG12864                                                      05/09/2023 14:53:13 PAGE 1   
+C51 COMPILER V9.60.0.0   LCD_HFG12864                                                      05/09/2023 16:27:42 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE LCD_HFG12864
@@ -62,7 +62,7 @@ line level    source
               #else
   51   1        WriteComm(0xa1); //0xA0 or 0xA1, 列地址移动方向:ADC=0(SEG1->SEG132)
   52   1        WriteComm(0xc8); //0xC0 or 0xC8, 行扫描方向:SHL=1(COM64->COM1)
-C51 COMPILER V9.60.0.0   LCD_HFG12864                                                      05/09/2023 14:53:13 PAGE 2   
+C51 COMPILER V9.60.0.0   LCD_HFG12864                                                      05/09/2023 16:27:42 PAGE 2   
 
   53   1      #endif
   54   1      
@@ -126,7 +126,7 @@ line level    source
  112   1        {
  113   2          SwitchPageNumber = 0x00;
  114   2        }
-C51 COMPILER V9.60.0.0   LCD_HFG12864                                                      05/09/2023 14:53:13 PAGE 3   
+C51 COMPILER V9.60.0.0   LCD_HFG12864                                                      05/09/2023 16:27:42 PAGE 3   
 
  115   1        else SwitchPageNumber++;
  116   1      //

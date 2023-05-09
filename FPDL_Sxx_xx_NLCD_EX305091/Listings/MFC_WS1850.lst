@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 1   
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MFC_WS1850
@@ -62,7 +62,7 @@ line level    source
   50          #define     DivlEnReg             0x03    
   51          #define     ComIrqReg             0x04    
   52          #define     DivIrqReg             0x05
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 2   
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 2   
 
   53          #define     ErrorReg              0x06    
   54          #define     Status1Reg            0x07    
@@ -126,7 +126,7 @@ line level    source
  112          #define     RFU3E                 0x3E   
  113          #define     RFU3F                 0x3F
  114          
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 3   
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 3   
 
  115          //******************************************************************/
  116          //                    RC522通讯返回错误代码                         /
@@ -190,7 +190,7 @@ line level    source
  174          #define MI_BREAK                    0x9E 
  175          #define MI_NY_IMPLEMENTED           0x9D 
  176          #define MI_NO_MFRC                  0x9C 
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 4   
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 4   
 
  177          #define MI_MFRC_NOTAUTH             0x9B 
  178          #define MI_WRONG_DES_MODE           0x9A 
@@ -254,7 +254,7 @@ line level    source
  236          static uint8_t TestBuff[20];
  237          
  238          static uint8_t HAL_SPI2_RXBUFF;
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 5   
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 5   
 
  239          #ifdef Function_CardReaderUseSPI
               //******************************************************************/
@@ -318,7 +318,7 @@ line level    source
  298          //功    能：置RC522寄存器位
  299          //参数说明：reg[IN]:寄存器地址
  300          //          mask[IN]:置位值
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 6   
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 6   
 
  301          //******************************************************************/
  302          void SetBitMask(uint8_t reg,uint8_t mask)  
@@ -382,7 +382,7 @@ line level    source
  360          //******************************************************************/
  361          //开启天线发射  
  362          //每次启动或关闭天险发射之间应至少有1ms的间隔
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 7   
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 7   
 
  363          //******************************************************************/
  364          void PcdAntennaOn(void)
@@ -446,7 +446,7 @@ line level    source
  422   2          case PCD_AUTHENT:
  423   2            irqEn   = 0x12                            ;
  424   2            waitFor = 0x10                            ;
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 8   
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 8   
 
  425   2            break                                     ;
  426   2          case PCD_TRANSCEIVE:
@@ -510,7 +510,7 @@ line level    source
  484   1        else{
  485   2          PcdAntennaOff();
  486   2        }
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 9   
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 9   
 
  487   1        SetBitMask(ControlReg,0x80);// stop timer now
  488   1        WriteRawRC(CommandReg,PCD_IDLE); 
@@ -574,7 +574,7 @@ line level    source
  546   1       
  547   1          ucComMF522Buf[0] = PICC_ANTICOLL1;
  548   1          ucComMF522Buf[1] = 0x20;
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 10  
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 10  
 
  549   1      
  550   1          status = PcdComMF522(PCD_TRANSCEIVE,ucComMF522Buf,2,ucComMF522Buf,&unLen);
@@ -638,7 +638,7 @@ line level    source
  608          //          pKey[IN]：密码
  609          //          pSnr[IN]：卡片序列号，4字节
  610          //返    回: 成功返回MI_OK
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 11  
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 11  
 
  611          //******************************************************************/
  612          sint8_t PcdAuthState(uint8_t auth_mode,uint8_t addr,
@@ -702,7 +702,7 @@ line level    source
  670   1        result = PcdAuthState(0x60,Block,Password_Buffer,UID)   ;
  671   1        if(result!=MI_OK)
  672   1          return result                                         ;
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 12  
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 12  
 
  673   1        result = PcdRead(Block,Buf)                             ;
  674   1      //  return result; // 2011.01.03
@@ -766,7 +766,7 @@ line level    source
  732   2      /*    Des_Encrypt((sint8_t *)RF_Buffer    ,KK,
  733   2                      (sint8_t *)RF_Buffer        )                ;// for debug
  734   2          Des_Encrypt((sint8_t *)&RF_Buffer[8],KK,
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 13  
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 13  
 
  735   2                      (sint8_t *)&RF_Buffer[8]    )                ;// for debug  
  736   2      */                
@@ -830,7 +830,7 @@ line level    source
  794          //******************************************************************/
  795          //功    能：备份钱包
  796          //参数说明: sourceaddr[IN]：源地址
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 14  
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 14  
 
  797          //          goaladdr[IN]：目标地址
  798          //返    回: 成功返回MI_OK
@@ -894,7 +894,7 @@ line level    source
  856   1          ucComMF522Buf[1] = 0;
  857   1          CalulateCRC(ucComMF522Buf,2,&ucComMF522Buf[2]);
  858   1       
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 15  
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 15  
 
  859   1          status = PcdComMF522(PCD_TRANSCEIVE,ucComMF522Buf,4,ucComMF522Buf,&unLen);
  860   1          return status;
@@ -958,7 +958,7 @@ line level    source
  918   1       
  919   1        //ENTKS = 0;
  920   1       //ClearBitMask(ComIrqReg,0x80);    //release IRQ PIN
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 16  
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 16  
 
  921   1        ClearBitMask(Status2Reg,0x08);
  922   1        WriteRawRC(BitFramingReg,0x07);
@@ -1022,7 +1022,7 @@ line level    source
  980   4              for (i=0;i<4;i++)
  981   4              {
  982   5                *Point = UID[i];
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 17  
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 17  
 
  983   5                Point++;
  984   5              }
@@ -1086,7 +1086,7 @@ line level    source
 1042   7                  }
 1043   6                }
 1044   5              }
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 18  
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 18  
 
 1045   4            }
 1046   3          }
@@ -1150,7 +1150,7 @@ line level    source
 1104   1              TestVal = 0x00;
 1105   1             DEBUG_MARK;
 1106   1        TestVal = ReadRawRC(RFCfgReg);//,0x78)       ; 
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 19  
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 19  
 
 1107   1        DEBUG_MARK;
 1108   1        TestVal = ReadRawRC(GsNReg);//,0xFF)        ; 
@@ -1214,7 +1214,7 @@ line level    source
 1166   2        }   
 1167   1      }
 1168          #endif
-C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 14:43:38 PAGE 20  
+C51 COMPILER V9.60.0.0   MFC_WS1850                                                        05/09/2023 17:03:18 PAGE 20  
 
 1169          
 1170          

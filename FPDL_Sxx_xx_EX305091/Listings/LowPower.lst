@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 14:53:15 PAGE 1   
+C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 16:27:45 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE LOWPOWER
@@ -62,7 +62,7 @@ line level    source
                 SleepingHallState = PINMACRO_HALLSENSOR_STATUS;
                 HallSleepFlag = 0;
                 #endif
-C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 14:53:15 PAGE 2   
+C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 16:27:45 PAGE 2   
 
   53   1      }
   54          
@@ -126,7 +126,7 @@ line level    source
  112   2          if(( PINMACRO_PICKLOCK_STATUS == 1 )&&( AntiPryingMgr.AntiPryingSignalRelease == bTRUE ))
  113   2          {
  114   3            MX_QuitLowPowerMode();
-C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 14:53:15 PAGE 3   
+C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 16:27:45 PAGE 3   
 
  115   3          }
  116   2        }
@@ -190,7 +190,7 @@ line level    source
  174   3            Hardware_DelayMs(20);
  175   3            FPM_Mgr_Task();
  176   3            if ( FpmAckMgr.Status == GotACK )
-C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 14:53:15 PAGE 4   
+C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 16:27:45 PAGE 4   
 
  177   3            {
  178   4              if (  ( FpmAckMgr.ErrorCode == Error_NONE)
@@ -254,7 +254,7 @@ line level    source
  236   1        
  237   1        Enable_EX_Interrupt();
  238   1        
-C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 14:53:15 PAGE 5   
+C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 16:27:45 PAGE 5   
 
  239   1        IntoLowPowerMode_Init();
  240   1      
@@ -318,7 +318,7 @@ line level    source
  298   1        
  299   1        TouchKeyRestart();
  300   1        Key_Init();
-C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 14:53:15 PAGE 6   
+C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 16:27:45 PAGE 6   
 
  301   1        
  302   1        GUI_Init(); 
@@ -382,7 +382,7 @@ line level    source
  360   2          FpmAckMgr.Status = WaitACK;
  361   2          FPM_SetBreathingLED(1,1,1,255);   //Blue LED breathing
  362   2          Hardware_DelayMs(20);
-C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 14:53:15 PAGE 7   
+C51 COMPILER V9.60.0.0   LOWPOWER                                                          05/09/2023 16:27:45 PAGE 7   
 
  363   2          FPM_Mgr_Task();
  364   2          if ( FpmAckMgr.Status == GotACK )

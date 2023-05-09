@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   BEEPMGR                                                           05/09/2023 14:53:12 PAGE 1   
+C51 COMPILER V9.60.0.0   BEEPMGR                                                           05/09/2023 16:27:41 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BEEPMGR
@@ -62,7 +62,7 @@ line level    source
   50   1        for ( SegmentCnt =0;SegmentCnt<49;SegmentCnt++)
   51   1        {
   52   2          if ( BUFF[SegmentCnt] == DEF_VoiceSegmentEndFlag ){break;}
-C51 COMPILER V9.60.0.0   BEEPMGR                                                           05/09/2023 14:53:12 PAGE 2   
+C51 COMPILER V9.60.0.0   BEEPMGR                                                           05/09/2023 16:27:41 PAGE 2   
 
   53   2          VoiceDataTransferMgr.DataBuff[2*SegmentCnt+1] = 0xF3; //Continue play
   54   2          //VoiceDataTransferMgr.DataBuff[2*SegmentCnt+1] = BUFF[SegmentCnt]+SystemLanguage; //Continue play
@@ -126,7 +126,7 @@ line level    source
  112   1              ||( CurrentScreen == SCREEN_IdentifySuccess)
  113   1              ||( CurrentScreen == SCREEN_IdentifyFail)
  114   1            )
-C51 COMPILER V9.60.0.0   BEEPMGR                                                           05/09/2023 14:53:12 PAGE 3   
+C51 COMPILER V9.60.0.0   BEEPMGR                                                           05/09/2023 16:27:41 PAGE 3   
 
  115   1          )
  116   1        {
@@ -190,7 +190,7 @@ line level    source
  174   1        VoiceDataTransferMgr2.Status = SendingDataStart;
  175   1      }
  176          
-C51 COMPILER V9.60.0.0   BEEPMGR                                                           05/09/2023 14:53:12 PAGE 4   
+C51 COMPILER V9.60.0.0   BEEPMGR                                                           05/09/2023 16:27:41 PAGE 4   
 
  177          void PLAY_VOICE2_TWOSEGMENT(uint8_t segment1,uint8_t segment2)
  178          {
@@ -254,7 +254,7 @@ line level    source
  236   2            switch ( VoiceDataTransferMgr.Status )
  237   2            {
  238   3              default:
-C51 COMPILER V9.60.0.0   BEEPMGR                                                           05/09/2023 14:53:12 PAGE 5   
+C51 COMPILER V9.60.0.0   BEEPMGR                                                           05/09/2023 16:27:41 PAGE 5   
 
  239   3                
  240   3              case VoiceIdle:
@@ -318,7 +318,7 @@ line level    source
  298   3                  {
  299   4                    SET_VOICEDATA_L;
  300   4                    if ( (VoiceDataTransferMgr.Data&0x01) != 0x00)
-C51 COMPILER V9.60.0.0   BEEPMGR                                                           05/09/2023 14:53:12 PAGE 6   
+C51 COMPILER V9.60.0.0   BEEPMGR                                                           05/09/2023 16:27:41 PAGE 6   
 
  301   4                    {
  302   5                      VoiceDataTransferMgr.PulseWidthCnt = 1; //300US
@@ -382,7 +382,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =    897    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----      23
-C51 COMPILER V9.60.0.0   BEEPMGR                                                           05/09/2023 14:53:12 PAGE 7   
+C51 COMPILER V9.60.0.0   BEEPMGR                                                           05/09/2023 16:27:41 PAGE 7   
 
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----

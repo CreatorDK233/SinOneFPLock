@@ -93,5 +93,5 @@ DoorBellMgr_t DoorBellMgr;
 
 WifiMgr_t WifiMgr;
 
-
+AwakeSystemKeyMgr_t AwakeSystemKeyMgr;
 

@@ -83,16 +83,30 @@ void AntiMisAwakeup(uint8_t KeyValue)
 		if(LastWakeUpKeyValue==KeyValue)
 		{
 			#ifdef Function_HallSlide
-			if( PINMACRO_HALLSENSOR_STATUS == 0 )
-			{
-				MX_QuitLowPowerMode();
-				KeyJustWakeUp = 1;
-			}
-			LastWakeUpKeyValue = 0xff;
+				if( PINMACRO_HALLSENSOR_STATUS == 0 )
+				{
+					AwakeSystemKeyMgr.IsDoorBellKeyAwake = bFALSE;
+					AwakeSystemKeyMgr.IsPoundsignKeyAwake = bFALSE;
+					MX_QuitLowPowerMode();
+					KeyJustWakeUp = 1;
+				}
+				LastWakeUpKeyValue = 0xff;
 			#else
-			MX_QuitLowPowerMode();
-			KeyJustWakeUp = 1;
-			LastWakeUpKeyValue = 0xff;
+				AwakeSystemKeyMgr.IsDoorBellKeyAwake = bFALSE;
+				AwakeSystemKeyMgr.IsPoundsignKeyAwake = bFALSE;
+				MX_QuitLowPowerMode();
+				#if defined ProjectIs_BarLock_S4914
+					if( KeyValue == 0x00 )
+					{
+						AwakeSystemKeyMgr.IsDoorBellKeyAwake = bTRUE;
+					}
+//					else if( KeyValue == 0x0C )
+//					{
+//						AwakeSystemKeyMgr.IsPoundsignKeyAwake = bTRUE;
+//					}
+				#endif
+				KeyJustWakeUp = 1;
+				LastWakeUpKeyValue = 0xff;
 			#endif
 		}
 		else{

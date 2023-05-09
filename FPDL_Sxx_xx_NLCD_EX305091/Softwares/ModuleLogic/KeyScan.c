@@ -28,7 +28,7 @@ void Key_Init(void)
 	TouchKeyStatus.KEY_POUNDSIGN_Pressed = bFALSE;
 	TouchKeyStatus.KEY_ASTERISK_Pressed = bFALSE;
 	TouchKeyStatus.KEY_DOORBELL_Pressed = bFALSE;
-	//TouchKeyStatus.KEY_DOORCLOSE_Pressed = bFALSE;
+	TouchKeyStatus.KEY_DOORCLOSE_Pressed = bFALSE;
 	TouchKeyStatus.KEY_INSIDEBUTTON_Pressed = bFALSE;
 }
 
@@ -56,6 +56,19 @@ keycode_t Key_Scan(void)
 			KeyJustWakeUp = 0;
 		}
 		return KEY_NONE;
+	}
+	if( CurrentScreen == SCREEN_Main )
+	{
+		if( AwakeSystemKeyMgr.IsDoorBellKeyAwake == bTRUE )
+		{
+			AwakeSystemKeyMgr.IsDoorBellKeyAwake = bFALSE;
+			return KEY_DOORBELL;
+		}
+		if( AwakeSystemKeyMgr.IsPoundsignKeyAwake == bTRUE )
+		{
+			AwakeSystemKeyMgr.IsPoundsignKeyAwake = bFALSE;
+			return KEY_POUNDSIGN;
+		}
 	}
 
 	KeyPressedJudge(key_value);

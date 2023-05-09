@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 1   
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE TUYAWIFI
@@ -62,7 +62,7 @@ line level    source
               
               /**
                * @brief  向wifi串口发送一帧数据
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 2   
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 2   
 
                * @param[in] {fr_type} 帧类型
                * @param[in] {*DataBuff} 数据
@@ -126,7 +126,7 @@ line level    source
                 
                 for(i = 0; i < DataLen; i++) {
                   DataBuff[i] = infoData[i];
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 3   
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 3   
 
                 }
               
@@ -190,7 +190,7 @@ line level    source
               void Wifi_SendGotCMDAck(void)
               {
                 uint16_t DataLen = 0;
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 4   
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 4   
 
                 uint8_t DataBuff[] = {0x00};
                 TuyaWIFISendFrame(DATA_QUERT_CMD,DataBuff,DataLen);
@@ -254,7 +254,7 @@ line level    source
               // pwd 离线密码
               void Wifi_SendOfflineTmpPWD(uint8_t* pwd, uint8_t lenth)
               { 
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 5   
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 5   
 
                 uint16_t DataLen = lenth + 7;
                 uint8_t* DataBuff = (uint8_t *) malloc(DataLen);
@@ -318,7 +318,7 @@ line level    source
               }
               
               // 获取WiFi状态
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 6   
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 6   
 
               //#ifdef LOCK_KEEP_ALIVE
               //void Wifi_SendGetWIFIState(void)
@@ -382,7 +382,7 @@ line level    source
                   DataBuff[8*i+12] = 0x00;          // 数据
                   DataBuff[8*i+13] = *id>>8;        // 数据
                   DataBuff[8*i+14] = *id;           // 数据
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 7   
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 7   
 
                   if( i < (InfoNum-1) )
                   {
@@ -446,7 +446,7 @@ line level    source
               }
               
               //上报 APP远程解锁
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 8   
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 8   
 
               void Wifi_ReportAPPRemoteUnlock(uint16_t value)
               {
@@ -510,7 +510,7 @@ line level    source
                 DataBuff[10] = 0x01;            // 数据长度L
                 DataBuff[11] = 0x01;            // 数据
               
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 9   
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 9   
 
                 Wifi_SendCurrentState(DataLen - 7, DataBuff + 7); // 实时
               //  Wifi_SendRecordState(DataLen, DataBuff);  // 记录型
@@ -574,7 +574,7 @@ line level    source
               //  DataBuff[10] = lenth;         // 数据长度L
               
               //  memcpy(DataBuff+4+7, newPwd, lenth);    // 数据
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 10  
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 10  
 
               
               //  if(DataBuff != NULL) {
@@ -638,7 +638,7 @@ line level    source
                */
               //uint8_t rssi = 0; // WiFi信号强度
               //uint8_t tmppwd[12] = 0; // WiFi信号强度
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 11  
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 11  
 
               
               void WifiDataHandle(uint8_t *offset)
@@ -702,7 +702,7 @@ line level    source
                         Temp_sendingflag = WifiMgr.PostMgr.SendingFlag.TotalFlagBits;
                         WifiMgr.PostMgr.Flag.TotalFlagBits  &= ~Temp_sendingflag;
                         WifiMgr.Ack.TimeOutCnt = 0;
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 12  
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 12  
 
                       } else if(offset[6] == 0x01) {
                         // 执行失败
@@ -766,7 +766,7 @@ line level    source
                             {
                               if( TempPswd[i] != WifiMgr.RemoteUnlockMgr.Passward[i] )
                               {
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 13  
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 13  
 
                                 WifiMgr.RemoteUnlockMgr.Result = IsFail;
                                 break;
@@ -830,7 +830,7 @@ line level    source
                             WifiMgr.OfflineTempPassword.Status = ClearCodeCorrect;
                           }
                         }
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 14  
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 14  
 
                       }
                       else
@@ -894,7 +894,7 @@ line level    source
                   //case WIFITEMPPASSCODE:
                     
                   default:
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 15  
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 15  
 
                     break;
                 }
@@ -958,7 +958,7 @@ line level    source
               void WifiRemoteUnlockTimeSendExecute(uint16_t time)
               {
                 if( IfWifiIsLinked() == S_SUCCESS )
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 16  
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 16  
 
                 {
                   Wifi_ReportRemoteUnlockRequestCountdown(time);
@@ -1022,7 +1022,7 @@ line level    source
                 }
               }
               
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 17  
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 17  
 
               //wifi离线临时密码上报
               void WifiTempPasscodeExecute(uint8_t DpID)
@@ -1086,7 +1086,7 @@ line level    source
                 }
               }
               
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 18  
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 18  
 
               //远程开锁倒计时上报
               void WifiRemoteUnlockCountdown(void)
@@ -1150,7 +1150,7 @@ line level    source
                     //WifiMgr.PostMgr.Flag.Bits.DoorBell = 0;
                     WifiMgr.PostMgr.SendingFlag.Bits.DoorBell = 1;
                     WifiRemoteUnlockTimeSendExecute(WifiMgr.PostMgr.RemoteUnlockCountdown);//发送请求远程开锁倒计时
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 19  
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 19  
 
                     WifiMgr.PostMgr.WifiPostIntervalCnt = Def_WifiSendTime;
                   }
@@ -1214,7 +1214,7 @@ line level    source
                   else if ( WifiMgr.PostMgr.Flag.Bits.CardSync != 0 )
                   {
                     WifiMgr.PostMgr.SendingFlag.Bits.CardSync = 1;
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 20  
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 20  
 
                     WifiSyncExecute(DpIdCardSync);//同步卡片用户
                     WifiMgr.PostMgr.WifiPostIntervalCnt = Def_WifiSendTime;
@@ -1278,7 +1278,7 @@ line level    source
                 }
                 WifiDataHandle(WifiMgr.Ack.Buff);
               }
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 21  
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 21  
 
               
               //结束远程开锁流程
@@ -1342,7 +1342,7 @@ line level    source
                   WifiMgr.PostMgr.Flag.Bits.DoorBell = 1;
                   WifiMgr.RemoteUnlockMgr.Status = RemoteUnlockRequestWait;
                   if( SystemPowerMgr.SleepDelayTimerCnt != 0 )
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 22  
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 22  
 
                   {
                     WifiMgr.PostMgr.RemoteUnlockCountdown = Def_RemoteUnlockCountdown;
@@ -1406,7 +1406,7 @@ line level    source
                 {
                   WifiMgr.OfflineTempPassword.Status = TempPswdIdle;
                   PasscodeUserIdentifyMgr.Status = PasscodeIdentifyFail;
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 23  
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 23  
 
                   //PasscodeUserIdentifyMgr.TimeCnt =Def_IdendtifyFailScreenTimeDelay;
                 }
@@ -1470,7 +1470,7 @@ line level    source
                 WifiMgr.PowerState = WIFIPowerClosed;
               }
               
-C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 14:43:41 PAGE 24  
+C51 COMPILER V9.60.0.0   TUYAWIFI                                                          05/09/2023 17:03:21 PAGE 24  
 
               /********************Text************************/
               //uint8_t UserID[12] = {0x01, 0x12, 0x03, 0x04, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x12};

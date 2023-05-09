@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   KEYSCAN                                                           05/09/2023 14:53:13 PAGE 1   
+C51 COMPILER V9.60.0.0   KEYSCAN                                                           05/09/2023 16:27:43 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE KEYSCAN
@@ -62,7 +62,7 @@ line level    source
   50   2        }
   51   1        
   52   1        if( KeyJustWakeUp == 1 )
-C51 COMPILER V9.60.0.0   KEYSCAN                                                           05/09/2023 14:53:13 PAGE 2   
+C51 COMPILER V9.60.0.0   KEYSCAN                                                           05/09/2023 16:27:43 PAGE 2   
 
   53   1        {
   54   2          if( key_value == 0 )
@@ -126,7 +126,7 @@ line level    source
  112   1        else if ( (TouchKeyStatus.KEY_POUNDSIGN_Pressed == bTRUE )&&(LastKeycode == KEY_POUNDSIGN)){
  113   2          NewKeycode = KEY_POUNDSIGN;
  114   2        }
-C51 COMPILER V9.60.0.0   KEYSCAN                                                           05/09/2023 14:53:13 PAGE 3   
+C51 COMPILER V9.60.0.0   KEYSCAN                                                           05/09/2023 16:27:43 PAGE 3   
 
  115   1        else if ( (TouchKeyStatus.KEY_ASTERISK_Pressed == bTRUE )&&(LastKeycode == KEY_ASTERISK)){
  116   2          NewKeycode = KEY_ASTERISK;
@@ -190,7 +190,7 @@ line level    source
  174   1      
  175   1        LEDsMgr.Keycode = NewKeycode;
  176   1      
-C51 COMPILER V9.60.0.0   KEYSCAN                                                           05/09/2023 14:53:13 PAGE 4   
+C51 COMPILER V9.60.0.0   KEYSCAN                                                           05/09/2023 16:27:43 PAGE 4   
 
  177   1        if ( NewKeycode != KEY_NONE )
  178   1        {
@@ -254,7 +254,7 @@ line level    source
  236          
  237          
 
-C51 COMPILER V9.60.0.0   KEYSCAN                                                           05/09/2023 14:53:13 PAGE 5   
+C51 COMPILER V9.60.0.0   KEYSCAN                                                           05/09/2023 16:27:43 PAGE 5   
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
