@@ -1,0 +1,430 @@
+C51 COMPILER V9.60.0.0   SSIX_INIT                                                         05/09/2023 14:53:11 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE SSIX_INIT
+OBJECT MODULE PLACED IN .\Objects\SSIX_Init.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Drivers\Lib\c\SSIX_Init.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE INCDIR(.\D
+                    -rivers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Protocol;.\So
+                    -ftwares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic) DEBUG PRINT(.\Listings\SSIX_Init.lst) TABS(2) OBJECT(.\Ob
+                    -jects\SSIX_Init.obj)
+
+line level    source
+
+   1          #include "Function_Init.H"
+   2          
+   3          //选择三合一模块：
+   4          #define  USCI2   2
+   5          #define  USCI3   3
+   6          #define  USCI4   4
+   7          #define  USCI5   5
+   8          
+   9          //选择三合一模式：
+  10          #define  UartX   0
+  11          #define  TWIX    1
+  12          #define  SPIX    2
+  13          
+  14          #define  SSIX_Select USCI3
+  15          #define  SSIX_Mode  2
+  16          
+  17          void UARTX_Init(uint Freq, unsigned long int baud);
+  18          void TWIX_Init(void);
+  19          void SPIX_Init(void);
+  20          
+  21          bit UartXSendFlag = 0;    //UartX发送中断标志位
+  22          bit UartXReceiveFlag = 0; //UartX接收中断标志位
+  23          
+  24          bit SPIXFlag = 0;         //SPIX数据传输完成标志位
+  25          bit TWIXFlag = 0;         //TWIX中断标志位
+  26          
+  27          uint8_t SSIxx_Select = 2;
+  28          uint8_t SSIxx_Mode = 0;
+  29          
+  30          /*****************************************************
+  31          *函数名称：void SSIX_Test(void)
+  32          *函数功能：SSIX测试
+  33          *入口参数：void
+  34          *出口参数：void
+  35          *****************************************************/
+  36          void SSIX_Test(void)
+  37          {
+  38   1        USXINX = SSIX_Select;       //USCIX寄存器指向对应的USCI
+  39   1      
+  40   1      //判断三合一模式
+  41   1      #if (SSIX_Mode == UartX)
+                {
+                  UARTX_Init(32, 9600);      //初始化串口，输入主频和波特兰
+                  while(1)
+                  {
+                    USXCON3 = 0xAA;         //发送0xAA
+                    while(!UartXSendFlag);        //等待发送完成标志位置起
+                    UartXSendFlag = 0;      //清除发送标志位
+                  }
+                }
+              #elif (SSIX_Mode == TWIX)
+                {
+C51 COMPILER V9.60.0.0   SSIX_INIT                                                         05/09/2023 14:53:11 PAGE 2   
+
+                  TWIX_Init();
+                  while(1)
+                  {
+                    USXCON1 |= 0x20;    //产生起始条件
+                    while(!TWIXFlag);
+                    TWIXFlag = 0;
+                    USXCON3 = 0x10;     //发送地址及写命令
+                    while(!TWIXFlag);
+                    TWIXFlag = 0;
+                    USXCON3 = 0x55;
+                    while(!TWIXFlag);
+                    TWIXFlag = 0;
+                    Soft_Delay_us(100);
+                    USXCON1 |= 0x10;        //发送结束信号
+                    Soft_Delay_us(100);
+                  }
+                }
+              #elif (SSIX_Mode == SPIX)
+  71   1        {
+  72   2          SPIX_Init();
+  73   2          while(1)
+  74   2          {
+  75   3            USXCON2 = 0xAA;
+  76   3            while(!SPIXFlag);
+  77   3            SPIXFlag = 0;
+  78   3            Soft_Delay_us(1000);
+  79   3          }
+  80   2        }
+  81   1      #endif
+  82   1      
+  83   1      }
+  84          
+  85          /*****************************************************
+  86          *函数名称：void UARTX_Init(uint Freq,unsigned long int baud)
+  87          *函数功能：UartX中断初始化
+  88          *入口参数：Freq-主频，baud-波特率
+  89          *出口参数：void
+  90          *****************************************************/
+  91          void UARTX_Init(uint Freq, unsigned long int baud)
+  92          {
+  93   1        TMCON &= 0x3F;
+  94   1        TMCON |= 0xC0;    //串行接口SSIX选择Uart通信
+  95   1        if (SSIxx_Select == USCI2)
+  96   1        {
+  97   2        P4CON &= ~0x30;
+  98   2        P4PH |= 0x30;
+  99   2        IE2 |= 0x02;      //开启中断
+ 100   2        }
+ 101   1        else if (SSIxx_Select == USCI3)
+ 102   1        {
+ 103   2        P2CON &= ~0xC0;
+ 104   2        P2PH |= 0xC0;
+ 105   2        IE2 |= 0x04;      //开启中断
+ 106   2        }
+ 107   1        else if (SSIxx_Select == USCI4)
+ 108   1        {
+ 109   2        P4CON &= ~0xC0;
+ 110   2        P4PH |= 0xC0;
+ 111   2        IE2 |= 0x08;     //开启中断
+ 112   2        }
+ 113   1        else if (SSIxx_Select == USCI5)
+ 114   1        {
+C51 COMPILER V9.60.0.0   SSIX_INIT                                                         05/09/2023 14:53:11 PAGE 3   
+
+ 115   2        P0CON &= ~0x0C;
+ 116   2        P0PH |= 0x0C;
+ 117   2        IE2 |= 0x10;     //开启中断
+ 118   2        }
+ 119   1      
+ 120   1        USXCON0 = 0x50;   //设置通信方式为模式一，允许接收
+ 121   1        USXCON1 = Freq * 1000000 / baud; //波特率低位控制
+ 122   1        USXCON2 = (Freq * 1000000 / baud) >> 8; //波特率高位控制
+ 123   1      
+ 124   1        EA = 1;
+ 125   1      }
+ 126          
+ 127          /*****************************************************
+ 128          *函数名称：void TWIX_Init(void)
+ 129          *函数功能：TWIX初始化
+ 130          *入口参数：void
+ 131          *出口参数：void
+ 132          *****************************************************/
+ 133          void TWIX_Init(void)
+ 134          {
+ 135   1        TMCON &= 0x3F;
+ 136   1        TMCON |= 0x80;    //串行接口SSIX选择TWI通信
+ 137   1        if (SSIxx_Select == USCI2)
+ 138   1        {
+ 139   2          P4CON &= ~0x18;
+ 140   2          P4PH |= 0x18;
+ 141   2          IE2 |= 0x02;      //开启中断
+ 142   2        }
+ 143   1        else if (SSIxx_Select == USCI3)
+ 144   1        {
+ 145   2          P2CON &= ~0x60;
+ 146   2          P2PH |= 0x60;
+ 147   2          IE2 |= 0x04;      //开启中断
+ 148   2        }
+ 149   1        else if (SSIxx_Select == USCI4)
+ 150   1        {
+ 151   2        P5CON &= ~0x20;
+ 152   2        P5PH |= 0x20;
+ 153   2        P4CON &= ~0x70;
+ 154   2        P4PH |= 0x70;
+ 155   2        IE2 |= 0x08;     //开启中断
+ 156   2        }
+ 157   1        else if (SSIxx_Select == USCI5)
+ 158   1        {
+ 159   2        P0CON &= ~0x06;
+ 160   2        P0PH |= 0x06;
+ 161   2        IE2 |= 0x10;     //开启中断
+ 162   2        }
+ 163   1      
+ 164   1        TMCON |= 0x80;   //选择TWIX模式
+ 165   1        USXCON0 = 0x80;  //主模式， 使能应答标志位
+ 166   1        USXCON1 = 0x05;  //---- xxxx  x为时钟速率
+ 167   1        IE2 |= 1 << (SSIxx_Select - 1);    //开启中断
+ 168   1        EA = 1;
+ 169   1      }
+ 170          
+ 171          /*****************************************************
+ 172          *函数名称：void SPIX_Init(void)
+ 173          *函数功能：SPIX初始化
+ 174          *入口参数：void
+ 175          *出口参数：void
+ 176          *****************************************************/
+C51 COMPILER V9.60.0.0   SSIX_INIT                                                         05/09/2023 14:53:11 PAGE 4   
+
+ 177          void SPIX_Init(void)
+ 178          {
+ 179   1        TMCON &= 0x3F;
+ 180   1        TMCON |= 0x40;    //串行接口SSIX选择SPI通信
+ 181   1        if (SSIxx_Select == USCI2)
+ 182   1        {
+ 183   2        P4CON &= ~0x38;
+ 184   2        P4PH |= 0x38;
+ 185   2        IE2 |= 0x02;      //开启中断
+ 186   2        }
+ 187   1        else if (SSIxx_Select == USCI3)
+ 188   1        {
+ 189   2        P2CON &= ~0xE0;
+ 190   2        P2PH |= 0xE0;
+ 191   2        //IE2 |= 0x04;      //开启中断
+ 192   2        }
+ 193   1        else if (SSIxx_Select == USCI4)
+ 194   1        {
+ 195   2        P5CON &= ~0x20;
+ 196   2        P5PH |= 0x20;
+ 197   2        P4CON &= ~0xC0;
+ 198   2        P4PH |= 0xC0;
+ 199   2        IE2 |= 0x08;     //开启中断
+ 200   2        }
+ 201   1        else if (SSIxx_Select == USCI5)
+ 202   1        {
+ 203   2        P0CON &= ~0x0E;
+ 204   2        P0PH |= 0x0E;
+ 205   2        IE2 |= 0x10;     //开启中断
+ 206   2        }
+ 207   1      
+ 208   1        TMCON |= 0X40;    //选择SPIX模式
+ 209   1        USXCON0 = 0x3B;   //设置SPIX为主设备，SCK空闲时间为高电平，SCK周期第二沿采集数据，时钟速率为Fsys/8
+ 210   1        USXCON1 = 0x01;   //MSB优先发送，8位传输，不允许发送中断
+ 211   1        USXCON0 |= 0x80;  //开启SPIX
+ 212   1        //IE2 |= 1 << (SSIxx_Select - 1);    //开启中断
+ 213   1        EA = 1;
+ 214   1      }
+ 215          
+ 216          #if (0)
+              /*****************************************************
+              *函数名称：void TWI2/SPI2/UART2_Int() interrupt 7
+              *函数功能：SSI2中断函数
+              *入口参数：void
+              *出口参数：void
+              *****************************************************/
+              #if (SSIX_Mode == UartX)
+              void UART2_Int() //interrupt 16   //UartX中断函数
+              {
+                if(USXCON0 & 0x02)  //发送标志位判断
+                {
+                  USXCON0 &= 0xFE;
+                  UartXSendFlag = 1;
+                }
+                if((USXCON0 & 0x01)) //接收标志位判断
+                {
+                  USXCON0 |= 0xFD;
+                  UartXReceiveFlag = 1;
+                }
+              }
+              #elif (SSIX_Mode == TWIX)
+              void TWI2_Int() //interrupt 16     //TWIX中断函数
+C51 COMPILER V9.60.0.0   SSIX_INIT                                                         05/09/2023 14:53:11 PAGE 5   
+
+              {
+                if(USXCON0 & 0x40)
+                {
+                  USXCON0 &= 0xbf;  //中断清零
+                  TWIXFlag = 1;
+                }
+              }
+              #elif (SSIX_Mode == SPIX)
+              void SPI2Int(void) //interrupt 16    //SPIX中断函数
+              {   
+                if(USXCON1&0X08)    //发送缓存器空标志判断
+                {
+                  USXCON1 &= ~0X08;
+                }
+                if(USXCON1&0X80)    //数据传输标志位判断
+                {
+                  USXCON1 &= ~0X80;
+                  SPIXFlag = 1;
+                }
+              }
+              #endif
+              #elif (0)
+              /*****************************************************
+              *函数名称：void TWI3/SPI3/UART3_Int() interrupt 7
+              *函数功能：SSI2中断函数
+              *入口参数：void
+              *出口参数：void
+              *****************************************************/
+              #if (SSIX_Mode == UartX)
+              void UART3_Int() //interrupt 17   //UartX中断函数
+              {
+                if(USXCON0 & 0x02)  //发送标志位判断
+                {
+                  USXCON0 &= 0xFE;
+                  UartXSendFlag = 1;
+                }
+                if((USXCON0 & 0x01)) //接收标志位判断
+                {
+                  USXCON0 |= 0xFD;
+                  UartXReceiveFlag = 1;
+                }
+              }
+              #elif (SSIX_Mode == TWIX)
+              void TWI3_Int() //interrupt 17     //TWIX中断函数
+              {
+                if(USXCON0 & 0x40)
+                {
+                  USXCON0 &= 0xbf;  //中断清零
+                  TWIXFlag = 1;
+                }
+              }
+              #elif (SSIX_Mode == SPIX)
+              void SPI3_Int(void) //interrupt 17    //SPIX中断函数
+              {   
+                 if(USXCON1&0X08)    //发送缓存器空标志判断
+                 {
+                    USXCON1 &= ~0X08;
+                 }
+                 if(USXCON1&0X80)    //数据传输标志位判断
+                 {
+                    USXCON1 &= ~0X80;
+                    SPIXFlag = 1;
+C51 COMPILER V9.60.0.0   SSIX_INIT                                                         05/09/2023 14:53:11 PAGE 6   
+
+                 }
+              }
+              #endif
+              #elif (0)
+              /*****************************************************
+              *函数名称：void TWI4/SPI4/UART4_Int() interrupt 7
+              *函数功能：SSI2中断函数
+              *入口参数：void
+              *出口参数：void
+              *****************************************************/
+              #if (SSIX_Mode == UartX)
+              void UART4_Int() //interrupt 18   //UartX中断函数
+              {
+                if(USXCON0 & 0x02)  //发送标志位判断
+                {
+                  USXCON0 &= 0xFE;
+                  UartXSendFlag = 1;
+                }
+                if((USXCON0 & 0x01)) //接收标志位判断
+                {
+                  USXCON0 |= 0xFD;
+                  UartXReceiveFlag = 1;
+                }
+              }
+              #elif (SSIX_Mode == TWIX)
+              void TWI4_Int() //interrupt 18     //TWIX中断函数
+              {
+                if(USXCON0 & 0x40)
+                {
+                  USXCON0 &= 0xbf;  //中断清零
+                  TWIXFlag = 1;
+                }
+              }
+              #elif (SSIX_Mode == SPIX)
+              void SPI4_Int(void) //interrupt 18   //SPIX中断函数
+              {   
+                if(USXCON1&0X08)    //发送缓存器空标志判断
+                {
+                  USXCON1 &= ~0X08;
+                }
+                if(USXCON1&0X80)    //数据传输标志位判断
+                {
+                  USXCON1 &= ~0X80;
+                  SPIXFlag = 1;
+                }
+              }
+              #endif
+              
+              #elif (0)
+              #if (SSIX_Mode == UartX)
+              void UART5_Int() //interrupt 19   //UartX中断函数
+              {
+                if(USXCON0 & 0x02)  //发送标志位判断
+                {
+                  USXCON0 &= 0xFE;
+                  UartXSendFlag = 1;
+                }
+                if((USXCON0 & 0x01)) //接收标志位判断
+                {
+                  USXCON0 |= 0xFD;
+                  UartXReceiveFlag = 1;
+                }
+C51 COMPILER V9.60.0.0   SSIX_INIT                                                         05/09/2023 14:53:11 PAGE 7   
+
+              }
+              #elif (SSIX_Mode == TWIX)
+              void TWI5_Int() //interrupt 19     //TWIX中断函数
+              {
+                if(USXCON0 & 0x40)
+                {
+                  USXCON0 &= 0xbf;  //中断清零
+                  TWIXFlag = 1;
+                }
+              }
+              #elif (SSIX_Mode == SPIX)
+              void SPI5_Int(void) //interrupt 19   //SPIX中断函数
+              {   
+                if(USXCON1&0X08)    //发送缓存器空标志判断
+                {
+                  USXCON1 &= ~0X08;
+                }
+                if(USXCON1&0X80)    //数据传输标志位判断
+                {
+                  USXCON1 &= ~0X80;
+                  SPIXFlag = 1;
+                }
+              }
+              #endif
+              
+              #endif
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    369    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =      2       6
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      4    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

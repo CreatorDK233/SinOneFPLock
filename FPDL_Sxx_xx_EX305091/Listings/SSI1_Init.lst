@@ -1,0 +1,15 @@
+C51 COMPILER V9.60.0.0   SSI1_INIT                                                         02/06/2023 19:12:31 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE SSI1_INIT
+OBJECT MODULE PLACED IN .\Objects\SSI1_Init.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE c\SSI1_Init.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE INCDIR(.\Software\Soft
+                    -ware_Inc;.\Software\Software_Src;.\Hardware\c;.\Hardware\H;.\Hardware\Drivers\Drivers_Inc;.\Hardware\Drivers\Drivers_Src
+                    -;.\Hardware\IAP_Lib;.\Hardware\TouchKey_lib) DEBUG PRINT(.\Listings\SSI1_Init.lst) TABS(2) OBJECT(.\Objects\SSI1_Init.ob
+                    -j)
+
+line level    source
+
+*** ERROR C318 OF c\SSI1_Init.c: can't open file 'c\SSI1_Init.c'
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  1 ERROR(S)

@@ -1,0 +1,36 @@
+C51 COMPILER V9.60.0.0   BEEP                                                              02/10/2023 17:35:34 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BEEP
+OBJECT MODULE PLACED IN .\Objects\Beep.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Softwares\ModuleLogic\Beep.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE INCDIR(
+                    -.\Drivers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Protocol;.
+                    -\Softwares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic) DEBUG PRINT(.\Listings\Beep.lst) TABS(2) OBJECT(.\Obje
+                    -cts\Beep.obj)
+
+line level    source
+
+   1          #include "Beep.h"
+   2          
+   3          
+   4          
+   5          
+   6          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,84 @@
+C51 COMPILER V9.60.0.0   SPI                                                               05/09/2023 14:53:12 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE SPI
+OBJECT MODULE PLACED IN .\Objects\spi.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Drivers\Physical\spi.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE INCDIR(.\Driv
+                    -ers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Protocol;.\Softw
+                    -ares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic) DEBUG PRINT(.\Listings\spi.lst) TABS(2) OBJECT(.\Objects\spi
+                    -.obj)
+
+line level    source
+
+   1          #include "spi.h"
+   2          #include "SC95F861xB_C.H"
+   3          
+   4          bit SPI0_Flag = 0;         //SPIX数据传输完成标志位
+   5          //#define   SPI0_send_OK  while(!SPI0_Flag); SPI0_Flag = 0
+   6          #define   SPI0_send_OK  while(US0CON1 & 0X20);US0CON1 &= ~0X20
+   7          void MX_SPI0_Init(void)
+   8          {
+   9   1        SPI0_Init();
+  10   1      }
+  11          void SPI0_DeInit(void)
+  12          {
+  13   1        US0CON0 &= ~0x80;  //关闭SPI0
+  14   1        IE1 &= ~0x01;     //关中断
+  15   1      }
+  16          
+  17          /*******************************SPI发送字节*/
+  18          void SPI0SendByte(uint8_t dat)
+  19          {
+  20   1        US0CON2 = dat;
+  21   1        SPI0_send_OK;
+  22   1        //Soft_Delay_usS(3);
+  23   1      }
+  24          /******************************SPI发送字符串*/
+  25          void SPI0SendStr(uint8_t *pstr,uint8_t strlen)
+  26          {
+  27   1        if((NULL == pstr)||(0 == strlen))
+  28   1        {
+  29   2          return;
+  30   2        }
+  31   1        while(strlen--)
+  32   1        {
+  33   2          SPI0SendByte(*pstr);
+  34   2      //    US0CON2 = *pstr;
+  35   2      //    SPI0_send_OK;
+  36   2          pstr++;
+  37   2        }
+  38   1      }
+  39          
+  40          //void SPI0_Int(void) //interrupt 7    //SPI0中断函数
+  41          //{
+  42          //  if(US0CON1 & 0X08)  //发送缓存器空标志判断
+  43          //  {
+  44          //    US0CON1 &= ~0X08;
+  45          //  }
+  46          //  if(US0CON1 & 0X80)  //数据传输标志位判断
+  47          //  {
+  48          //    US0CON1 &= ~0X80;
+  49          //    SPI0_Flag = 1;
+  50          //  }
+  51          //}
+  52          
+C51 COMPILER V9.60.0.0   SPI                                                               05/09/2023 14:53:12 PAGE 2   
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     83    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----       3
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

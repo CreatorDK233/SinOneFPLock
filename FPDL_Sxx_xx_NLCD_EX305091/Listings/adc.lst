@@ -1,0 +1,86 @@
+C51 COMPILER V9.60.0.0   ADC                                                               05/09/2023 14:43:37 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE ADC
+OBJECT MODULE PLACED IN .\Objects\adc.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Drivers\Physical\adc.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE INCDIR(.\Driv
+                    -ers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Protocol;.\Softw
+                    -ares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic;.\Drivers\Protocol\YC_NFC;.\Drivers\Protocol\WIFI_Tuya) DEBUG
+                    - PRINT(.\Listings\adc.lst) TABS(2) OBJECT(.\Objects\adc.obj)
+
+line level    source
+
+   1          #include "adc.h"
+   2          #include "SC95F861xB_C.H"
+   3          
+   4          bit Adc_Flag = 0;
+   5          extern uint16_t a2d_data[1];
+   6          
+   7          void ADC_Init(uint8_t Channel)
+   8          {
+   9   1        a2d_data[0]=0x0929;
+  10   1        ADCCON = 0X80|Channel;    //开启ADC，ADC采样频率为2M ,选择Channel位ADC采样口
+  11   1        if(Channel<8)
+  12   1        {
+  13   2          ADCCFG0 = 1<<Channel;   //设置Channel作为采样口
+  14   2        }
+  15   1        else
+  16   1        {
+  17   2          ADCCFG1 = 1<<(Channel-8);   //设置Channel作为采样口
+  18   2        }
+  19   1        ADCCFG2 = 0x10;     //ADC采样时间为三个时钟
+  20   1        IE |= 0X40;        //开启ADC中断
+  21   1        EA = 1;
+  22   1      }
+  23          void ADC_DeInit(void)
+  24          {
+  25   1        ADCCON &= (~0X80);
+  26   1        IE &= (~0X40);        
+  27   1      }
+  28          uint16_t ADC_Value_Got(void)
+  29          {
+  30   1        uint16_t ADC_Value = 0x0000;
+  31   1        ADCCON |= 0X40;   //开始ADC转换
+  32   1        while(!Adc_Flag);              //等待 ADC转换完成;
+  33   1        Adc_Flag = 0;
+  34   1        ADC_Value = (ADCVH<<4)+(ADCVL>>4);
+  35   1        return ADC_Value;
+  36   1      }
+  37          
+  38          //根据硬件的不同 该函数系数也需要重新测算
+  39          uint8_t VoltageGet(uint16_t A2D_Data)
+  40          {
+  41   1        return ( A2D_Data*2 + 467 )/100;
+  42   1      }
+  43          
+  44          /* ADC1 init function */
+  45          void MX_ADC1_Init(void)
+  46          {
+  47   1        ADC_Init(AIN11);
+  48   1      }
+  49          
+  50          void ADC_Interrupt(void) interrupt 6
+  51          {
+  52   1        ADCCON &= ~(0X20);  //清中断标志位
+C51 COMPILER V9.60.0.0   ADC                                                               05/09/2023 14:43:37 PAGE 2   
+
+  53   1        Adc_Flag = 1;
+  54   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    141    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
