@@ -1,0 +1,144 @@
+C51 COMPILER V9.60.0.0   RTC_PCF8563                                                       05/12/2023 14:12:14 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE RTC_PCF8563
+OBJECT MODULE PLACED IN .\Objects\RTC_PCF8563.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Drivers\Protocol\RTC_PCF8563.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE INCDI
+                    -R(.\Drivers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Protocol
+                    -;.\Softwares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic) DEBUG PRINT(.\Listings\RTC_PCF8563.lst) TABS(2) OBJE
+                    -CT(.\Objects\RTC_PCF8563.obj)
+
+line level    source
+
+   1          #include "global_variable.h"
+   2          #include "I2cBus.h"
+   3          #include <string.h>
+   4          #include "Project.h"
+   5          #include "Basic_Function.h"
+   6          
+   7          #define PCF8653_CONFIG_REG0   0x08
+   8          #define PCF8653_CONFIG_REG1   0x00
+   9          #define PCF8653_CONFIG_REG2   0x00
+  10          #define PCF8653_CONFIG_REG3   0x00
+  11          #define PCF8653_CONFIG_REG4   0x00
+  12          #define PCF8653_CONFIG_REG5   0x00
+  13          #define PCF8653_CONFIG_REG6   0x00
+  14          #define PCF8653_CONFIG_REG7   0x00
+  15          #define PCF8653_CONFIG_REG8   0x18
+  16          #define PCF8653_CONFIG_REG9   0x80
+  17          #define PCF8653_CONFIG_REG10  0x80
+  18          #define PCF8653_CONFIG_REG11  0x80
+  19          #define PCF8653_CONFIG_REG12  0x80
+  20          #define PCF8653_CONFIG_REG13  0x00
+  21          #define PCF8653_CONFIG_REG14  0x00
+  22          #define PCF8653_CONFIG_REG15  0x00
+  23          
+  24          void PCF8563_Init(void)
+  25          {
+  26   1        #ifndef Function_USE_Internal_RTC
+  27   1        uint8_t PCF8653_CONFIG_REG_BUFF[]=
+  28   1        {
+  29   1          PCF8653_CONFIG_REG0,PCF8653_CONFIG_REG1,PCF8653_CONFIG_REG9,PCF8653_CONFIG_REG10,
+  30   1          PCF8653_CONFIG_REG11,PCF8653_CONFIG_REG12,PCF8653_CONFIG_REG13
+  31   1        };
+  32   1        I2C_WriteSequential(I2CADDR_RTC,0x00,PCF8653_CONFIG_REG_BUFF,7);
+  33   1      
+  34   1        Hardware_DelayMs(10);
+  35   1        #endif
+  36   1      }
+  37          
+  38          void PCF8563_WriteTime(void)
+  39          {
+  40   1        #ifndef Function_USE_Internal_RTC
+  41   1        uint8_t BUFF[7]={0};
+  42   1      
+  43   1        BUFF[0]= SystemTime.second; 
+  44   1        BUFF[1]= SystemTime.minute; 
+  45   1        BUFF[2]= SystemTime.hour;
+  46   1        BUFF[3]= SystemTime.date;
+  47   1        BUFF[4]= SystemTime.day;
+  48   1        BUFF[5]= SystemTime.month;
+  49   1        BUFF[6]= SystemTime.year;
+  50   1      
+  51   1        I2C_WriteSequential(I2CADDR_RTC,0x02,&BUFF[0],7);
+  52   1        #endif
+C51 COMPILER V9.60.0.0   RTC_PCF8563                                                       05/12/2023 14:12:14 PAGE 2   
+
+  53   1      }
+  54          
+  55          void PCF8563_ReadTime(void)
+  56          {
+  57   1        #ifndef Function_USE_Internal_RTC
+  58   1        uint8_t BUFF[7]={0};
+  59   1      
+  60   1        I2C_ReadSequential(I2CADDR_RTC,0x02,&BUFF[0],7);
+  61   1      
+  62   1        //DEBUG_MARK;
+  63   1        if( (BUFF[0]&0x7F) >= 0x60 || (BUFF[0]&0x0F)>0x09 ||
+  64   1            (BUFF[1]&0x7F) >= 0x60 || (BUFF[1]&0x0F)>0x09 ||
+  65   1            (BUFF[2]&0x3F) >= 0x24 || (BUFF[2]&0x0F)>0x09 ||
+  66   1            (BUFF[3]&0x3F) >  0x31 || (BUFF[3]&0x0F)>0x09 || (BUFF[3]&0x3F) == 0x00 ||
+  67   1            //(BUFF[4]&0x07) >= 0x08 ||
+  68   1            (BUFF[5]&0x1F) >  0x12 || (BUFF[5]&0x0F)>0x09 || (BUFF[5]&0x1F) == 0x00 ||
+  69   1             BUFF[6]>0x99          || (BUFF[6]&0x0F)>0x09   )
+  70   1        {
+  71   2          PCF8563_WriteTime();
+  72   2          return;
+  73   2        }
+  74   1        
+  75   1        SystemTime.second   =   BUFF[0]&0x7F;   //Voltage Low bit is not care
+  76   1        SystemTime.minute   =   BUFF[1]&0x7F; 
+  77   1        SystemTime.hour     =   BUFF[2]&0x3F; 
+  78   1        SystemTime.date     =   BUFF[3]&0x3F;
+  79   1        SystemTime.day    =   BUFF[4]&0x07;
+  80   1        SystemTime.month  =   BUFF[5]&0x1F;   //CENTURY BIT is not care 
+  81   1        SystemTime.year     = BUFF[6];
+  82   1        #endif
+  83   1        
+  84   1      }
+  85          
+  86          void PCF8563_Test(void)
+  87          {
+  88   1        #if 0
+                uint8_t BUFF[7];
+              
+                BUFF[0]= 33;  
+                BUFF[1]= 22;  
+                BUFF[2]= 11;
+                BUFF[3]= 4;
+                BUFF[4]= 5;
+                BUFF[5]= 6;
+                BUFF[6]= 7;
+              
+                I2C_WriteSequential(I2CADDR_RTC,0x02,&BUFF[0],7);
+                BUFF[0]= 0; 
+                BUFF[1]= 0; 
+                BUFF[2]= 0;
+                BUFF[3]= 0;
+                BUFF[4]= 0;
+                BUFF[5]= 0;
+                BUFF[6]= 0;
+                
+                I2C_ReadSequential(I2CADDR_RTC,0x02,&BUFF[0],7);
+                #endif
+ 110   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    368    ----
+C51 COMPILER V9.60.0.0   RTC_PCF8563                                                       05/12/2023 14:12:14 PAGE 3   
+
+   CONSTANT SIZE    =     21    ----
+   XDATA SIZE       =   ----      21
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

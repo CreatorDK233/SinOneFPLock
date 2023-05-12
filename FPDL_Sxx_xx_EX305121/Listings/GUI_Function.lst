@@ -1,0 +1,1014 @@
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/12/2023 14:12:16 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE GUI_FUNCTION
+OBJECT MODULE PLACED IN .\Objects\GUI_Function.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Softwares\Application\GUI_Function.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE
+                    - INCDIR(.\Drivers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Pr
+                    -otocol;.\Softwares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic) DEBUG PRINT(.\Listings\GUI_Function.lst) TABS(
+                    -2) OBJECT(.\Objects\GUI_Function.obj)
+
+line level    source
+
+   1          #include "gpio.h"
+   2          //Protocol layer
+   3          #include "MFC_WS1850.h"
+   4          #include "EEPROM.h"
+   5          #include "BeepMgr.h"
+   6          //Logic layer
+   7          #include "AppUnlock.h"
+   8          #include "Motor.h"
+   9          #include "FP.h"
+  10          #include "LCD.h"
+  11          #include "MFC.h"
+  12          //Application layer
+  13          #include "GUI_Function.h"
+  14          #include "global_variable.h"
+  15          #include "Font.h"
+  16          #include "Voice_Menu.h"
+  17          #include "Font_Menu.h"
+  18          
+  19          
+  20          extern screen_t CurrentScreen;
+  21          extern DataInputMgr_t DataInputMgr;
+  22          extern VoiceMenuMgr_t VoiceMenuMgr;
+  23          extern PasscodeInputMgr_t PasscodeInputMgr;
+  24          extern uint8_t LEDsCtrlSwitch;
+  25          extern uint8_t GUI_ToggleFlag_05s;
+  26          extern keycode_t gui_keycode;
+  27          
+  28          
+  29          
+  30          void GoToMainMenu(void)//进入主菜单
+  31          {
+  32   1        VoiceMenuMgr.MenuPoint=0;
+  33   1        VoiceMenuMgr.TotalMenuNum = 6;
+  34   1        CurrentScreen = SCREEN_MainMenu;
+  35   1      }
+  36          
+  37          void GoToFpMenu(void)//进入指纹菜单
+  38          {
+  39   1        VoiceMenuMgr.MenuPoint=0;
+  40   1        VoiceMenuMgr.TotalMenuNum = 4;
+  41   1        CurrentScreen = SCREEN_FpMenu;
+  42   1      }
+  43          void GoToPasswordMenu(void)//进入密码菜单
+  44          {
+  45   1        VoiceMenuMgr.MenuPoint=0;
+  46   1        VoiceMenuMgr.TotalMenuNum = 4;
+  47   1        CurrentScreen = SCREEN_PasscodeMenu;
+  48   1      }
+  49          void GoToCardMenu(void)//进入卡片菜单
+  50          {
+  51   1        VoiceMenuMgr.MenuPoint=0;
+  52   1        VoiceMenuMgr.TotalMenuNum = 3;
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/12/2023 14:12:16 PAGE 2   
+
+  53   1        CurrentScreen = SCREEN_CardUserMenu;
+  54   1      }
+  55          void GoToSystemConfigMenu(void)//进入系统设置菜单
+  56          {
+  57   1        VoiceMenuMgr.MenuPoint=0;
+  58   1        VoiceMenuMgr.TotalMenuNum = 7;
+  59   1        CurrentScreen = SCREEN_SystemConfigMenu;
+  60   1      }
+  61          void GoToSystemVersion(void)//进入系统版本号菜单
+  62          {
+  63   1        VoiceMenuMgr.MenuPoint=0;
+  64   1        VoiceMenuMgr.TotalMenuNum = 2;
+  65   1        CurrentScreen = SCREEN_SystemVersion;
+  66   1      }
+  67          
+  68          void GotoLogMenu(void)//进入日志菜单
+  69          {
+  70   1        VoiceMenuMgr.MenuPoint=0;
+  71   1        VoiceMenuMgr.TotalMenuNum = 3;
+  72   1        CurrentScreen = SCREEN_EventLogMenu;
+  73   1      }
+  74          
+  75          bool_t IfSystemIsInFactoryDefaultStatus(void)//如果系统处于出厂默认状态
+  76          {
+  77   1        if ( ( CheckMemoryMgr.FpUserNum == 0x00 )
+  78   1            &&(CheckMemoryMgr.FpMasterNum == 0x00 )
+  79   1            &&(CheckMemoryMgr.CardUserNum == 0x00 )
+  80   1            &&(CheckMemoryMgr.PasscodeMasterNum == 0x00 )
+  81   1            &&(CheckMemoryMgr.PasscodeUserNum == 0x00 ) )
+  82   1        {
+  83   2          return bTRUE;
+  84   2        }
+  85   1        else
+  86   1        {
+  87   2          return bFALSE;
+  88   2        }
+  89   1      }
+  90          
+  91          bool_t IfSystemWithoutSecondIdentity(void)//如果系统没有第二身份
+  92          {
+  93   1        if  ( (((CheckMemoryMgr.FpUserNum+CheckMemoryMgr.FpMasterNum) == 0x00 )&&((CheckMemoryMgr.PasscodeMasterN
+             -um + CheckMemoryMgr.PasscodeUserNum)== 0x00))
+  94   1          ||(((CheckMemoryMgr.FpUserNum+CheckMemoryMgr.FpMasterNum) == 0x00 )&&(CheckMemoryMgr.CardUserNum == 0x00
+             - ))
+  95   1          ||(((CheckMemoryMgr.PasscodeMasterNum + CheckMemoryMgr.PasscodeUserNum)== 0x00)&&(CheckMemoryMgr.CardUse
+             -rNum == 0x00 ))
+  96   1          )
+  97   1        {
+  98   2          return bTRUE;
+  99   2        }
+ 100   1        else
+ 101   1        {
+ 102   2          return bFALSE;
+ 103   2        }
+ 104   1      }
+ 105          
+ 106          bool_t CompareTwoArrayIsSame(uint8_t Point1[],uint8_t Point2[],uint8_t Lenth)//比较两个数组是否相同
+ 107          {
+ 108   1        uint8_t i;
+ 109   1        for (i=0;i<Lenth;i++)
+ 110   1        {
+ 111   2          if (Point1[i]!=Point2[i]){
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/12/2023 14:12:16 PAGE 3   
+
+ 112   3            return bFALSE;
+ 113   3          }
+ 114   2        }
+ 115   1        return bTRUE;
+ 116   1      }
+ 117          
+ 118          void UnlockModeJudgment(void)//开锁模式有效性判断
+ 119          {
+ 120   1        if  ( IfSystemWithoutSecondIdentity() == bTRUE )
+ 121   1        {
+ 122   2          UserIdentifyResultMgr.UnlockingMode = SingalMode;
+ 123   2          EEPROM_WriteSequential(UnlockModeStartAddr,&UserIdentifyResultMgr.UnlockingMode,1);
+ 124   2        }
+ 125   1      }
+ 126          
+ 127          bool_t is_valid_date(uint8_t year, uint8_t month, uint8_t date)//判断是不是有效日期
+ 128          {
+ 129   1          uint8_t monttbuffer[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+ 130   1          uint16_t y;
+ 131   1          uint8_t m,d;
+ 132   1          y=((year/16)*10)+(year%16)+2000;
+ 133   1          m = ((month/16)*10)+(month%16);
+ 134   1          d = ((date/16)*10) + (date%16);
+ 135   1              if (((y % 4 == 0) && (y % 100 != 0)) 
+ 136   1            || (y % 400 == 0)
+ 137   1            )
+ 138   1              {
+ 139   2                      monttbuffer[1] = 29; 
+ 140   2          }
+ 141   1              if ( (m > 0) 
+ 142   1            && (m < 13)
+ 143   1            && (d > 0) 
+ 144   1            && (d <= monttbuffer[m - 1])
+ 145   1            )
+ 146   1              {
+ 147   2            return bTRUE;
+ 148   2          }
+ 149   1          else{
+ 150   2            return bFALSE;
+ 151   2          }
+ 152   1      }
+ 153          
+ 154          void Config_AntiPrying_Interrupt(void)//设置防撬
+ 155          {
+ 156   1        if (PickAlarmEnableMgr.Enable == bTRUE)
+ 157   1        {
+ 158   2          EnableAntiPrying_Interrupt();
+ 159   2        }
+ 160   1        else{
+ 161   2          DisableAntiPrying_Interrupt();
+ 162   2        }
+ 163   1      }
+ 164          
+ 165          void UnlockSuccess(uint8_t UnlockType)//开锁成功
+ 166          {
+ 167   1        UserIdentifyResultMgr.IdentifyType = UnlockType;
+ 168   1        GUI_SetMotorToOpenAndCloseDoor();
+ 169   1        //Enable_KEYLED_WATERLIGHT(); 
+ 170   1        CurrentScreen = SCREEN_IdentifySuccess;
+ 171   1        UserIdentifyResultMgr.TimeCnt = Def_MessageBoxTimeDelay;
+ 172   1      }
+ 173          
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/12/2023 14:12:16 PAGE 4   
+
+ 174          void RefreshSystemSleepTime(void)//更新系统休眠时间
+ 175          {
+ 176   1        if ( ( CurrentScreen == SCREEN_Main )
+ 177   1           ||( CurrentScreen ==SCREEN_Initialization)
+ 178   1           ||( CurrentScreen ==SCREEN_LowBattery )
+ 179   1          )
+ 180   1        {
+ 181   2          SystemPowerMgr.SleepDelayTimerCnt = DEF_SystemSleepDelayTime_MainScreen;
+ 182   2        }
+ 183   1        else
+ 184   1        {
+ 185   2          SystemPowerMgr.SleepDelayTimerCnt = DEF_SystemSleepDelayTime_MenuScreen;
+ 186   2        }
+ 187   1      }
+ 188          
+ 189          void SystemConfigSave(void)//系统设置保存
+ 190          {
+ 191   1          EEPROM_WriteSequential(SystemLanguageStartAddr, (uint8_t*)&SystemLanguage, 1);
+ 192   1          EEPROM_WriteSequential(UnlockModeStartAddr, (uint8_t*)&UserIdentifyResultMgr.UnlockingMode, 1);
+ 193   1          EEPROM_WriteSequential(VolumeSwitchStartAddr, (uint8_t*)&VoiceMgr.Enable, 1);
+ 194   1          EEPROM_WriteSequential(PickAlarmSwitchStartAddr, (uint8_t*)&PickAlarmEnableMgr.Enable, 1);
+ 195   1      }
+ 196          
+ 197          void SystemConfigLoad(void)//系统设置加载
+ 198          {
+ 199   1        uint8_t temp;
+ 200   1        bool_t temp_BOOL;
+ 201   1        EEPROM_ReadSequential(UnlockModeStartAddr,&temp,1);
+ 202   1        if (temp == DoubleMode)
+ 203   1        {
+ 204   2          UserIdentifyResultMgr.UnlockingMode = DoubleMode;
+ 205   2        }
+ 206   1        else
+ 207   1        {
+ 208   2          UserIdentifyResultMgr.UnlockingMode = SingalMode;
+ 209   2        }
+ 210   1        
+ 211   1        EEPROM_ReadSequential(VolumeSwitchStartAddr,(uint8_t*)&temp_BOOL,1);
+ 212   1      
+ 213   1        if (temp_BOOL == bFALSE)
+ 214   1        {
+ 215   2            VoiceMgr.Enable = bFALSE;
+ 216   2        }
+ 217   1        else
+ 218   1        {
+ 219   2            VoiceMgr.Enable = bTRUE;
+ 220   2        }
+ 221   1        
+ 222   1        EEPROM_ReadSequential(PickAlarmSwitchStartAddr,(uint8_t*)&temp_BOOL,1);
+ 223   1          
+ 224   1        #ifdef Function_AntiPryingDefaultDisabled
+ 225   1        if (temp_BOOL == bTRUE)
+ 226   1        {
+ 227   2            PickAlarmEnableMgr.Enable = bTRUE;
+ 228   2        }
+ 229   1        else
+ 230   1        {
+ 231   2            PickAlarmEnableMgr.Enable = bFALSE;
+ 232   2        }
+ 233   1        #else
+                if (temp_BOOL == bFALSE)
+                {
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/12/2023 14:12:16 PAGE 5   
+
+                    PickAlarmEnableMgr.Enable = bFALSE;
+                }
+                else
+                {
+                    PickAlarmEnableMgr.Enable = bTRUE;
+                }
+                #endif
+ 243   1          
+ 244   1        Config_AntiPrying_Interrupt();
+ 245   1        
+ 246   1      }
+ 247          
+ 248          /****************************************************************/
+ 249          void ReadLockBrand(void)//读取锁品牌
+ 250          {
+ 251   1        uint8_t temp;
+ 252   1        
+ 253   1        EEPROM_ReadSequential(LockBrandStartAddr,&temp,1);
+ 254   1        if ( temp == 0x55 )
+ 255   1        {
+ 256   2          EEPROM_ReadSequential(LockBrandStartAddr+1,&LockBrand.LockBrandDisDataBuff[0],224);
+ 257   2          LockBrand.LockBrandDataValid = bTRUE;
+ 258   2        }
+ 259   1        else{
+ 260   2          LockBrand.LockBrandDataValid = bFALSE;
+ 261   2        } 
+ 262   1      }
+ 263          
+ 264          void WriteLockBrand(void)//写入锁品牌
+ 265          { 
+ 266   1        #ifdef Function_ScreenDisplay
+ 267   1        uint8_t temp;
+ 268   1        temp = 0x55;
+ 269   1        LockBrand.GotBrandData = bFALSE;
+ 270   1        if ( MFC_ReadLockBrandData(&LockBrand.LockBrandDisDataBuff[0]) == S_SUCCESS )
+ 271   1        {
+ 272   2          EEPROM_WriteSequential(LockBrandStartAddr,&temp,1);
+ 273   2          
+ 274   2      //    if ( LockBrand.BrandType == SmallBrand )
+ 275   2      //    {
+ 276   2            EEPROM_WriteSequential(LockBrandStartAddr+1,&LockBrand.LockBrandDisDataBuff[0],224);
+ 277   2      //    }
+ 278   2      //    else if ( LockBrand.BrandType == BigBrand )
+ 279   2      //    {
+ 280   2      //      EEPROM_WriteSequential(LockBrandStartAddr+1,&LockBrand.LockBrandDisDataBuff[0],512);
+ 281   2      //    }
+ 282   2          LockBrand.GotBrandData = bTRUE;
+ 283   2          LockBrand.LockBrandDataValid = bTRUE;
+ 284   2        }
+ 285   1        #endif
+ 286   1      }
+ 287          
+ 288          void SystemConfigReset(void)//系统设置恢复出厂
+ 289          {
+ 290   1        UserIdentifyResultMgr.UnlockingMode = SingalMode;
+ 291   1        VoiceMgr.Enable = bTRUE;
+ 292   1        
+ 293   1        #ifdef Function_AntiPryingDefaultDisabled
+ 294   1          PickAlarmEnableMgr.Enable = bFALSE;
+ 295   1        #else
+                  PickAlarmEnableMgr.Enable = bTRUE;
+                #endif
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/12/2023 14:12:16 PAGE 6   
+
+ 298   1        
+ 299   1        Config_AntiPrying_Interrupt();
+ 300   1      
+ 301   1        SystemConfigSave();
+ 302   1      }
+ 303          
+ 304          //ID输入效果显示生成
+ 305          void GUI_DataInputCreat(uint8_t StartPage,uint8_t StartColumn,uint8_t InputNum,uint16_t DefaultValue)
+ 306          {
+ 307   1        uint8_t temp,i;
+ 308   1        uint16_t value;
+ 309   1      
+ 310   1        if( DataInputMgr.Status == InputIdle )
+ 311   1        {
+ 312   2          DataInputMgr.Status = InputStart;
+ 313   2          DataInputMgr.Value = DefaultValue;
+ 314   2          DataInputMgr.InputNum = InputNum;
+ 315   2      
+ 316   2          if ( DefaultValue == 0x0000 ){
+ 317   3            DataInputMgr.InputPoint = 0;
+ 318   3          }
+ 319   2          else{
+ 320   3            DataInputMgr.InputPoint = InputNum;
+ 321   3          }
+ 322   2        }
+ 323   1          
+ 324   1        else if ( DataInputMgr.Status == InputStart )
+ 325   1        {
+ 326   2          if (DataInputMgr.InputPoint > DataInputMgr.InputNum ){
+ 327   3            return;
+ 328   3          }
+ 329   2      
+ 330   2          value = DataInputMgr.Value;
+ 331   2          for (i=0;i<DataInputMgr.InputPoint;i++)
+ 332   2          { 
+ 333   3            temp = value%10;
+ 334   3            DisOneDigital16x8(StartPage,StartColumn+(8*(DataInputMgr.InputPoint-i-1)),temp,NormalDisplay);
+ 335   3            value/=10;
+ 336   3          }
+ 337   2      
+ 338   2          for (i=DataInputMgr.InputPoint;i<(DataInputMgr.InputNum+1);i++)   //"+1" for clear underline
+ 339   2          {
+ 340   3            DisZF16x8(StartPage,StartColumn+(8*i),ZF_kongge,NormalDisplay);
+ 341   3          }
+ 342   2          
+ 343   2          if ( GUI_ToggleFlag_05s == 1 )
+ 344   2          {
+ 345   3            DisZF16x8(StartPage,StartColumn+(8*DataInputMgr.InputPoint),ZF_kongge,NormalDisplay);
+ 346   3          }
+ 347   2          else{
+ 348   3            DisZF16x8(StartPage,StartColumn+(8*DataInputMgr.InputPoint),ZF_underline,NormalDisplay);
+ 349   3          }
+ 350   2        }
+ 351   1      
+ 352   1      }
+ 353          
+ 354          
+ 355          void GUI_UserIDinputButtonMonitor(keycode_t keycode)//GUI_用户ID输入按钮监视器
+ 356          {
+ 357   1        if ( (keycode < KEY_NINE)||(keycode == KEY_NINE) )
+ 358   1        {
+ 359   2          DEF_ButtonPress_Voice;
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/12/2023 14:12:16 PAGE 7   
+
+ 360   2          PasscodeUserRegisterMgr.OverTimeCnt = Def_GuiTimeDelayCnt5s;
+ 361   2          if ( DataInputMgr.InputPoint < DataInputMgr.InputNum )
+ 362   2          {
+ 363   3            DataInputMgr.Value = DataInputMgr.Value*10+gui_keycode;
+ 364   3            DataInputMgr.InputPoint++;
+ 365   3          }
+ 366   2        }
+ 367   1        else if ( keycode == KEY_ASTERISK )
+ 368   1        {
+ 369   2          DEF_ButtonPress_Voice;
+ 370   2          PasscodeUserRegisterMgr.OverTimeCnt = Def_GuiTimeDelayCnt5s;
+ 371   2          if ( DataInputMgr.InputPoint > 0 )
+ 372   2          {
+ 373   3            DataInputMgr.InputPoint--;
+ 374   3            DataInputMgr.Value/=10;
+ 375   3          }
+ 376   2          else
+ 377   2          {
+ 378   3            DataInputMgr.Status = InputExit;
+ 379   3          }
+ 380   2        }
+ 381   1        else if ( keycode == KEY_POUNDSIGN )
+ 382   1        {
+ 383   2          //DEF_ButtonPress_Voice;
+ 384   2          PasscodeUserRegisterMgr.OverTimeCnt = Def_GuiTimeDelayCnt5s;
+ 385   2          if ( DataInputMgr.InputPoint == 0 )
+ 386   2          {
+ 387   3            DataInputMgr.Status = InputExit;
+ 388   3          }
+ 389   2          else
+ 390   2          {
+ 391   3            DataInputMgr.Status = InputEnd;
+ 392   3          }
+ 393   2        }
+ 394   1      }
+ 395          
+ 396          void GUI_PasscodeInputCreat(uint8_t StartPage,uint8_t StartColumn)//GUI密码输入显示效果生成
+ 397          {
+ 398   1        uint8_t i=0;
+ 399   1        StartColumn=0;//无意义，注掉不影响，会报warming
+ 400   1        if (PasscodeInputMgr.Point > 16)
+ 401   1        {
+ 402   2          return;
+ 403   2        }
+ 404   1        #ifdef Function_ScreenDisplay
+ 405   1        Clear_Screen_Page(StartPage);
+ 406   1        Clear_Screen_Page(StartPage+1);
+ 407   1        for (i=0;i<PasscodeInputMgr.Point;i++)
+ 408   1        {
+ 409   2          DisZF16x8(StartPage,(8*i)+(64-(PasscodeInputMgr.Point*4)),ZF_xinghao,NormalDisplay);
+ 410   2        }
+ 411   1        #endif
+ 412   1      }
+ 413          
+ 414          void GUI_PasscodeInputButtonMonitor(keycode_t keycode)//GUI按键密码输入监视器
+ 415          {
+ 416   1        if ( (keycode < KEY_NINE)||(keycode == KEY_NINE) )//0-9
+ 417   1        {
+ 418   2          PasscodeUserRegisterMgr.OverTimeCnt = Def_GuiTimeDelayCnt5s;
+ 419   2          if ( CurrentScreen != SCREEN_PickLockAlarm ){
+ 420   3            DEF_ButtonPress_Voice;
+ 421   3          }
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/12/2023 14:12:16 PAGE 8   
+
+ 422   2          if ( PasscodeInputMgr.Point <  PasscodeInputMgr.PasscodeLen )
+ 423   2          {
+ 424   3            PasscodeInputMgr.InputBuff[PasscodeInputMgr.Point] = gui_keycode;
+ 425   3            PasscodeInputMgr.Point++;
+ 426   3          }
+ 427   2        }
+ 428   1        else if ( keycode == KEY_ASTERISK )
+ 429   1        {
+ 430   2          PasscodeUserRegisterMgr.OverTimeCnt = Def_GuiTimeDelayCnt5s;
+ 431   2          if ( CurrentScreen != SCREEN_PickLockAlarm && CurrentScreen != SCREEN_ManagerIdentify){
+ 432   3            DEF_ButtonPress_Voice;
+ 433   3          }
+ 434   2          
+ 435   2          if ( PasscodeInputMgr.Point > 0 )
+ 436   2          {
+ 437   3            PasscodeInputMgr.Status = PasscodeInputExit;  
+ 438   3          }
+ 439   2          else
+ 440   2          {
+ 441   3            PasscodeInputMgr.Status = PasscodeInputExit;
+ 442   3          }
+ 443   2        }
+ 444   1        else if ( keycode == KEY_POUNDSIGN )
+ 445   1        {
+ 446   2          PasscodeUserRegisterMgr.OverTimeCnt = Def_GuiTimeDelayCnt5s;
+ 447   2          if ( CurrentScreen != SCREEN_PickLockAlarm ){
+ 448   3            DEF_ButtonPress_Voice;
+ 449   3          }
+ 450   2          if ( PasscodeInputMgr.Point == 0 )
+ 451   2          {
+ 452   3            PasscodeInputMgr.Status = PasscodeInputExit;
+ 453   3          }
+ 454   2          else
+ 455   2          {
+ 456   3            PasscodeInputMgr.Status = PasscodeInputEnd;
+ 457   3          }
+ 458   2        }
+ 459   1      }
+ 460          
+ 461          void PasscodeUserIdentify(void)//密码用户认证
+ 462          {
+ 463   1        if ( PasscodeUserIdentifyMgr.Status != PasscodeIdentifyIdle )
+ 464   1        {
+ 465   2          if (PasscodeUserIdentifyMgr.Status == PasscodeIdentifyStart )
+ 466   2          {
+ 467   3            //PasscodeUserIdentifyMgr.TimeCnt = 240;
+ 468   3            PasscodeUserIdentifyMgr.Status = PasscodeIdentifyPasscodeInput;
+ 469   3          }
+ 470   2          else if (PasscodeUserIdentifyMgr.Status == PasscodeIdentifyPasscodeInput)
+ 471   2          {
+ 472   3            Clear_Screen_Page(3);
+ 473   3            Clear_Screen_Page(6);
+ 474   3            Clear_Screen_Page(7);
+ 475   3            GUI_PasscodeInputCreat(4,0);
+ 476   3            if (PasscodeInputMgr.Status == PasscodeInputEnd)
+ 477   3            {
+ 478   4              if ( IfSystemIsInFactoryDefaultStatus()==bTRUE )
+ 479   4              {
+ 480   5                if( (PasscodeInputMgr.InputBuff[0]==0x01)
+ 481   5                  &&(PasscodeInputMgr.InputBuff[1]==0x01)
+ 482   5                  &&(PasscodeInputMgr.InputBuff[2]==0x01)
+ 483   5                  &&(PasscodeInputMgr.InputBuff[3]==0x01)
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/12/2023 14:12:16 PAGE 9   
+
+ 484   5                  &&(PasscodeInputMgr.InputBuff[4]==0x01)
+ 485   5                  &&(PasscodeInputMgr.InputBuff[5]==0x01)
+ 486   5                  &&(PasscodeInputMgr.InputBuff[6]==0x01)
+ 487   5                  &&(PasscodeInputMgr.InputBuff[8]==0x01)
+ 488   5                  &&(PasscodeInputMgr.InputBuff[9]==0x01)
+ 489   5                  )
+ 490   5                {
+ 491   6                  PasscodeUserIdentifyMgr.Status = PasscodeIdentifyAgingTestSuccess;
+ 492   6                }
+ 493   5                else if ((PasscodeInputMgr.InputBuff[0]==0x01)
+ 494   5                    &&(PasscodeInputMgr.InputBuff[1]==0x03)
+ 495   5                    &&(PasscodeInputMgr.InputBuff[2]==0x05)
+ 496   5                    &&(PasscodeInputMgr.InputBuff[3]==0x07)
+ 497   5                    &&(PasscodeInputMgr.Point == 4)
+ 498   5                    )
+ 499   5                {
+ 500   6                  PasscodeUserIdentifyMgr.Status = PasscodeIdentifyCheckVersionSuccess;
+ 501   6                }
+ 502   5                else
+ 503   5                {
+ 504   6                  PasscodeUserIdentifyMgr.Status = PasscodeIdentifyFail;
+ 505   6                }
+ 506   5              }
+ 507   4              else
+ 508   4              {
+ 509   5                PasscodeUserIdentifyMgr.UserID = PasscodeIdendify(PasscodeInputMgr.InputBuff);
+ 510   5                if ( PasscodeUserIdentifyMgr.UserID != 0x00 )//Identify success
+ 511   5                {
+ 512   6                  PasscodeUserIdentifyMgr.Status = PasscodeIdentifySuccess;
+ 513   6                  //PasscodeUserIdentifyMgr.TimeCnt =Def_IdendtifySuccessScreenTimeDelay;
+ 514   6                  UserIdentifyResultMgr.PasscodeType = LocalPasscode;
+ 515   6                  //GUI_Flag_RefreshLCD = bTRUE;
+ 516   6                }
+ 517   5              #ifdef Function_AppUnlock
+ 518   5                else
+ 519   5                {
+ 520   6                  if ((PasscodeInputMgr.Point == 12)||( PasscodeInputMgr.Point == 13 ))
+ 521   6                  {
+ 522   7                     PasscodeUserIdentifyMgr.UserID = AppPasscodeIdentify(PasscodeInputMgr.InputBuff);
+ 523   7                    if ( PasscodeUserIdentifyMgr.UserID != 0x00 )//App unlock success
+ 524   7                    {
+ 525   8                      PasscodeUserIdentifyMgr.Status = PasscodeIdentifySuccess;
+ 526   8                      //PasscodeUserIdentifyMgr.TimeCnt =Def_IdendtifySuccessScreenTimeDelay;
+ 527   8                      UserIdentifyResultMgr.PasscodeType = AppPasscode;
+ 528   8                      //GUI_Flag_RefreshLCD = bTRUE;
+ 529   8                    }
+ 530   7                    else
+ 531   7                    {
+ 532   8                      PasscodeUserIdentifyMgr.Status = PasscodeIdentifyFail;
+ 533   8                      //PasscodeUserIdentifyMgr.TimeCnt =Def_IdendtifyFailScreenTimeDelay;
+ 534   8                      //GUI_Flag_RefreshLCD = bTRUE;
+ 535   8                    }
+ 536   7                  }
+ 537   6                  else
+ 538   6                  {
+ 539   7                    PasscodeUserIdentifyMgr.Status = PasscodeIdentifyFail;
+ 540   7                    //PasscodeUserIdentifyMgr.TimeCnt =Def_IdendtifyFailScreenTimeDelay;
+ 541   7                    //GUI_Flag_RefreshLCD = bTRUE;
+ 542   7                  }
+ 543   6                }
+ 544   5              #else
+                        else
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/12/2023 14:12:16 PAGE 10  
+
+                        {
+                          PasscodeUserIdentifyMgr.Status = PasscodeIdentifyFail;
+                          //PasscodeUserIdentifyMgr.TimeCnt =Def_IdendtifyFailScreenTimeDelay;
+                          //GUI_Flag_RefreshLCD = bTRUE;
+                        }
+                      #endif
+ 552   5              }
+ 553   4            }
+ 554   3            else if (PasscodeInputMgr.Status == PasscodeInputExit)
+ 555   3            {
+ 556   4              PasscodeUserIdentifyMgr.Status = PasscodeIdentifyIdle;
+ 557   4              PasscodeUserRegisterMgr.TimeCnt = 0;  
+ 558   4              //GUI_Flag_RefreshLCD = bTRUE;
+ 559   4            }
+ 560   3          }
+ 561   2        }
+ 562   1      }
+ 563          
+ 564          uint8_t PasscodeIdendify(uint8_t *BUFF1)//密码验证
+ 565          {
+ 566   1          uint8_t i,k;
+ 567   1        int j;
+ 568   1        uint8_t PasscodeLen;
+ 569   1        for (i=0;i<(DEF_MAX_PASSCODEMASTER+DEF_MAX_PASSCODEUSER);i++)
+ 570   1        {
+ 571   2          if ( PasscodeMemoryMgr[i].Status != PasscodeIsValid ){
+ 572   3            continue;
+ 573   3          }
+ 574   2      
+ 575   2          PasscodeLen = 0;
+ 576   2          for (j=11;j>=0;j--)
+ 577   2          {
+ 578   3            if(j%2==1)
+ 579   3            {
+ 580   4              if ( (PasscodeMemoryMgr[i].PasscodeBuff[j/2]&0xf) != 0xF )
+ 581   4              {
+ 582   5                PasscodeLen = j+1;
+ 583   5                break;
+ 584   5              }
+ 585   4            }
+ 586   3            else
+ 587   3            {
+ 588   4              if ( ((PasscodeMemoryMgr[i].PasscodeBuff[j/2]>>4)&0xf) != 0xF )
+ 589   4              {
+ 590   5                PasscodeLen = j+1;
+ 591   5                break;
+ 592   5              }
+ 593   4            }
+ 594   3          }
+ 595   2          
+ 596   2          for (j=0;j<(16-PasscodeLen+1);j++)
+ 597   2          {
+ 598   3            for (k=0;k<PasscodeLen;k++)
+ 599   3            {
+ 600   4              if(k%2==1)
+ 601   4              {
+ 602   5                if (((PasscodeMemoryMgr[i].PasscodeBuff[k/2]&0xf) != *(BUFF1+k+j)))
+ 603   5                {
+ 604   6                  break;
+ 605   6                }
+ 606   5              }
+ 607   4                else
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/12/2023 14:12:16 PAGE 11  
+
+ 608   4              {
+ 609   5                if ((((PasscodeMemoryMgr[i].PasscodeBuff[k/2]>>4)&0xf) != *(BUFF1+k+j)))
+ 610   5                {
+ 611   6                  break;
+ 612   6                }
+ 613   5              }
+ 614   4            }
+ 615   3            if (k == PasscodeLen){
+ 616   4              return PasscodeMemoryMgr[i].UserID;
+ 617   4            }
+ 618   3          }
+ 619   2        }
+ 620   1        return 0;
+ 621   1      }
+ 622          
+ 623          uint8_t AppPasscodeIdentify(uint8_t BUFF[])//APP密码识别
+ 624          {
+ 625   1        uint8_t i,j;
+ 626   1        uint8_t UserPasscodeLen;
+ 627   1        uint8_t temp[12];
+ 628   1        for (i=0;i<DEF_MAX_PASSCODEMASTER;i++){
+ 629   2          UserPasscodeLen = 0;
+ 630   2          for(j=0;j<6;j++)
+ 631   2          {
+ 632   3            temp[2*j]=PasscodeMemoryMgr[i].PasscodeBuff[j]>>4;
+ 633   3            temp[2*j+1]=PasscodeMemoryMgr[i].PasscodeBuff[j]&0x0f;
+ 634   3          }
+ 635   2          for (j=0;j<12;j++){
+ 636   3             if ( temp[j] < 10){
+ 637   4                  UserPasscodeLen++;
+ 638   4             }
+ 639   3             else{
+ 640   4                 break;
+ 641   4             }
+ 642   3          }
+ 643   2          if(UserPasscodeLen<6){
+ 644   3              continue;
+ 645   3          }
+ 646   2          if ( pwd_decrypt_checkmode(temp,UserPasscodeLen,BUFF,12) > 0 ){
+ 647   3             return i+1;
+ 648   3          }
+ 649   2        }
+ 650   1        return 0;
+ 651   1      }
+ 652          
+ 653          void ShowLockBrand(void)//显示锁品牌
+ 654          {
+ 655   1        #ifdef Function_ScreenDisplay
+ 656   1        code uint8_t Welcome_Str[8]={HZ_huan,HZ_yingjie,HZ_shiyong,HZ_yong,HZ_zhineng,HZ_neng,HZ_suomen,HZ_end};
+ 657   1      
+ 658   1        if ( LockBrand.LockBrandDataValid == bTRUE )
+ 659   1        {
+ 660   2          DisImage_RAM(6,8,112,16,&LockBrand.LockBrandDisDataBuff[0],NormalDisplay);
+ 661   2        }
+ 662   1        else if( LockBrand.LockBrandDataValid == bFALSE )
+ 663   1        {
+ 664   2          DisHZ16x14Str(6,16,Welcome_Str,NormalDisplay);
+ 665   2        }
+ 666   1        #endif
+ 667   1      }
+ 668          
+ 669          void GUI_Update_Version(void)//更新版本号
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/12/2023 14:12:16 PAGE 12  
+
+ 670          {
+ 671   1        #ifdef Function_ScreenDisplay
+ 672   1         code uint8_t SystemVersionStr[]={HZ_xi,HZ_tong,HZ_ban,HZ_ben,HZ_end};
+ 673   1        //code uint8_t FPM_Version[]={"FPM:126"};
+ 674   1        uint8_t ModelStr[]={"Sxxx-xxx"};
+ 675   1        uint8_t VersionStr[]={"100.100"};
+ 676   1        #endif
+ 677   1      
+ 678   1        if ( VoiceDataTransferMgr.VoicePlayEnd == bTRUE )
+ 679   1        {
+ 680   2          if (VoiceMenuMgr.MenuPoint < VoiceMenuMgr.TotalMenuNum )
+ 681   2          {
+ 682   3            PLAY_VOICE_MULTISEGMENTS(SystemVersionVoiceBuff[VoiceMenuMgr.MenuPoint]);
+ 683   3            VoiceMenuMgr.MenuPoint++;
+ 684   3          }
+ 685   2        }
+ 686   1        
+ 687   1        #ifdef Function_ScreenDisplay
+ 688   1        DisHZ16x14Str(0,32,SystemVersionStr,NormalDisplay);
+ 689   1        ModelStr[1]=DEF_CustomerNumber/100+0x30;
+ 690   1        ModelStr[2]=DEF_CustomerNumber%100/10+0x30;
+ 691   1        ModelStr[3]=DEF_CustomerNumber%10+0x30;
+ 692   1        ModelStr[5]=DEF_ModelNumber/100+0x30;
+ 693   1        ModelStr[6]=DEF_ModelNumber%100/10+0x30;
+ 694   1        ModelStr[7]=DEF_ModelNumber%10+0x30;  
+ 695   1        DisEN16x8Str(3,20,ModelStr,NormalDisplay);
+ 696   1        //Main Board Hardware Version
+ 697   1        VersionStr[0]=DEF_HardwareVerion/100+0x30;
+ 698   1        VersionStr[1]=DEF_HardwareVerion%100/10+0x30;
+ 699   1        VersionStr[2]=DEF_HardwareVerion%10+0x30;
+ 700   1        //Main Board Firmware Version
+ 701   1        VersionStr[4]=DEF_FirmwareVerion/100+0x30;
+ 702   1        VersionStr[5]=DEF_FirmwareVerion%100/10+0x30;
+ 703   1        VersionStr[6]=DEF_FirmwareVerion%10+0x30;
+ 704   1      
+ 705   1        DisEN16x8Str(5,20,VersionStr,NormalDisplay);
+ 706   1        #endif
+ 707   1      }
+ 708          
+ 709          void ReadPasscodeUserMemoryFromEEPROM(void)//从EEPROM内存读取密码用户
+ 710          {
+ 711   1        EEPROM_ReadSequential(PasscodeUserMemoryStartAddr,&PasscodeMemoryMgr[0].UserID,(8*(DEF_MAX_PASSCODEUSER+D
+             -EF_MAX_PASSCODEMASTER)));
+ 712   1      }
+ 713          
+ 714          void WritePasscodeUserMemoryToEEPROM(void)//从EEPROM内存写入密码用户
+ 715          {
+ 716   1        EEPROM_WriteSequential(PasscodeUserMemoryStartAddr,&PasscodeMemoryMgr[0].UserID,(8*(DEF_MAX_PASSCODEUSER+
+             -DEF_MAX_PASSCODEMASTER)));
+ 717   1      }
+ 718          
+ 719          bool_t GUI_CompareTwoPasscodes(uint8_t *BUFF1,uint8_t *BUFF2)//比较两个密码是否相等
+ 720          {
+ 721   1        if (  ( *BUFF1 == *BUFF2)
+ 722   1          &&(*(BUFF1+1) == *(BUFF2+1))
+ 723   1          &&(*(BUFF1+2) == *(BUFF2+2))
+ 724   1          &&(*(BUFF1+3) == *(BUFF2+3))
+ 725   1          &&(*(BUFF1+4) == *(BUFF2+4))
+ 726   1          &&(*(BUFF1+5) == *(BUFF2+5))
+ 727   1          &&(*(BUFF1+6) == *(BUFF2+6))
+ 728   1          &&(*(BUFF1+7) == *(BUFF2+7))
+ 729   1          &&(*(BUFF1+8) == *(BUFF2+8))
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/12/2023 14:12:16 PAGE 13  
+
+ 730   1          &&(*(BUFF1+9) == *(BUFF2+9))
+ 731   1          &&(*(BUFF1+10) == *(BUFF2+10))
+ 732   1          &&(*(BUFF1+11) == *(BUFF2+11))
+ 733   1           )
+ 734   1        {
+ 735   2          return bTRUE;
+ 736   2        }
+ 737   1        else
+ 738   1        {
+ 739   2          return bFALSE;
+ 740   2        }
+ 741   1      }
+ 742          
+ 743          bool_t IfPasscodeUserIDisRegistered(uint8_t UserID)//如果密码用户ID已注册
+ 744          {
+ 745   1        uint8_t i;
+ 746   1        for (i=0;i<(DEF_MAX_PASSCODEUSER+DEF_MAX_PASSCODEMASTER);i++)
+ 747   1        {
+ 748   2          if (PasscodeMemoryMgr[i].UserID == UserID )
+ 749   2          {
+ 750   3            return bTRUE;
+ 751   3          }
+ 752   2        } 
+ 753   1        return bFALSE;
+ 754   1      }
+ 755          
+ 756          uint8_t CheckHowManyRegisteredPasscodeMaster( void )//检查注册密码管理员数量
+ 757          {
+ 758   1        uint8_t i,MasterNum;
+ 759   1        MasterNum =0;
+ 760   1        for (i=0;i<(DEF_MAX_PASSCODEMASTER);i++)
+ 761   1        {
+ 762   2          if ( IfPasscodeUserIDisRegistered(i+1) == bTRUE )
+ 763   2          {
+ 764   3            MasterNum++;
+ 765   3          }
+ 766   2        }
+ 767   1        return MasterNum;
+ 768   1      }
+ 769          
+ 770          uint8_t CheckHowManyRegisteredPasscodeUser( void )//检查注册密码用户数量
+ 771          {
+ 772   1        uint8_t i,UserNum;
+ 773   1        UserNum =0;
+ 774   1        for (i=DEF_MAX_PASSCODEMASTER;i<(DEF_MAX_PASSCODEUSER+DEF_MAX_PASSCODEMASTER);i++)
+ 775   1        {
+ 776   2          if ( IfPasscodeUserIDisRegistered(i+1) == bTRUE )
+ 777   2          {
+ 778   3              UserNum++;
+ 779   3          }
+ 780   2        }
+ 781   1        return UserNum;
+ 782   1      }
+ 783          
+ 784          void DeletePasscodeUserfromMemory(uint8_t UserID)//从EEPROM内存中删除密码用户
+ 785          {
+ 786   1        uint8_t i,j;
+ 787   1      
+ 788   1        for (i=0;i<(DEF_MAX_PASSCODEUSER+DEF_MAX_PASSCODEMASTER);i++)
+ 789   1        {
+ 790   2          if (PasscodeMemoryMgr[i].UserID == UserID )
+ 791   2          {
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/12/2023 14:12:16 PAGE 14  
+
+ 792   3            PasscodeMemoryMgr[i].Status = PasscodeIsInvalid;
+ 793   3            PasscodeMemoryMgr[i].UserID = 0xFF;
+ 794   3            for (j=0;j<6;j++)
+ 795   3            {
+ 796   4              PasscodeMemoryMgr[i].PasscodeBuff[j] = 0xFF;
+ 797   4            }
+ 798   3            break;
+ 799   3          }
+ 800   2        } 
+ 801   1      
+ 802   1        WritePasscodeUserMemoryToEEPROM();
+ 803   1      }
+ 804          
+ 805          void DeleteAllPasscodeMasterfromMemory(void)//从EEPROM内存中删除全部密码管理员
+ 806          {
+ 807   1        uint8_t i,j;
+ 808   1      
+ 809   1        for (i=0;i<DEF_MAX_PASSCODEMASTER;i++)
+ 810   1        {
+ 811   2      
+ 812   2          PasscodeMemoryMgr[i].Status = PasscodeIsInvalid;
+ 813   2          PasscodeMemoryMgr[i].UserID = 0xFF;
+ 814   2          for (j=0;j<6;j++)
+ 815   2          {
+ 816   3            PasscodeMemoryMgr[i].PasscodeBuff[j] = 0xFF;
+ 817   3          }
+ 818   2      
+ 819   2        } 
+ 820   1        WritePasscodeUserMemoryToEEPROM();
+ 821   1      }
+ 822          
+ 823          void DeleteAllPasscodeUserfromMemory(void)//从EEPROM内存中删除全部密码用户
+ 824          {
+ 825   1        uint8_t i,j;
+ 826   1      
+ 827   1        for (i=DEF_MAX_PASSCODEMASTER;i<(DEF_MAX_PASSCODEMASTER+DEF_MAX_PASSCODEUSER);i++)
+ 828   1        {
+ 829   2      
+ 830   2          PasscodeMemoryMgr[i].Status = PasscodeIsInvalid;
+ 831   2          PasscodeMemoryMgr[i].UserID = 0xFF;
+ 832   2          for (j=0;j<6;j++)
+ 833   2          {
+ 834   3            PasscodeMemoryMgr[i].PasscodeBuff[j] = 0xFF;
+ 835   3          }
+ 836   2      
+ 837   2        } 
+ 838   1        WritePasscodeUserMemoryToEEPROM();
+ 839   1      }
+ 840          
+ 841          status_t SavePasscodeUserToMemory(uint8_t *Point,uint8_t UserID)//保存密码用户到内存
+ 842          {
+ 843   1        uint8_t j;
+ 844   1        for (j=0;j<6;j++)
+ 845   1        {
+ 846   2          PasscodeMemoryMgr[UserID-1].PasscodeBuff[j] = (*(Point+2*j))<<4|((*(Point+2*j+1)&0X0f));
+ 847   2        }
+ 848   1        PasscodeMemoryMgr[UserID-1].UserID = UserID;
+ 849   1        PasscodeMemoryMgr[UserID-1].Status = PasscodeIsValid;
+ 850   1        WritePasscodeUserMemoryToEEPROM();
+ 851   1        return S_SUCCESS;
+ 852   1      }
+ 853          
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/12/2023 14:12:16 PAGE 15  
+
+ 854          uint8_t Get_Availabe_PasscodeMasterID(void)//获取已注册密码管理员ID
+ 855          {
+ 856   1        uint8_t i;
+ 857   1        for (i=0;i<DEF_MAX_PASSCODEMASTER;i++)
+ 858   1        {
+ 859   2          if ( PasscodeMemoryMgr[i].Status != PasscodeIsValid ){
+ 860   3            return (i+1);
+ 861   3          }
+ 862   2        }
+ 863   1        return 0;
+ 864   1      }
+ 865          
+ 866          uint8_t Get_Availabe_PasscodeUserID(void)//获取已注册密码用户ID
+ 867          {
+ 868   1        uint8_t i;
+ 869   1        for (i=DEF_MAX_PASSCODEMASTER;i<(DEF_MAX_PASSCODEMASTER+DEF_MAX_PASSCODEUSER);i++)
+ 870   1        {
+ 871   2          if ( PasscodeMemoryMgr[i].Status != PasscodeIsValid ){
+ 872   3            return (i+1);
+ 873   3          }
+ 874   2        }
+ 875   1        return 0;
+ 876   1      }
+ 877          
+ 878          void GUI_GetUserNumList(void)//获取用户数量
+ 879          {
+ 880   1      
+ 881   1        if ( CheckMemoryMgr.Status == StartCheckMemory)
+ 882   1        {
+ 883   2          CheckHomManyRegisteredFPuser.Status = StartCheckHowManyRegisteredFPuser;
+ 884   2          CheckHomManyRegisteredFPuser.FailTimes = 0x00;
+ 885   2          CheckMemoryMgr.Status = WaitForReadFPuserNum;
+ 886   2        }
+ 887   1        else if ( CheckMemoryMgr.Status == WaitForReadFPuserNum )
+ 888   1        {
+ 889   2          CheckHowManyRegistereFPuser();
+ 890   2          if ( CheckHomManyRegisteredFPuser.Status == CheckHomManyRegisteredFPuserSuccess )
+ 891   2          {
+ 892   3            CheckMemoryMgr.FpUserNum = CheckHomManyRegisteredFPuser.UserNum;
+ 893   3            CheckMemoryMgr.FpMasterNum = CheckHomManyRegisteredFPuser.MasterNum;
+ 894   3            CheckMemoryMgr.CardUserNum = CheckHowManyRegisteredCardUser();
+ 895   3            CheckMemoryMgr.PasscodeMasterNum = CheckHowManyRegisteredPasscodeMaster();
+ 896   3            CheckMemoryMgr.PasscodeUserNum = CheckHowManyRegisteredPasscodeUser();
+ 897   3            CheckMemoryMgr.Status = CheckMemorySuccess;
+ 898   3          }
+ 899   2          else if ( CheckHomManyRegisteredFPuser.Status == CheckHomManyRegisteredFPuserFail )
+ 900   2          {
+ 901   3            if ( CheckHomManyRegisteredFPuser.FailTimes++ < 4 )
+ 902   3            {
+ 903   4              CheckHomManyRegisteredFPuser.Status = StartCheckHowManyRegisteredFPuser;//retry
+ 904   4            }
+ 905   3            else
+ 906   3            {
+ 907   4              CheckMemoryMgr.Status = CheckMemoryFail;
+ 908   4              CheckMemoryMgr.FpUserNum = 1;//CheckHomManyRegisteredFPuser.UserNum;
+ 909   4              CheckMemoryMgr.FpMasterNum = 1;//CheckHomManyRegisteredFPuser.MasterNum;
+ 910   4              CheckMemoryMgr.CardUserNum = CheckHowManyRegisteredCardUser();
+ 911   4              CheckMemoryMgr.PasscodeMasterNum = CheckHowManyRegisteredPasscodeMaster();
+ 912   4              CheckMemoryMgr.PasscodeUserNum = CheckHowManyRegisteredPasscodeUser();
+ 913   4            }
+ 914   3          }
+ 915   2        }
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/12/2023 14:12:16 PAGE 16  
+
+ 916   1        
+ 917   1      }
+ 918          
+ 919          uint8_t TranslateNumberToVoice(uint8_t value)//将数字转换为语音
+ 920          {
+ 921   1        return 12+(2*value);
+ 922   1      }
+ 923          
+ 924          void SaveSystemTime( void )
+ 925          {
+ 926   1        SystemTime.year   =   TempSystemTime.year;
+ 927   1        SystemTime.month  =   TempSystemTime.month;
+ 928   1        SystemTime.date   =   TempSystemTime.date;
+ 929   1        //SystemTime.day    =   TempSystemTime.day;
+ 930   1        SystemTime.hour   =   TempSystemTime.hour;
+ 931   1        SystemTime.minute =   TempSystemTime.minute;
+ 932   1        SystemTime.second =   TempSystemTime.second;
+ 933   1      }
+ 934          
+ 935          void GotSystemTime( void )
+ 936          {
+ 937   1        TempSystemTime.year   = SystemTime.year;
+ 938   1        TempSystemTime.month  = SystemTime.month;
+ 939   1        TempSystemTime.date   = SystemTime.date;
+ 940   1        //TempSystemTime.day    = SystemTime.day;
+ 941   1        TempSystemTime.hour   = SystemTime.hour;
+ 942   1        TempSystemTime.minute = SystemTime.minute;
+ 943   1        TempSystemTime.second = SystemTime.second;
+ 944   1      }
+ 945          
+ 946          
+ 947          
+ 948          
+ 949          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   3796    ----
+   CONSTANT SIZE    =     42    ----
+   XDATA SIZE       =   ----      92
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
