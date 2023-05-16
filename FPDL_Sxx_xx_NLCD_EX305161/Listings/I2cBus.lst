@@ -1,0 +1,107 @@
+C51 COMPILER V9.60.0.0   I2CBUS                                                            05/16/2023 16:37:55 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE I2CBUS
+OBJECT MODULE PLACED IN .\Objects\I2cBus.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Drivers\Physical\I2cBus.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE INCDIR(.\D
+                    -rivers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Protocol;.\So
+                    -ftwares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic;.\Drivers\Protocol\YC_NFC;.\Drivers\Protocol\WIFI_Tuya) DE
+                    -BUG PRINT(.\Listings\I2cBus.lst) TABS(2) OBJECT(.\Objects\I2cBus.obj)
+
+line level    source
+
+   1          #include "bsp_io_i2c.h"
+   2          #include "I2cBus.h"
+   3          #include "Basic_Function.h"
+   4          
+   5          void I2C_WriteRandom(uint8_t DeviceAddr,uint8_t RegisterAddr,uint8_t Value)
+   6          {
+   7   1        uint8_t i;
+   8   1        uint8_t Data_send[2];
+   9   1        Data_send[0] = DeviceAddr&0xFE;     //·¢ËÍµØÖ·¼°Ð´ÃüÁî
+  10   1        Data_send[1] = RegisterAddr;    //·¢ËÍ¼Ä´æÆ÷µØÖ·
+  11   1        for(i=0;i<10;i++)
+  12   1        {
+  13   2          if( IIC_SEND(Data_send[0],Data_send[1],&Value,1) != 0 )
+  14   2            break;
+  15   2          Soft_Delay_us(100);
+  16   2        }
+  17   1      }
+  18          
+  19          void I2C_WriteSequential(uint8_t DeviceAddr,uint8_t StartAddr,uint8_t *BUFF,uint8_t Num)
+  20          {
+  21   1        uint8_t i;
+  22   1        uint8_t Data_send[2];
+  23   1        Data_send[0] = DeviceAddr&0xFE;     //·¢ËÍµØÖ·¼°Ð´ÃüÁî
+  24   1        Data_send[1] = StartAddr;   //·¢ËÍ¼Ä´æÆ÷µØÖ·
+  25   1        for(i=0;i<10;i++)
+  26   1        {
+  27   2          if( IIC_SEND(Data_send[0],Data_send[1],BUFF,Num) != 0 )
+  28   2            break;
+  29   2          Soft_Delay_us(100);
+  30   2        }
+  31   1      }
+  32          
+  33          void I2C_ReadRandom(uint8_t DeviceAddr,uint8_t RegisterAddr,uint8_t *Point)
+  34          {
+  35   1        uint8_t i;
+  36   1        uint8_t Data_send[3];
+  37   1        Data_send[0] = DeviceAddr&0xFE;     //·¢ËÍµØÖ·¼°Ð´ÃüÁî
+  38   1        Data_send[1] = RegisterAddr;    //·¢ËÍ¼Ä´æÆ÷µØÖ·
+  39   1        Data_send[2] = DeviceAddr|0x01;     //·¢ËÍµØÖ·¼°¶ÁÃüÁî
+  40   1        for(i=0;i<10;i++)
+  41   1        {
+  42   2          if( IIC_READ(Data_send[0],Data_send[1],Data_send[2],Point,1) != 0 )
+  43   2            break;
+  44   2          Soft_Delay_us(100);
+  45   2        }
+  46   1      }
+  47          
+  48          void I2C_ReadSequential(uint8_t DeviceAddr,uint8_t StartAddr,uint8_t *BUFF,uint8_t Num)
+  49          {
+  50   1        uint8_t i;
+  51   1        uint8_t Data_send[3];
+  52   1        Data_send[0] = DeviceAddr&0xFE;     //·¢ËÍµØÖ·¼°Ð´ÃüÁî
+C51 COMPILER V9.60.0.0   I2CBUS                                                            05/16/2023 16:37:55 PAGE 2   
+
+  53   1        Data_send[1] = StartAddr;   //·¢ËÍ¼Ä´æÆ÷µØÖ·
+  54   1        Data_send[2] = DeviceAddr|0x01;     //·¢ËÍµØÖ·¼°¶ÁÃüÁî
+  55   1        for(i=0;i<10;i++)
+  56   1        {
+  57   2          if( IIC_READ(Data_send[0],Data_send[1],Data_send[2],BUFF,Num) != 0 )
+  58   2            break;
+  59   2        }
+  60   1      }
+  61          
+  62          
+  63          void WRITEREG(uint8_t addr, uint8_t data_m)
+  64          {
+  65   1        I2C_WriteRandom(I2CADDR_MFC,addr,data_m);
+  66   1      }
+  67          
+  68          uint8_t READREG(uint8_t addr)
+  69          {
+  70   1        uint8_t reg = 0xFF; 
+  71   1        //NFC_read = 1;
+  72   1        I2C_ReadRandom(I2CADDR_MFC,addr,&reg);
+  73   1        //NFC_read = 0;
+  74   1        return reg;
+  75   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    384    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----      31
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

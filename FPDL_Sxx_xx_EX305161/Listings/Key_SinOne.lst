@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/16/2023 14:42:14 PAGE 1   
+C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/16/2023 16:36:56 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE KEY_SINONE
@@ -62,7 +62,7 @@ line level    source
   43   2          {
   44   3            TK_Value = TouchKeyScan();
   45   3            SOCAPI_TouchKeyStatus &= 0x7F;    //清一轮扫描标志位
-C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/16/2023 14:42:14 PAGE 2   
+C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/16/2023 16:36:56 PAGE 2   
 
   46   3            for(i=0; i<4; i++)
   47   3            {
@@ -126,7 +126,7 @@ line level    source
  105   4                TouchKeyStatus.KEY_TWO_Pressed = bTRUE;
  106   4              }
  107   3              else
-C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/16/2023 14:42:14 PAGE 3   
+C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/16/2023 16:36:56 PAGE 3   
 
  108   3              {
  109   4                TouchKeyStatus.KEY_TWO_Pressed = bFALSE;
@@ -190,7 +190,7 @@ line level    source
  167   3                
  168   3            case 8:
  169   3              if( TK_Flag )
-C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/16/2023 14:42:14 PAGE 4   
+C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/16/2023 16:36:56 PAGE 4   
 
  170   3              {
  171   4                TouchKeyStatus.KEY_EIGHT_Pressed = bTRUE;
@@ -254,7 +254,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
-C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/16/2023 14:42:14 PAGE 5   
+C51 COMPILER V9.60.0.0   KEY_SINONE                                                        05/16/2023 16:36:56 PAGE 5   
 
    EDATA SIZE       =   ----    ----
    HDATA SIZE       =   ----    ----

@@ -1647,6 +1647,10 @@ void ShowRegisterPasscodeUser(void)//×¢²áÃÜÂëÓÃ»§
 		{
 			PasscodeUserRegisterMgr.Status = InputPasscodeUserID;
 			DataInputMgr.Status = InputIdle;
+			for (i=0;i<12;i++)
+			{
+				PasscodeInputMgr.InputBuff[i] = 0xFF;		//Initial passcode buffer
+			}
 		}
 	}
 	else if  (PasscodeUserRegisterMgr.Status == InputPasscodeUserID)

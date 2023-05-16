@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 14:42:13 PAGE 1   
+C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 16:36:55 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE S_TOUCHKEYCFG
@@ -62,7 +62,7 @@ line level    source
   50          
   51          /*TKCR*/
   52          //sbit  ENTKS = TKCR^7;               //TouchKey开关电源
-C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 14:42:13 PAGE 2   
+C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 16:36:55 PAGE 2   
 
   53          sbit  TRIG  = TKCR^6;               //TouchKey触发开关：写1有效，触发一次key扫描周期
   54          sbit  TRIF  = TKCR^5;               //TouchKey中断标志
@@ -126,7 +126,7 @@ line level    source
  111          #define     SET_ANTIJAM             10
  112          #define     BAUD                    11
  113          #define     DwellTime               12
-C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 14:42:13 PAGE 3   
+C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 16:36:55 PAGE 3   
 
  114          #define     SaveTime              13
  115          #define     NOISE                           16
@@ -190,7 +190,7 @@ line level    source
  173          bit  BTM_WakeUpFlag =0;                       //BTM唤醒标志位
  174          bit  Touch_WakeUpFlag=0;                      //按键唤醒标志位
  175          
-C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 14:42:13 PAGE 4   
+C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 16:36:55 PAGE 4   
 
  176          unsigned    char    idata       WakeUpKey_List[WakeUpKeyNum];
  177          unsigned  char  idata       WakeUpThenScanCount = 0; 
@@ -254,7 +254,7 @@ line level    source
  235          **************************************************/
  236          void Customer_BTM_Dispose(void)
  237          {
-C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 14:42:13 PAGE 5   
+C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 16:36:55 PAGE 5   
 
  238   1         //该函数已在低功耗模式扫描函数中调用
  239   1      
@@ -318,7 +318,7 @@ line level    source
  296          /**************************************************
  297          *函数名称：int  GetBaselineUpdateThreshold(void)
  298          *函数功能：更新速度 
-C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 14:42:13 PAGE 6   
+C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 16:36:55 PAGE 6   
 
  299          *入口参数：void
  300          *出口参数：  int 
@@ -382,7 +382,7 @@ line level    source
  358          *备注  ：
  359          **************************************************/
  360          unsigned char IsDoubleKeyOrSlideKey(void)
-C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 14:42:13 PAGE 7   
+C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 16:36:55 PAGE 7   
 
  361          {
  362   1          return TKCFG[IsDoubleKey];
@@ -446,7 +446,7 @@ line level    source
  420          *出口参数：void
  421          *备注  ：
  422          **************************************************/
-C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 14:42:13 PAGE 8   
+C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 16:36:55 PAGE 8   
 
  423          void CurrentSensorChoose(void)
  424          {
@@ -510,7 +510,7 @@ line level    source
  482          void TouchKeyCFGInit(void)
  483          {
  484   1        unsigned char   i;
-C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 14:42:13 PAGE 9   
+C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 16:36:55 PAGE 9   
 
  485   1        ConfirmTouchCnt = TKCFG[CONFIRMTOUCHCNT];
  486   1        SetNoiseThreshold = TKCFG[NOISE];
@@ -574,7 +574,7 @@ line level    source
  543   5                if(IsDoubleKeyOrSlideKey())
  544   5                {
  545   6                  bMultiple = 0;
-C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 14:42:13 PAGE 10  
+C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 16:36:55 PAGE 10  
 
  546   6                }          
  547   5              }     
@@ -638,7 +638,7 @@ line level    source
  605   5                KeyData = 0;
  606   5              }
  607   4              for(t=0;t<CurrentChannelMax;t++)
-C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 14:42:13 PAGE 11  
+C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 16:36:55 PAGE 11  
 
  608   4              {
  609   5                FilterDataDeal(t);
@@ -702,7 +702,7 @@ line level    source
  667          *函数名称：bit GetLowPowerScanFlag(void)
  668          *函数功能获取低功耗模式
  669          *入口参数：void
-C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 14:42:13 PAGE 12  
+C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 16:36:55 PAGE 12  
 
  670          *出口参数：void  
  671          **************************************************/
@@ -766,7 +766,7 @@ line level    source
  727   2        }
  728   1          #endif
  729   1      }
-C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 14:42:13 PAGE 13  
+C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 16:36:55 PAGE 13  
 
  730          
  731          #ifdef  TK_LowPowerMode
@@ -830,7 +830,7 @@ line level    source
  789   1          _nop_();
  790   1          _nop_();
  791   1          _nop_();
-C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 14:42:13 PAGE 14  
+C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 16:36:55 PAGE 14  
 
  792   1        _nop_();
  793   1        
@@ -894,7 +894,7 @@ line level    source
  851   1        {     
  852   2        
  853   2           TRIG = 1;
-C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 14:42:13 PAGE 15  
+C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 16:36:55 PAGE 15  
 
  854   2           TKSleepMode();
  855   2           RawData[WakeUpKeyValue] = TKCNT << ScanTimeCon;
@@ -958,7 +958,7 @@ line level    source
  913   1        PCON = 0x02;  //PCON的bit1 STOP位写1，配置MCU进入STOP模式
  914   1        _nop_();    //至少需要8个_nop_()
  915   1          _nop_();
-C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 14:42:13 PAGE 16  
+C51 COMPILER V9.60.0.0   S_TOUCHKEYCFG                                                     05/16/2023 16:36:55 PAGE 16  
 
  916   1          _nop_();
  917   1          _nop_();

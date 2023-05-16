@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 1   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE APPUNLOCK
@@ -62,7 +62,7 @@ line level    source
   50            u_int  aday_l;  // aday%6 密码中时间的低3位
   51            u_int  dminute_l; // aday%6  
   52          
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 2   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 2   
 
   53            u_int  yday_max;  //该年最多几天[365|366]
   54          #ifdef DEBUG_GCC
@@ -126,7 +126,7 @@ line level    source
  111                326,130,320,605,145,426,310,315,461,341,
  112                264,524,641,504,150,403,526,405,563,502,
  113                253,432,406,421,650,364,561,436,265,134,
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 3   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 3   
 
  114                430,104,301,435,431,243,625,542,142,156,
  115                615,261,160,240,306,624,162,614,654,205,
@@ -190,7 +190,7 @@ line level    source
  171          bool time_dyear(itime *it);
  172          u_int time_yday_max(u_int year);
  173          void time_print(itime it,u_char label[]);
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 4   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 4   
 
  174          u_int time_findyear(u_int year/*2019*/,u_int days/*1-366*/,u_int *pmonth,u_int *pday);
  175          bool time_cur(itime *it);
@@ -254,7 +254,7 @@ line level    source
                    vsnprintf(buff,1024 ,str, args);
                    va_end(args);
               
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 5   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 5   
 
                  printf(buff);
               
@@ -318,7 +318,7 @@ line level    source
  292          u_int system_time(u_int *pyear,u_int *pmonth, u_int *pday,u_int *phour,u_int *pminute)
  293          {
  294   1              uint16_t y,m,d,hour,min;
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 6   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 6   
 
  295   1              /*
  296   1        *pyear = 2019;
@@ -382,7 +382,7 @@ line level    source
  354   1        if( it==NULL )
  355   1          return false;
  356   1        system_time(&(it->year),&(it->month),&(it->day),&(it->hour),&(it->minute));
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 7   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 7   
 
  357   1        it->dmin=it->hour*60+ it->minute;
  358   1        time_adays(it);
@@ -446,7 +446,7 @@ line level    source
  416   1          return false;
  417   1        it->year = year;
  418   1        it->month = month;
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 8   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 8   
 
  419   1        it->day = day;
  420   1        it->hour= hour;
@@ -510,7 +510,7 @@ line level    source
  478          //从年第几天得出是哪个年月日
  479          //入参year是准备查询的年份，比如偏移天数是700，要按2019、2020...顺序找700天是�
              -�在哪年哪月哪日
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 9   
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 9   
 
  480          u_int time_findyear(u_int year/*2019*/,u_int days/*1-366*/,u_int *pmonth,u_int *pday)
  481          {
@@ -574,7 +574,7 @@ line level    source
  539   1        diff_day = (t1.aday-t2.aday);
  540   1        if (diff_day > 10 )
  541   1          diff_day = 10;
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 10  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 10  
 
  542   1        else if (diff_day < -10 )
  543   1          diff_day = -10;
@@ -638,7 +638,7 @@ line level    source
  601          {
  602   1        if( pwd==NULL )
  603   1          return false;
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 11  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 11  
 
  604   1        if( userpwdlen<6 || userpwdlen>12 || lockpwd_len!=12 )
  605   1          return false;
@@ -702,7 +702,7 @@ line level    source
  663   1        
  664   1        for(i=0;i<offset;i++)
  665   1        {
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 12  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 12  
 
  666   2          u_char tmp = pwd->lockpwd[start];
  667   2          for(j=(start+1);j<=end;j++)
@@ -766,7 +766,7 @@ line level    source
  725   2          pwd->userpwd_hash[0] = pwd->lockpwd[1];
  726   2          pwd->userpwd_hash[1] = pwd->lockpwd[2];
  727   2          pwd->userpwd_hash[2] = pwd->lockpwd[3];
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 13  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 13  
 
  728   2          pwd->userpwd_hash[3] = pwd->lockpwd[4];
  729   2          dc = pwd->lockpwd[5];
@@ -830,7 +830,7 @@ line level    source
  786   1        return true;
  787   1      }
  788          
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 14  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 14  
 
  789          bool pwd_hash_d(ipwd *pwd)
  790          {
@@ -894,7 +894,7 @@ line level    source
  848          {
  849   1        if( pwd==NULL )
  850   1          return false;
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 15  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 15  
 
  851   1        pwd->mode = pwd->lockpwd[0];
  852   1        switch(pwd->mode)
@@ -958,7 +958,7 @@ line level    source
  910   3              checksum += pwd->lockpwd[i];
  911   3            }
  912   2            checksum -= pwd->lockpwd[9];
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 16  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 16  
 
  913   2            if( pwd->lockpwd[9] == checksum%10 )
  914   2            {
@@ -1022,7 +1022,7 @@ line level    source
                   pwd_snap(&pwd,0);
                 pwd_confuse_d(&pwd);
                   pwd_snap(&pwd,1);
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 17  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 17  
 
                 pwd_cross_d(&pwd);
                   pwd_snap(&pwd,2);
@@ -1086,7 +1086,7 @@ line level    source
 MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =   6843    ----
    CONSTANT SIZE    =    188    ----
-C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 14:42:14 PAGE 18  
+C51 COMPILER V9.60.0.0   APPUNLOCK                                                         05/16/2023 16:36:56 PAGE 18  
 
    XDATA SIZE       =   1222     566
    PDATA SIZE       =   ----    ----

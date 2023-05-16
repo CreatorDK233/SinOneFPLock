@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 14:42:14 PAGE 1   
+C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 16:36:56 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE LEDSMGR
@@ -62,7 +62,7 @@ line level    source
   50   2            SET_LED_KEY3_OFF; 
   51   2          break;
   52   2        case KEY_FOUR:
-C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 14:42:14 PAGE 2   
+C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 16:36:56 PAGE 2   
 
   53   2            SET_LED_KEY4_OFF; 
   54   2          break;
@@ -126,7 +126,7 @@ line level    source
  112   2              SET_LED_KEY9_ON;
  113   2            break;
  114   2          case KEY_ASTERISK:
-C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 14:42:14 PAGE 3   
+C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 16:36:56 PAGE 3   
 
  115   2              SET_LED_KEYASTERISK_ON;
  116   2            break;
@@ -190,7 +190,7 @@ line level    source
  174          *  输入： 无
  175          *  输出： 无                                       
  176          *  备注:  无
-C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 14:42:14 PAGE 4   
+C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 16:36:56 PAGE 4   
 
  177          ********************************************************************************************************/
  178          void SET_123A_LED_ON(void)
@@ -254,7 +254,7 @@ line level    source
  236   1        SET_LED_KEYASTERISK_ON;
  237   1        SET_LED_KEY0_OFF;
  238   1        SET_LED_KEYPOUNDSIGN_OFF;
-C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 14:42:14 PAGE 5   
+C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 16:36:56 PAGE 5   
 
  239   1      }
  240          
@@ -318,7 +318,7 @@ line level    source
  298   2        }
  299   1        if ( KeyLEDsFlashTimeCnt < 40 )
  300   1        {
-C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 14:42:14 PAGE 6   
+C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 16:36:56 PAGE 6   
 
  301   2          SET_ALLKEYLED_OFF();
  302   2        }
@@ -382,7 +382,7 @@ line level    source
  360   3            SET_LED_KEY5_OFF;
  361   3            SET_LED_KEY6_ON;
  362   3            SET_LED_KEY7_OFF;
-C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 14:42:14 PAGE 7   
+C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 16:36:56 PAGE 7   
 
  363   3            SET_LED_KEY8_ON;
  364   3            SET_LED_KEY9_OFF;
@@ -446,7 +446,7 @@ line level    source
  422   2          {
  423   3            SET_LED_KEY0_ON;
  424   3            SET_LED_KEY9_OFF;
-C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 14:42:14 PAGE 8   
+C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 16:36:56 PAGE 8   
 
  425   3          }
  426   2          else if ( (i%12)==6)
@@ -510,7 +510,7 @@ line level    source
  484   1      //  HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_SET);
  485   1      }
  486          void SET_LedCtrl1_L(void) 
-C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 14:42:14 PAGE 9   
+C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 16:36:56 PAGE 9   
 
  487          {
  488   1      //  GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -574,7 +574,7 @@ line level    source
  546   1      //  GPIO_InitTypeDef GPIO_InitStruct = {0};
  547   1      //  GPIO_InitStruct.Pin = GPIO_PIN_10;
  548   1      //  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 14:42:14 PAGE 10  
+C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 16:36:56 PAGE 10  
 
  549   1      //  GPIO_InitStruct.Pull = GPIO_NOPULL;
  550   1      //  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -638,7 +638,7 @@ line level    source
  608   2        
  609   2        default:
  610   2          SET_LEDRGB_R_OFF;
-C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 14:42:14 PAGE 11  
+C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 16:36:56 PAGE 11  
 
  611   2          SET_LEDRGB_G_OFF;
  612   2          SET_LEDRGB_B_ON;
@@ -702,7 +702,7 @@ line level    source
                   SET_LedCtrl1_Hi();
                   SET_LedCtrl3_Hi();
                   SET_LedCtrl4_Hi();
-C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 14:42:14 PAGE 12  
+C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 16:36:56 PAGE 12  
 
                   SET_LedCtrl2_L();
                   
@@ -766,7 +766,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =    984    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =      7    ----
-C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 14:42:14 PAGE 13  
+C51 COMPILER V9.60.0.0   LEDSMGR                                                           05/16/2023 16:36:56 PAGE 13  
 
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----

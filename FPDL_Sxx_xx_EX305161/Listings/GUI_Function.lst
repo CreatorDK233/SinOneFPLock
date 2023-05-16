@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 14:42:16 PAGE 1   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 16:36:58 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE GUI_FUNCTION
@@ -62,7 +62,7 @@ line level    source
   50          {
   51   1        VoiceMenuMgr.MenuPoint=0;
   52   1        VoiceMenuMgr.TotalMenuNum = 3;
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 14:42:16 PAGE 2   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 16:36:58 PAGE 2   
 
   53   1        CurrentScreen = SCREEN_CardUserMenu;
   54   1      }
@@ -126,7 +126,7 @@ line level    source
  109   1        for (i=0;i<Lenth;i++)
  110   1        {
  111   2          if (Point1[i]!=Point2[i]){
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 14:42:16 PAGE 3   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 16:36:58 PAGE 3   
 
  112   3            return bFALSE;
  113   3          }
@@ -190,7 +190,7 @@ line level    source
  171   1        UserIdentifyResultMgr.TimeCnt = Def_MessageBoxTimeDelay;
  172   1      }
  173          
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 14:42:16 PAGE 4   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 16:36:58 PAGE 4   
 
  174          void RefreshSystemSleepTime(void)//更新系统休眠时间
  175          {
@@ -254,7 +254,7 @@ line level    source
  233   1        #else
                 if (temp_BOOL == bFALSE)
                 {
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 14:42:16 PAGE 5   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 16:36:58 PAGE 5   
 
                     PickAlarmEnableMgr.Enable = bFALSE;
                 }
@@ -318,7 +318,7 @@ line level    source
  295   1        #else
                   PickAlarmEnableMgr.Enable = bTRUE;
                 #endif
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 14:42:16 PAGE 6   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 16:36:58 PAGE 6   
 
  298   1        
  299   1        Config_AntiPrying_Interrupt();
@@ -382,7 +382,7 @@ line level    source
  357   1        if ( (keycode < KEY_NINE)||(keycode == KEY_NINE) )
  358   1        {
  359   2          DEF_ButtonPress_Voice;
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 14:42:16 PAGE 7   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 16:36:58 PAGE 7   
 
  360   2          PasscodeUserRegisterMgr.OverTimeCnt = Def_GuiTimeDelayCnt5s;
  361   2          if ( DataInputMgr.InputPoint < DataInputMgr.InputNum )
@@ -446,7 +446,7 @@ line level    source
  419   2          if ( CurrentScreen != SCREEN_PickLockAlarm ){
  420   3            DEF_ButtonPress_Voice;
  421   3          }
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 14:42:16 PAGE 8   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 16:36:58 PAGE 8   
 
  422   2          if ( PasscodeInputMgr.Point <  PasscodeInputMgr.PasscodeLen )
  423   2          {
@@ -510,7 +510,7 @@ line level    source
  481   5                  &&(PasscodeInputMgr.InputBuff[1]==0x01)
  482   5                  &&(PasscodeInputMgr.InputBuff[2]==0x01)
  483   5                  &&(PasscodeInputMgr.InputBuff[3]==0x01)
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 14:42:16 PAGE 9   
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 16:36:58 PAGE 9   
 
  484   5                  &&(PasscodeInputMgr.InputBuff[4]==0x01)
  485   5                  &&(PasscodeInputMgr.InputBuff[5]==0x01)
@@ -574,7 +574,7 @@ line level    source
  543   6                }
  544   5              #else
                         else
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 14:42:16 PAGE 10  
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 16:36:58 PAGE 10  
 
                         {
                           PasscodeUserIdentifyMgr.Status = PasscodeIdentifyFail;
@@ -638,7 +638,7 @@ line level    source
  605   6                }
  606   5              }
  607   4                else
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 14:42:16 PAGE 11  
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 16:36:58 PAGE 11  
 
  608   4              {
  609   5                if ((((PasscodeMemoryMgr[i].PasscodeBuff[k/2]>>4)&0xf) != *(BUFF1+k+j)))
@@ -702,7 +702,7 @@ line level    source
  667   1      }
  668          
  669          void GUI_Update_Version(void)//更新版本号
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 14:42:16 PAGE 12  
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 16:36:58 PAGE 12  
 
  670          {
  671   1        #ifdef Function_ScreenDisplay
@@ -766,7 +766,7 @@ line level    source
  727   1          &&(*(BUFF1+6) == *(BUFF2+6))
  728   1          &&(*(BUFF1+7) == *(BUFF2+7))
  729   1          &&(*(BUFF1+8) == *(BUFF2+8))
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 14:42:16 PAGE 13  
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 16:36:58 PAGE 13  
 
  730   1          &&(*(BUFF1+9) == *(BUFF2+9))
  731   1          &&(*(BUFF1+10) == *(BUFF2+10))
@@ -830,7 +830,7 @@ line level    source
  789   1        {
  790   2          if (PasscodeMemoryMgr[i].UserID == UserID )
  791   2          {
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 14:42:16 PAGE 14  
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 16:36:58 PAGE 14  
 
  792   3            PasscodeMemoryMgr[i].Status = PasscodeIsInvalid;
  793   3            PasscodeMemoryMgr[i].UserID = 0xFF;
@@ -894,7 +894,7 @@ line level    source
  851   1        return S_SUCCESS;
  852   1      }
  853          
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 14:42:16 PAGE 15  
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 16:36:58 PAGE 15  
 
  854          uint8_t Get_Availabe_PasscodeMasterID(void)//获取已注册密码管理员ID
  855          {
@@ -958,7 +958,7 @@ line level    source
  913   4            }
  914   3          }
  915   2        }
-C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 14:42:16 PAGE 16  
+C51 COMPILER V9.60.0.0   GUI_FUNCTION                                                      05/16/2023 16:36:58 PAGE 16  
 
  916   1        
  917   1      }

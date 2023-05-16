@@ -1,0 +1,1 @@
+"Drivers\Drivers_Src\RealTimeClock.c" LARGE OMF2 OPTIMIZE (8,SPEED) BROWSE INCDIR(.\TouchKey_lib;.\Software\Software_Inc;.\Software\Software_Src;.\Drivers\Drivers_Inc;.\Drivers\Drivers_Src;.\c;.\H) DEBUG PRINT(.\Listings\RealTimeClock.lst) TABS (2) OBJECT(.\Objects\RealTimeClock.obj)
