@@ -1,1 +1,0 @@
-"Drivers\Drivers_Src\Hardware.c" LARGE OMF2 OPTIMIZE (9,SPEED) BROWSE INCDIR(.\Software\Software_Inc;.\Software\Software_Src;.\Hardware\c;.\Hardware\H;.\Hardware\Drivers\Drivers_Inc;.\Hardware\Drivers\Drivers_Src;.\Hardware\IAP_Lib;.\Hardware\TouchKey_lib) DEBUG PRINT(.\Listings\Hardware.lst) TABS (2) OBJECT(.\Objects\Hardware.obj)

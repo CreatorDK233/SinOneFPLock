@@ -1,0 +1,249 @@
+C51 COMPILER V9.60.0.0   PCF8563                                                           02/09/2023 18:35:54 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE PCF8563
+OBJECT MODULE PLACED IN .\Objects\PCF8563.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Drivers\Protocol\PCF8563.c LARGE OMF2 OPTIMIZE(9,SPEED) BROWSE INCDIR(.\
+                    -Drivers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Protocol;.\S
+                    -oftwares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic) DEBUG PRINT(.\Listings\PCF8563.lst) TABS(2) OBJECT(.\Obj
+                    -ects\PCF8563.obj)
+
+line level    source
+
+   1          #include "global_variable.h"
+   2          #include "I2cBus.h"
+   3          #include <string.h>
+   4          #include "PCF8563.h"
+   5          
+   6          #define PCF8653_CONFIG_REG0   0x08
+   7          #define PCF8653_CONFIG_REG1 0x00
+   8          #define PCF8653_CONFIG_REG2  0x00
+   9          #define PCF8653_CONFIG_REG3 0x00
+  10          #define PCF8653_CONFIG_REG4 0x00
+  11          #define PCF8653_CONFIG_REG5 0x00
+  12          #define PCF8653_CONFIG_REG6 0x00
+  13          #define PCF8653_CONFIG_REG7   0x00
+  14          #define PCF8653_CONFIG_REG8   0x18
+  15          #define PCF8653_CONFIG_REG9   0x80
+  16          #define PCF8653_CONFIG_REG10  0x80
+  17          #define PCF8653_CONFIG_REG11  0x80
+  18          #define PCF8653_CONFIG_REG12  0x80
+  19          #define PCF8653_CONFIG_REG13  0x00
+  20          #define PCF8653_CONFIG_REG14  0x00
+  21          #define PCF8653_CONFIG_REG15  0x00
+  22          
+  23          #define SECPerDay  86400
+  24          static uint8_t DayOfMon[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
+  25          
+  26          static uint8_t TestVal;
+  27          
+  28          void PCF8563_Init(void)
+  29          {
+  30   1        uint8_t PCF8653_CONFIG_REG_BUFF[]={
+  31   1          PCF8653_CONFIG_REG0,PCF8653_CONFIG_REG1,PCF8653_CONFIG_REG9,PCF8653_CONFIG_REG10,
+  32   1          PCF8653_CONFIG_REG11,PCF8653_CONFIG_REG12,PCF8653_CONFIG_REG13
+  33   1        };
+  34   1        I2C_WriteSequential(I2CADDR_RTC,0x00,PCF8653_CONFIG_REG_BUFF,(uint8_t)strlen(PCF8653_CONFIG_REG_BUFF));
+  35   1      }
+  36          
+  37          
+  38          void PCF8563_ReadTime(void)
+  39          {
+  40   1        uint8_t BUFF[7];
+  41   1      
+  42   1        I2C_ReadSequential(I2CADDR_RTC,0x02,&BUFF[0],7);
+  43   1      
+  44   1        //DEBUG_MARK;
+  45   1        if( (BUFF[0]&0x7F) >= 0x60 || (BUFF[0]&0x0F)>0x09 ||
+  46   1            (BUFF[1]&0x7F) >= 0x60 || (BUFF[1]&0x0F)>0x09 ||
+  47   1            (BUFF[2]&0x3F) >= 0x24 || (BUFF[2]&0x0F)>0x09 ||
+  48   1            (BUFF[3]&0x3F) >  0x31 || (BUFF[3]&0x0F)>0x09 || (BUFF[3]&0x3F) == 0x00 ||
+  49   1            //(BUFF[4]&0x07) >= 0x08 ||
+  50   1            (BUFF[5]&0x1F) >  0x12 || (BUFF[5]&0x0F)>0x09 || (BUFF[5]&0x1F) == 0x00 ||
+  51   1             BUFF[6]>0x99          || (BUFF[6]&0x0F)>0x09   )
+  52   1        {
+C51 COMPILER V9.60.0.0   PCF8563                                                           02/09/2023 18:35:54 PAGE 2   
+
+  53   2          PCF8563_Init();
+  54   2          PCF8563_WriteTime();
+  55   2          return;
+  56   2        }
+  57   1        
+  58   1        SystemTime.second   =   BUFF[0]&0x7F;   //Voltage Low bit is not care
+  59   1        SystemTime.minute   =   BUFF[1]&0x7F; 
+  60   1        SystemTime.hour     =   BUFF[2]&0x3F; 
+  61   1        SystemTime.date     =   BUFF[3]&0x3F;
+  62   1        SystemTime.day    =   BUFF[4]&0x07;
+  63   1        SystemTime.month  =   BUFF[5]&0x1F;   //CENTURY BIT is not care 
+  64   1        SystemTime.year     = BUFF[6];
+  65   1      
+  66   1        //DEBUG_MARK;
+  67   1      }
+  68          
+  69          
+  70          void PCF8563_WriteTime(void)
+  71          {
+  72   1        //uint8_t i;
+  73   1        uint8_t BUFF[7];
+  74   1      
+  75   1        BUFF[0]= SystemTime.second; 
+  76   1        BUFF[1]= SystemTime.minute; 
+  77   1        BUFF[2]= SystemTime.hour;
+  78   1        BUFF[3]= SystemTime.date;
+  79   1        BUFF[4]= SystemTime.day;
+  80   1        BUFF[5]= SystemTime.month;
+  81   1        BUFF[6]= SystemTime.year;
+  82   1      
+  83   1        I2C_WriteSequential(I2CADDR_RTC,0x02,&BUFF[0],7);
+  84   1      
+  85   1        //DEBUG_MARK;
+  86   1        
+  87   1      //  for (i=0;i<7;i++)
+  88   1      //  {
+  89   1      //    BUFF[i]=0x88;
+  90   1      //  }
+  91   1      
+  92   1      //  I2C_ReadSequential(I2CADDR_RTC,0x02,&BUFF[0],7);
+  93   1      
+  94   1        //DEBUG_MARK;
+  95   1        
+  96   1      }
+  97          
+  98          uint8_t BCD_to_Hex(uint8_t num)
+  99          {
+ 100   1        return (num>>4)*10+(num&0x0f);
+ 101   1      }
+ 102          
+ 103          uint8_t Hex_to_BDC(uint8_t num)
+ 104          {
+ 105   1        return ((num/10)<<4)+(num%10);
+ 106   1      }
+ 107          
+ 108          uint32_t SystemTimeToUTC(systemtime_t Time)
+ 109          {
+ 110   1        uint32_t Sec_Today;
+ 111   1        uint32_t Day_Total = 0;
+ 112   1        uint16_t year = BCD_to_Hex(Time.year)+2000;
+ 113   1        uint8_t j;
+ 114   1        uint16_t day_at_month;
+C51 COMPILER V9.60.0.0   PCF8563                                                           02/09/2023 18:35:54 PAGE 3   
+
+ 115   1        while(year > 2000)
+ 116   1        {
+ 117   2          if(((year%4==0)&&(year%100!=0)) || (year%400==0)) 
+ 118   2          {
+ 119   3             Day_Total +=366;
+ 120   3             year--;
+ 121   3          }
+ 122   2          else
+ 123   2          {
+ 124   3            Day_Total +=365;
+ 125   3             year--;
+ 126   3          }
+ 127   2        }
+ 128   1        for(j=0;j<12;j++)     /* ?????·? */
+ 129   1        {
+ 130   2          if((j==1) && (((year%4==0)&&(year%100!=0)) || (year%400==0)))//闰年2月29天
+ 131   2            day_at_month = 29;
+ 132   2          else
+ 133   2            day_at_month = DayOfMon[j];
+ 134   2          if(BCD_to_Hex(SystemTime.month)-1 > j) 
+ 135   2          {
+ 136   3            Day_Total += day_at_month;
+ 137   3          }
+ 138   2          else 
+ 139   2          {
+ 140   3            Day_Total += BCD_to_Hex(SystemTime.date)-1;
+ 141   3            break;
+ 142   3          }
+ 143   2        }
+ 144   1        Sec_Today = (uint32_t)BCD_to_Hex( Time.hour)*3600+(uint32_t)BCD_to_Hex( Time.minute)*60+(uint32_t)BCD_to_
+             -Hex( Time.second);
+ 145   1        Sec_Today+=Day_Total*SECPerDay;
+ 146   1        return Sec_Today;
+ 147   1      }
+ 148          
+ 149          systemtime_t UTCToSystemtime(uint32_t UTC)
+ 150          {
+ 151   1        uint32_t DayToNow = UTC/SECPerDay;
+ 152   1        uint32_t SecOutOfDay =UTC%SECPerDay;
+ 153   1        uint16_t year = 2000;
+ 154   1        systemtime_t TimeResult;
+ 155   1        uint16_t day_at_month;
+ 156   1        uint8_t j;
+ 157   1        while(DayToNow > 365)
+ 158   1        {
+ 159   2          if(((year%4==0)&&(year%100!=0)) || (year%400==0))    /* ???? */
+ 160   2            DayToNow -= 366;
+ 161   2          else
+ 162   2            DayToNow -= 365;
+ 163   2          year++;
+ 164   2        }
+ 165   1         if((DayToNow == 365) && !(((year%4==0)&&(year%100!=0)) || (year%400==0)))//正好最后一天而且不是闰年
+ 166   1        {
+ 167   2          DayToNow -= 365;
+ 168   2          year++;
+ 169   2        }
+ 170   1        TimeResult.year =Hex_to_BDC((uint8_t)year-2000);
+ 171   1        for(j=0;j<12;j++)     /* ?????·? */
+ 172   1        {
+ 173   2          if((j==1) && (((year%4==0)&&(year%100!=0)) || (year%400==0)))//闰年2月29天
+ 174   2            day_at_month = 29;
+ 175   2          else
+C51 COMPILER V9.60.0.0   PCF8563                                                           02/09/2023 18:35:54 PAGE 4   
+
+ 176   2            day_at_month = DayOfMon[j];
+ 177   2          if(DayToNow >= day_at_month) DayToNow -= day_at_month;
+ 178   2          else break;
+ 179   2        }
+ 180   1        TimeResult.month =   Hex_to_BDC(j+1);
+ 181   1        TimeResult.date   =  Hex_to_BDC(DayToNow+1);
+ 182   1        TimeResult.hour =    Hex_to_BDC(((SecOutOfDay/ 3600))%24);
+ 183   1        TimeResult.minute  = Hex_to_BDC((SecOutOfDay % 3600)/60);
+ 184   1        TimeResult.second  = Hex_to_BDC((SecOutOfDay % 3600)%60);
+ 185   1        return TimeResult;
+ 186   1      }
+ 187          
+ 188          void PCF8563_Test(void)
+ 189          {
+ 190   1        uint8_t BUFF[7];
+ 191   1      
+ 192   1        BUFF[0]= 33;  
+ 193   1        BUFF[1]= 22;  
+ 194   1        BUFF[2]= 11;
+ 195   1        BUFF[3]= 4;
+ 196   1        BUFF[4]= 5;
+ 197   1        BUFF[5]= 6;
+ 198   1        BUFF[6]= 7;
+ 199   1      
+ 200   1        I2C_WriteSequential(I2CADDR_RTC,0x02,&BUFF[0],7);
+ 201   1        BUFF[0]= 0; 
+ 202   1        BUFF[1]= 0; 
+ 203   1        BUFF[2]= 0;
+ 204   1        BUFF[3]= 0;
+ 205   1        BUFF[4]= 0;
+ 206   1        BUFF[5]= 0;
+ 207   1        BUFF[6]= 0;
+ 208   1        
+ 209   1        I2C_ReadSequential(I2CADDR_RTC,0x02,&BUFF[0],7);
+ 210   1        
+ 211   1        //DEBUG_MARK;
+ 212   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1432    ----
+   CONSTANT SIZE    =      7    ----
+   XDATA SIZE       =     13      72
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
