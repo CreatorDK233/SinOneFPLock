@@ -1,1 +1,0 @@
-"Drivers\Protocol\BeepMgr.c" LARGE OMF2 OPTIMIZE (9,SPEED) BROWSE INCDIR(.\Drivers\Lib\c;.\Drivers\Lib\H;.\Drivers\Lib\IAP_Lib;.\Drivers\Lib\TouchKey_lib;.\Drivers\Physical;.\Drivers\Protocol;.\Softwares\Application;.\Softwares\Basic;.\Softwares\ModuleLogic) DEBUG PRINT(.\Listings\BeepMgr.lst) TABS (2) OBJECT(.\Objects\BeepMgr.obj)
